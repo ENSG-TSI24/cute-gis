@@ -19,6 +19,7 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        triangle.h triangle.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -44,7 +45,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(cute-gis PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(cute-gis PRIVATE Qt${QT_VERSION_MAJOR}::Widgets glfw GLEW libGLEW.so libGLU.so libGL.so)
 
 set_target_properties(cute-gis PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

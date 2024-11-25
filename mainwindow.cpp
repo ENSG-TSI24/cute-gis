@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "triangle.h"
+
+#include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -7,15 +10,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    int width = 900;
-    int lenght = 900;
+    auto* openGLWidget = new Triangle(this);
 
-    resize(width, lenght);
-    setWindowTitle(tr("CuteGis Mainpage"));
+    if (!ui->openGLWidget->layout()) {
+        auto* layout = new QVBoxLayout(ui->openGLWidget);
+        layout->setMargin(0);
+        layout->addWidget(openGLWidget);
+    } else {
+        ui->openGLWidget->layout()->addWidget(openGLWidget);
+    }
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
