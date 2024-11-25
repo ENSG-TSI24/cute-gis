@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     if (!ui->openGLWidget->layout()) {
         auto* layout = new QVBoxLayout(ui->openGLWidget);
-        layout->setMargin(0);
+        layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(openGLWidget);
     } else {
         ui->openGLWidget->layout()->addWidget(openGLWidget);
