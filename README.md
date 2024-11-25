@@ -1,4 +1,4 @@
-# GIS Application Project - Branch Dev
+# GIS Application Project - Branch Deve
 
 ### Créer une branche
 
