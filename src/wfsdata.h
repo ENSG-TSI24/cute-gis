@@ -1,19 +1,18 @@
 #ifndef WFSDATA_H
 #define WFSDATA_H
 
-#include <string>
+#include <gdal_priv.h>
+#include <ogrsf_frmts.h>
 
-class WFSData {
-public:
-    WFSData(const std::string& url);
-    bool fetchData();
-    const std::string& getResponse() const { return response; }
-
+class WFSData
+{
 private:
-    std::string wfs_url;
-    std::string response;
-
-    static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* userp);
+    GDALDataset* m_dataset; // Use GDALDataset instead of OGRDataSource
+public:
+    WFSData();
+    void open(const char* link);
+    void getData(const char* name);
+    GDALDataset* GetDataset();
 };
 
 #endif // WFSDATA_H
