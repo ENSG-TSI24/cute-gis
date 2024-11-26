@@ -14,25 +14,74 @@
 
 
 
+
+/**
+ * \class Camera
+ * The aim of this class is to provide a Camera to manage the vue of the user.
+ */
+
+
 class Camera
 {
 public:
     Camera();
 
+    /**
+    * @brief Get the value of the x coordonate
+    * @return float
+    */
     float getX();
+    /**
+    * @brief Get the value of the y coordonate
+    * @return float
+    */
     float getY();
+    /**
+    * @brief Set the value to the x coordonate
+    *
+    * @param The  float to assign to the coordonate
+    */
     void setX(float x);
-    void setY(float y);
+    /**
+    * @brief Set the value to the y coordonate
+    *
+    * @param The  float to assign to the coordonate
+    */
 
-    float getZoomLevel();
-    void setZoomLevel(float zoom);
+    void setY(float y);
+    /**
+    * @brief Add to the y coordonate
+    *
+    * @param The  float to add  to the coordonate
+    */
 
     void moveUp(float step);
+    /**
+    * @brief Minus the value to the y coordonate
+    *
+    * @param The float to substract to the coordonate
+    */
     void moveDown(float step);
+    /**
+    * @brief Add to the x coordonate
+    *
+    * @param The  The  float to add  to the coordonate
+    */
     void moveLeft(float step);
+    /**
+    * @brief Minus the value to the x coordonate
+    *
+    * @param The float to substract to the coordonate
+    */
     void moveRight(float step);
+    /**
+    * @brief Update the the camera with a matrix this matrix contains the edge of the vue and
+    * the fov
+    *
+    */
 
     void update();
+
 
 private:
     float x;

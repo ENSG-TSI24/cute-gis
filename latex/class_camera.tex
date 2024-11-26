@@ -1,0 +1,156 @@
+\hypertarget{class_camera}{}\doxysection{Camera Class Reference}
+\label{class_camera}\index{Camera@{Camera}}
+
+
+{\ttfamily \#include $<$camera.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+float \mbox{\hyperlink{class_camera_ae7c46d026313f6faefdcfdb5094ea8cb}{getX}} ()
+\begin{DoxyCompactList}\small\item\em Get the value of the x coordonate. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_camera_ad71d83315248602503546eba37697390}{getY}} ()
+\begin{DoxyCompactList}\small\item\em Get the value of the y coordonate. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_camera_a6a69508383fdb7b7064e9bea4d569ee9}{setX}} (float x)
+\begin{DoxyCompactList}\small\item\em Set the value to the x coordonate. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_camera_a7200923e83852873639e208cb327434d}{setY}} (float y)
+\begin{DoxyCompactList}\small\item\em Set the value to the y coordonate. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_camera_a99afddab826f90cf854f858a2c717bb9}{move\+Up}} (float step)
+\begin{DoxyCompactList}\small\item\em Add to the y coordonate. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_camera_a3afa8d087d48047307dcbe76b5134a8a}{move\+Down}} (float step)
+\begin{DoxyCompactList}\small\item\em Minus the value to the y coordonate. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_camera_a9733e299c281288208e4ce36681143a6}{move\+Left}} (float step)
+\begin{DoxyCompactList}\small\item\em Add to the x coordonate. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_camera_a70f638369d8bbcb60639f5b1cc40de19}{move\+Right}} (float step)
+\begin{DoxyCompactList}\small\item\em Minus the value to the x coordonate. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_camera_a42cda7239981a5618660d04bd5893556}\label{class_camera_a42cda7239981a5618660d04bd5893556}} 
+void \mbox{\hyperlink{class_camera_a42cda7239981a5618660d04bd5893556}{update}} ()
+\begin{DoxyCompactList}\small\item\em Update the the camera with a matrix this matrix contains the edge of the vue and the fov. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The aim of this class is to provide a \mbox{\hyperlink{class_camera}{Camera}} to manage the vue of the user. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_camera_ae7c46d026313f6faefdcfdb5094ea8cb}\label{class_camera_ae7c46d026313f6faefdcfdb5094ea8cb}} 
+\index{Camera@{Camera}!getX@{getX}}
+\index{getX@{getX}!Camera@{Camera}}
+\doxysubsubsection{\texorpdfstring{getX()}{getX()}}
+{\footnotesize\ttfamily float Camera\+::getX (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get the value of the x coordonate. 
+
+\begin{DoxyReturn}{Returns}
+float 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_camera_ad71d83315248602503546eba37697390}\label{class_camera_ad71d83315248602503546eba37697390}} 
+\index{Camera@{Camera}!getY@{getY}}
+\index{getY@{getY}!Camera@{Camera}}
+\doxysubsubsection{\texorpdfstring{getY()}{getY()}}
+{\footnotesize\ttfamily float Camera\+::getY (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get the value of the y coordonate. 
+
+\begin{DoxyReturn}{Returns}
+float 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_camera_a3afa8d087d48047307dcbe76b5134a8a}\label{class_camera_a3afa8d087d48047307dcbe76b5134a8a}} 
+\index{Camera@{Camera}!moveDown@{moveDown}}
+\index{moveDown@{moveDown}!Camera@{Camera}}
+\doxysubsubsection{\texorpdfstring{moveDown()}{moveDown()}}
+{\footnotesize\ttfamily void Camera\+::move\+Down (\begin{DoxyParamCaption}\item[{float}]{step }\end{DoxyParamCaption})}
+
+
+
+Minus the value to the y coordonate. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em The} & float to substract to the coordonate \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_camera_a9733e299c281288208e4ce36681143a6}\label{class_camera_a9733e299c281288208e4ce36681143a6}} 
+\index{Camera@{Camera}!moveLeft@{moveLeft}}
+\index{moveLeft@{moveLeft}!Camera@{Camera}}
+\doxysubsubsection{\texorpdfstring{moveLeft()}{moveLeft()}}
+{\footnotesize\ttfamily void Camera\+::move\+Left (\begin{DoxyParamCaption}\item[{float}]{step }\end{DoxyParamCaption})}
+
+
+
+Add to the x coordonate. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em The} & The float to add to the coordonate \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_camera_a70f638369d8bbcb60639f5b1cc40de19}\label{class_camera_a70f638369d8bbcb60639f5b1cc40de19}} 
+\index{Camera@{Camera}!moveRight@{moveRight}}
+\index{moveRight@{moveRight}!Camera@{Camera}}
+\doxysubsubsection{\texorpdfstring{moveRight()}{moveRight()}}
+{\footnotesize\ttfamily void Camera\+::move\+Right (\begin{DoxyParamCaption}\item[{float}]{step }\end{DoxyParamCaption})}
+
+
+
+Minus the value to the x coordonate. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em The} & float to substract to the coordonate \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_camera_a99afddab826f90cf854f858a2c717bb9}\label{class_camera_a99afddab826f90cf854f858a2c717bb9}} 
+\index{Camera@{Camera}!moveUp@{moveUp}}
+\index{moveUp@{moveUp}!Camera@{Camera}}
+\doxysubsubsection{\texorpdfstring{moveUp()}{moveUp()}}
+{\footnotesize\ttfamily void Camera\+::move\+Up (\begin{DoxyParamCaption}\item[{float}]{step }\end{DoxyParamCaption})}
+
+
+
+Add to the y coordonate. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em The} & float to add to the coordonate \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_camera_a6a69508383fdb7b7064e9bea4d569ee9}\label{class_camera_a6a69508383fdb7b7064e9bea4d569ee9}} 
+\index{Camera@{Camera}!setX@{setX}}
+\index{setX@{setX}!Camera@{Camera}}
+\doxysubsubsection{\texorpdfstring{setX()}{setX()}}
+{\footnotesize\ttfamily void Camera\+::setX (\begin{DoxyParamCaption}\item[{float}]{x }\end{DoxyParamCaption})}
+
+
+
+Set the value to the x coordonate. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em The} & float to assign to the coordonate \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_camera_a7200923e83852873639e208cb327434d}\label{class_camera_a7200923e83852873639e208cb327434d}} 
+\index{Camera@{Camera}!setY@{setY}}
+\index{setY@{setY}!Camera@{Camera}}
+\doxysubsubsection{\texorpdfstring{setY()}{setY()}}
+{\footnotesize\ttfamily void Camera\+::setY (\begin{DoxyParamCaption}\item[{float}]{y }\end{DoxyParamCaption})}
+
+
+
+Set the value to the y coordonate. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em The} & float to assign to the coordonate \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+camera.\+h\item 
+camera.\+cpp\end{DoxyCompactItemize}
