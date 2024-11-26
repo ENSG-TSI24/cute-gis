@@ -19,7 +19,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt install -y build-essential cmake qtbase5-dev qt5-qmake
-        sudo apt-get install libdgal-dev
+        sudo apt-get install libgdal-dev
 
     # Étape 3 : Configurer et compiler le projet
     - name: Configure and Build
