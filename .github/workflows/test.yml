@@ -12,7 +12,7 @@ jobs:
     steps:
     # Étape 1 : Récupérer le code
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # Étape 2 : Installer les dépendances
     - name: Install Qt

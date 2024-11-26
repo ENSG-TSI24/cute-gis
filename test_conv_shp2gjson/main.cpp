@@ -7,8 +7,8 @@ int main() {
     GDALAllRegister();
 
     // Chemin du fichier source (Shapefile) et fichier de sortie (GeoJSON)
-    const char *inputFile = "/home/formation/Documents/Project/test/data/ADRESSE_BAN.shp";
-    const char *outputFile = "/home/formation/Documents/Project/test/data/ADRESSE_BAN.geojson";
+    const char *inputFile = "./data/COURS_D_EAU.shp";
+    const char *outputFile = "./data/COURS_D_EAU.geojson";
 
     // Ouvrir le fichier source
     GDALDataset *sourceDataset = (GDALDataset *) GDALOpenEx(inputFile, GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
