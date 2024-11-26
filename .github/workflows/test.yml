@@ -1,18 +1,9 @@
 name: back test
 
 on:
-  push:
-    branches:
-      - main
-      - dev
-      - devback
-      - devfront
-  pull_request:
-    branches:
-      - main
-      - dev
-      - devback
-      - devfront
+  - push
+  - pull_request
+
 
 jobs:
   build:
