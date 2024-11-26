@@ -13,6 +13,7 @@ public:
     void open(const char* link);
     void getData(const char* name);
     GDALDataset* GetDataset();
+    std::string ExportToGeoJSON(int n);
 };
 
 #endif // WFSDATA_H
