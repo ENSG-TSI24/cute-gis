@@ -6,6 +6,13 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <utility>
+#include "camera.h"
+
+#include <QOpenGLFunctions>
+#include <fstream>
+#include <stdexcept>
+#include <iostream>
+#include <QKeyEvent>
 
 class GeoJsonViewer : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -20,14 +27,12 @@ protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     std::vector<std::pair<float, float>> coordinates;
-    float cameraX = 0.0f, cameraY = 0.0f; // Position de la caméra
-    float zoomLevel = 1.0f;               // Niveau de zoom
-
+    Camera camera;
     void renderPoints();
-    void updateCamera();
 };
 
 #endif // GEOJSONVIEWER_H

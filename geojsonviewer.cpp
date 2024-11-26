@@ -1,11 +1,11 @@
 #include "geojsonviewer.h"
-#include <fstream>
-#include <stdexcept>
-#include <iostream>
+
 
 using json = nlohmann::json;
 
-GeoJsonViewer::GeoJsonViewer(QWidget* parent) : QOpenGLWidget(parent) {}
+GeoJsonViewer::GeoJsonViewer(QWidget* parent) : QOpenGLWidget(parent) {
+    setFocusPolicy(Qt::StrongFocus);
+}
 
 void GeoJsonViewer::loadGeoJSON(const std::string& filePath) {
     std::ifstream file(filePath);
@@ -45,13 +45,50 @@ void GeoJsonViewer::initializeGL() {
 
 void GeoJsonViewer::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
-    updateCamera();
+    camera.update();
 }
 
 void GeoJsonViewer::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT);
-    updateCamera();
+    camera.update();
     renderPoints();
+}
+
+
+
+void GeoJsonViewer::keyPressEvent(QKeyEvent *event){
+    float step = 10.0;
+    switch (event->key()) {
+        case( Qt::Key_Up):
+            this->camera.moveUp(step);
+             break;
+        case(Qt::Key_Down):
+            this->camera.moveDown(step);
+            break;
+        case(Qt::Key_Left):
+            this->camera.moveLeft(step);
+            break;
+        case(Qt::Key_Right):
+            this->camera.moveRight(step);
+            break;
+        case(Qt::Key_Z):
+            this->camera.moveRight(step);
+            break;
+        case(Qt::Key_Q):
+            this->camera.moveLeft(step);
+            break;
+        case(Qt::Key_D):
+            this->camera.moveRight(step);
+            break;
+        case(Qt::Key_S):
+            this->camera.moveDown(step);
+            break;
+    }
+
+
+
+    camera.update();
+    update();
 }
 
 void GeoJsonViewer::renderPoints() {
@@ -64,12 +101,4 @@ void GeoJsonViewer::renderPoints() {
     glEnd();
 }
 
-void GeoJsonViewer::updateCamera() {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    float left = -180.0f / zoomLevel + cameraX;
-    float right = 180.0f / zoomLevel + cameraX;
-    float bottom = -90.0f / zoomLevel + cameraY;
-    float top = 90.0f / zoomLevel + cameraY;
-    glOrtho(left, right, bottom, top, -1.0f, 1.0f);
-}
+

@@ -4,6 +4,12 @@
 #include <QMainWindow>
 #include <QTimer>
 
+#include "./ui_mainwindow.h"
+#include "geojsonviewer.h"
+
+#include <QVBoxLayout>
+#include <QMessageBox>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

@@ -1,9 +1,5 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
-#include "geojsonviewer.h"
 
-#include <QVBoxLayout>
-#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Charger un fichier GeoJSON
-    const std::string geoJsonFile = "/home/formation/Bureau/test opengl/points_lumineux_bordeaux.geojson";
+    const std::string geoJsonFile = "../cute-gis/points_lumineux_bordeaux.geojson";
     try {
         geoJsonViewer->loadGeoJSON(geoJsonFile);
     } catch (const std::exception& ex) {
