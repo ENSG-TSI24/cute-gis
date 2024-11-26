@@ -21,6 +21,7 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         triangle.h triangle.cpp
+        geojsonviewer.h geojsonviewer.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
