@@ -1,11 +1,12 @@
 #include "wfsdata.h"
 #include <iostream>
 #include <ogrsf_frmts.h>
+#include <fstream>
 
 WFSData::WFSData() : m_dataset(nullptr) {}
 
 GDALDataset* WFSData::GetDataset(){
-    return this->m_dataset;
+    return m_dataset;
 }
 
 
@@ -116,7 +117,7 @@ void WFSData::getData(const char* name="")
 
 }
 
-std::string WFSData::ExportToGeoJSON()
+std::string WFSData::ExportToGeoJSON(int n, const std::string& outputFilePath)
 {
     if (m_dataset == nullptr)
     {
@@ -132,17 +133,17 @@ std::string WFSData::ExportToGeoJSON()
         return "";
     }
 
-    // Create an in-memory dataset to hold the GeoJSON output
+    // Create an temp dataset file to hold the GeoJSON output
     char** options = nullptr;
     GDALDataset* geoJsonDataset = geoJsonDriver->Create("/vsimem/temp.geojson", 0, 0, 0, GDT_Unknown, options);
     if (geoJsonDataset == nullptr)
     {
-        std::cout << "Failed to create in-memory GeoJSON dataset." << std::endl;
+        std::cout << "Failed to create the temp GeoJSON dataset." << std::endl;
         return "";
     }
 
-    // Get the first layer
-    OGRLayer* layer = m_dataset->GetLayer(0);
+    // Get the selected layer
+    OGRLayer* layer = m_dataset->GetLayer(n);
     if (layer == nullptr)
     {
         std::cout << "No layer found in the dataset." << std::endl;
@@ -177,11 +178,47 @@ std::string WFSData::ExportToGeoJSON()
     std::string geoJsonContent(fileSize, '\0'); // Allocate a string with the required size
     VSIFReadL(&geoJsonContent[0], 1, fileSize, file);
 
+    std::ofstream outputFile(outputFilePath);
+        if (outputFile.is_open())
+        {
+            outputFile << geoJsonContent;
+            outputFile.close();
+            std::cout << "GeoJSON written to file: " << outputFilePath << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed to write GeoJSON to file." << std::endl;
+        }
     // Close and clean up
     VSIFCloseL(file);
     VSIUnlink("/vsimem/temp.geojson");
 
     return geoJsonContent;
+}
+OGRLayer* WFSData::GetLayer(const char* name)
+{
+    if (m_dataset == nullptr)
+    {
+        std::cout << "Dataset is not opened." << std::endl;
+        return nullptr;
+    }
+
+    if (std::string(name).empty())
+    {
+        // Automatically select the only layer if there's just one
+        if (m_dataset->GetLayerCount() == 1)
+        {
+            return m_dataset->GetLayer(0);
+        }
+        else
+        {
+            std::cout << "Multiple layers present. Specify a layer name." << std::endl;
+            return nullptr;
+        }
+    }
+
+    // Get the layer by name
+    return m_dataset->GetLayerByName(name);
 }
 
 
