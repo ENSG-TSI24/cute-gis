@@ -48,12 +48,48 @@ void Triangle::paintGL() {
     glLoadMatrixf(modelMatrix.constData());
 
     // red color for triangle
-    glColor3f(1.0f, 0.0f, 0.0f); // Couleur rouge
-    glBegin(GL_TRIANGLES);
-    glVertex3f(-0.6f,  0.3f, 0.0f);
-    glVertex3f(-0.9f, -0.3f, 0.0f);
-    glVertex3f(-0.3f, -0.3f, 0.0f);
-    glEnd();
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glBegin(GL_QUADS);
+            glNormal3f(0,0,-1);
+            glVertex3f(-1,-1,0);
+            glVertex3f(-1,1,0);
+            glVertex3f(1,1,0);
+            glVertex3f(1,-1,0);
+
+        glEnd();
+        glColor3f(0.0f, 1.0f, 0.0f);
+
+        glBegin(GL_TRIANGLES);
+            glNormal3f(0,-1,0.707);
+            glVertex3f(-1,-1,0);
+            glVertex3f(1,-1,0);
+            glVertex3f(0,0,1.2);
+        glEnd();
+        glColor3f(0.0f, 0.0f, 1.0f);
+
+        glBegin(GL_TRIANGLES);
+            glNormal3f(1,0, 0.707);
+            glVertex3f(1,-1,0);
+            glVertex3f(1,1,0);
+            glVertex3f(0,0,1.2);
+        glEnd();
+
+        glColor3f(0.0f, 0.0f, 0.5f);
+
+        glBegin(GL_TRIANGLES);
+            glNormal3f(0,1,0.707);
+            glVertex3f(1,1,0);
+            glVertex3f(-1,1,0);
+            glVertex3f(0,0,1.2);
+        glEnd();
+        glColor3f(0.4f, 0.0f, 1.0f);
+
+        glBegin(GL_TRIANGLES);
+            glNormal3f(-1,0,0.707);
+            glVertex3f(-1,1,0);
+            glVertex3f(-1,-1,0);
+            glVertex3f(0,0,1.2);
+        glEnd();
 }
 
 void Triangle::updateRotation() {
