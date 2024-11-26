@@ -16,10 +16,10 @@ bool LoadGeojson::loadFromFile(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
         std::cerr << "Could not open the file!" << std::endl;
-        return;
+        return false;
     }
 
     file >> geojsonData;
 
-    std::cout << "GeoJSON content: " << geojsonData.toStyledString() << std::endl;
+    return true;
 }

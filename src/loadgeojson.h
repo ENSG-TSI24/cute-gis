@@ -11,10 +11,10 @@ public:
     ~LoadGeojson();
 
     bool loadFromFile(const std::string& filePath);
-    Json::Value getGeojsonData() const;
+    Json::Value getGeojsonData() const { return geojsonData; }
 
 private:
     Json::Value geojsonData;
 };
 
-#endif
+#endif // LOADGEOJSON_H
