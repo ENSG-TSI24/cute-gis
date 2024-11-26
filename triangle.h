@@ -4,7 +4,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QTimer>
-
+#include <glm/glm.hpp>
 class Triangle : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 
@@ -19,6 +19,16 @@ protected:
 private:
     QTimer* m_timer;
     float m_angle;
+
+     std::vector<glm::vec3> vertices;
+     std::vector<glm::vec3> normals;
+     std::vector<glm::vec2> uvs;
+
+     bool loadOBJ(
+             const char* path,
+             std::vector<glm::vec3>& out_vertices,
+             std::vector<glm::vec2>& out_uvs,
+             std::vector<glm::vec3>& out_normals);
 
 private slots:
     void updateRotation();
