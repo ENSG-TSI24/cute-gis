@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "triangle.h"
-
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)

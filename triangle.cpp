@@ -1,8 +1,7 @@
 #include "triangle.h"
 #include <QMatrix4x4>
 #include <QTimer>
-#include <fstream>
-#include <sstream>
+#include <tiny_obj_loader.h>
 
 Triangle::Triangle(QWidget* parent)
     : QOpenGLWidget(parent), m_angle(0.0f) {
@@ -20,13 +19,12 @@ void Triangle::initializeGL() {
 
     glEnable(GL_DEPTH_TEST);
 
-    if (!loadOBJ("/home/laurent/Documents/m2_tsi/cute-gis/data/cube.obj", vertices, uvs, normals)) {
+    if (!loadOBJWithTinyObjLoader("/home/laurent/Documents/m2_tsi/cute-gis/data/city.obj", vertices, uvs, normals)) {
         qWarning("Failed to load OBJ file!");
     } else {
         qDebug() << "OBJ vertex count:" << vertices.size();
     }
 }
-
 
 void Triangle::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
@@ -43,18 +41,40 @@ void Triangle::resizeGL(int w, int h) {
 void Triangle::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+    // create view matrix for the camera
+    QMatrix4x4 viewMatrix;
+
+    // setting position of camera
+    QVector3D cameraPosition(0.0f, 8.0f, 3.0f);
+
+    // center object position
+    QVector3D target(0.0f, 0.0f, 0.0f);
+
+    // set orientation top-bottom view
+    QVector3D upVector(0.0f, 1.0f, 0.0f);
+    viewMatrix.lookAt(cameraPosition, target, upVector);
+
+    // create model matrix
     QMatrix4x4 modelMatrix;
+
+    // position of the object translate
     modelMatrix.translate(0.0f, 0.0f, -3.0f);
+
+    // position of the object rotate
     modelMatrix.rotate(m_angle, 0.0f, 1.0f, 0.0f);
 
-    modelMatrix.scale(0.5f);
+    // scale of object
+    modelMatrix.scale(0.005f);
 
+    QMatrix4x4 modelViewMatrix = viewMatrix * modelMatrix;
+
+    // load matrix to opengl
     glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(modelMatrix.constData());
+    glLoadMatrixf(modelViewMatrix.constData());
 
     glColor3f(1.0f, 1.0f, 0.0f);
 
-    // create the object
     glBegin(GL_TRIANGLES);
     for (size_t i = 0; i < vertices.size(); i++) {
         if (!normals.empty()) {
@@ -62,17 +82,16 @@ void Triangle::paintGL() {
             glNormal3f(normal.x, normal.y, normal.z);
         }
         const glm::vec3& vertex = vertices[i];
-        // create each vertex
         glVertex3f(vertex.x, vertex.y, vertex.z);
     }
-
     glEnd();
 }
 
 
 void Triangle::updateRotation() {
     // angle animation
-    m_angle += 1.0f;
+    // can setup the rotate speed
+    m_angle += 0.1f;
 
     // reset angle after complete rotate
     if (m_angle >= 360.0f) {
@@ -83,78 +102,49 @@ void Triangle::updateRotation() {
     update();
 }
 
-bool Triangle::loadOBJ(
-        const char* path,
-        std::vector<glm::vec3>& out_vertices,
-        std::vector<glm::vec2>& out_uvs,
-        std::vector<glm::vec3>& out_normals) {
+bool Triangle::loadOBJWithTinyObjLoader(
+    const char* path,
+    std::vector<glm::vec3>& out_vertices,
+    std::vector<glm::vec2>& out_uvs,
+    std::vector<glm::vec3>& out_normals) {
 
-    std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
-    std::vector<glm::vec3> temp_vertices;
-    std::vector<glm::vec2> temp_uvs;
-    std::vector<glm::vec3> temp_normals;
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+    std::string warn, err;
 
-    std::ifstream file(path);
-    if (!file.is_open()) {
-        qDebug() << "impossible to open the file!";
+    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path)) {
+        qWarning() << "TinyObjLoader error:" << QString::fromStdString(warn + err);
         return false;
     }
 
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream lineStream(line);
-        std::string lineHeader;
-        lineStream >> lineHeader;
+    for (const auto& shape : shapes) {
+        for (const auto& index : shape.mesh.indices) {
+            glm::vec3 vertex = {
+                attrib.vertices[3 * index.vertex_index + 0],
+                attrib.vertices[3 * index.vertex_index + 1],
+                attrib.vertices[3 * index.vertex_index + 2]
+            };
+            out_vertices.push_back(vertex);
 
-        // extract each vertex start v
-        if (lineHeader == "v") {
-            glm::vec3 vertex;
-            lineStream >> vertex.x >> vertex.y >> vertex.z;
-            temp_vertices.push_back(vertex);
-        }
+            if (index.texcoord_index >= 0) {
+                glm::vec2 uv = {
+                    attrib.texcoords[2 * index.texcoord_index + 0],
+                    attrib.texcoords[2 * index.texcoord_index + 1]
+                };
+                out_uvs.push_back(uv);
+            }
 
-        // extract each vertex start vt
-        else if (lineHeader == "vt") {
-            glm::vec2 uv;
-            lineStream >> uv.x >> uv.y;
-            temp_uvs.push_back(uv);
-        }
-
-        // extract each vertex start vn
-        else if (lineHeader == "vn") {
-            glm::vec3 normal;
-            lineStream >> normal.x >> normal.y >> normal.z;
-            temp_normals.push_back(normal);
-        }
-
-        // extract indices of the object
-        else if (lineHeader == "f") {
-            unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-            char slash1, slash2;
-            for (int i = 0; i < 3; i++) {
-                lineStream >> vertexIndex[i] >> slash1 >> uvIndex[i] >> slash2 >> normalIndex[i];
-                vertexIndices.push_back(vertexIndex[i]);
-                uvIndices.push_back(uvIndex[i]);
-                normalIndices.push_back(normalIndex[i]);
+            if (index.normal_index >= 0) {
+                glm::vec3 normal = {
+                    attrib.normals[3 * index.normal_index + 0],
+                    attrib.normals[3 * index.normal_index + 1],
+                    attrib.normals[3 * index.normal_index + 2]
+                };
+                out_normals.push_back(normal);
             }
         }
     }
 
-    file.close();
-
-    for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-        unsigned int vertexIndex = vertexIndices[i];
-        out_vertices.push_back(temp_vertices[vertexIndex - 1]);
-    }
-    for (unsigned int i = 0; i < uvIndices.size(); i++) {
-        unsigned int uvIndex = uvIndices[i];
-        out_uvs.push_back(temp_uvs[uvIndex - 1]);
-    }
-    for (unsigned int i = 0; i < normalIndices.size(); i++) {
-        unsigned int normalIndex = normalIndices[i];
-        out_normals.push_back(temp_normals[normalIndex - 1]);
-    }
-
     return true;
 }
-

@@ -20,6 +20,7 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         triangle.h triangle.cpp
+        tiny_obj_loader.h tiny_obj_loader.cc
 )
 
 qt_add_executable(cute-gis
