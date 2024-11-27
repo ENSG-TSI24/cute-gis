@@ -28,6 +28,7 @@ protected:
     void resizeGL(int w, int h) override;
     void paintGL() override;
     void keyPressEvent(QKeyEvent *event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     std::vector<std::pair<float, float>> coordinates;

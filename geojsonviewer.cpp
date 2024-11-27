@@ -54,7 +54,17 @@ void GeoJsonViewer::paintGL() {
     renderPoints();
 }
 
+void GeoJsonViewer::wheelEvent(QWheelEvent* event) {
+    float zoomStep = 1.0f;
+    if (event->angleDelta().y() > 0) {
+        camera.setZoom(zoomStep);
+    } else if (event->angleDelta().y() < 0) {
+        camera.setZoom(-zoomStep);
+    }
 
+    camera.update();
+    update();
+}
 
 void GeoJsonViewer::keyPressEvent(QKeyEvent *event){
     float step = 10.0;

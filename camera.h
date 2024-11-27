@@ -82,10 +82,14 @@ public:
 
     void update();
 
+    float getZoom();
+    void setZoom(float zoom);
+
 
 private:
     float x;
     float y;
+    float zoom;
 };
 
 #endif // CAMERA_H
