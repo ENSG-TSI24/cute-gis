@@ -20,6 +20,8 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         triangle.h triangle.cpp
+        camera.h camera.cpp
+        geojsonviewer.h geojsonviewer.cpp
 )
 
 qt_add_executable(cute-gis
