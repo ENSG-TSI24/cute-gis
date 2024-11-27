@@ -9,11 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Étape 1 : Récupérer le code
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Étape 2 : Vérifier la structure des fichiers
     - name: Check file structure
       run: |
         echo "Current directory:"
@@ -21,14 +19,11 @@ jobs:
         echo "Files in directory:"
         ls -R
 
-    # Étape 3 : Installer les dépendances
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt install -y build-essential cmake qtbase5-dev qt5-qmake
-        sudo apt-get install libgdal-dev
+        sudo apt-get install -y build-essential cmake qt6-base-dev qt6-qmake libgdal-dev
 
-    # Étape 4 : Configurer et compiler le projet
     - name: Configure and Build
       run: |
         mkdir -p cute-gis/build
