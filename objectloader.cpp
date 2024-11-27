@@ -1,32 +1,32 @@
-#include "triangle.h"
+#include "objectloader.h"
 #include <QMatrix4x4>
 #include <QTimer>
 #include <tiny_obj_loader.h>
 
-Triangle::Triangle(QWidget* parent)
+ObjectLoader::ObjectLoader(QWidget* parent)
     : QOpenGLWidget(parent), m_angle(0.0f) {
 
     // instance timer
     m_timer = new QTimer(this);
-    connect(m_timer, &QTimer::timeout, this, &Triangle::updateRotation);
+    connect(m_timer, &QTimer::timeout, this, &ObjectLoader::updateRotation);
     m_timer->start(16); // config for 16 ms (=60fps)
 }
 
-void Triangle::initializeGL() {
+void ObjectLoader::initializeGL() {
     initializeOpenGLFunctions();
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
 
-    if (!loadOBJWithTinyObjLoader("/home/laurent/Documents/m2_tsi/cute-gis/data/city.obj", vertices, uvs, normals)) {
+    if (!loadOBJWithTinyObjLoader("/home/laurent/Téléchargements/data/city.obj", vertices, uvs, normals)) {
         qWarning("Failed to load OBJ file!");
     } else {
         qDebug() << "OBJ vertex count:" << vertices.size();
     }
 }
 
-void Triangle::resizeGL(int w, int h) {
+void ObjectLoader::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
 
     // projection matrix with perspective
@@ -38,7 +38,7 @@ void Triangle::resizeGL(int w, int h) {
     glLoadMatrixf(projectionMatrix.constData());
 }
 
-void Triangle::paintGL() {
+void ObjectLoader::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -46,7 +46,7 @@ void Triangle::paintGL() {
     QMatrix4x4 viewMatrix;
 
     // setting position of camera
-    QVector3D cameraPosition(0.0f, 8.0f, 3.0f);
+    QVector3D cameraPosition(0.0f, 4.0f, 3.0f);
 
     // center object position
     QVector3D target(0.0f, 0.0f, 0.0f);
@@ -88,7 +88,7 @@ void Triangle::paintGL() {
 }
 
 
-void Triangle::updateRotation() {
+void ObjectLoader::updateRotation() {
     // angle animation
     // can setup the rotate speed
     m_angle += 0.1f;
@@ -102,7 +102,7 @@ void Triangle::updateRotation() {
     update();
 }
 
-bool Triangle::loadOBJWithTinyObjLoader(
+bool ObjectLoader::loadOBJWithTinyObjLoader(
     const char* path,
     std::vector<glm::vec3>& out_vertices,
     std::vector<glm::vec2>& out_uvs,

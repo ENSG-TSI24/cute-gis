@@ -5,11 +5,12 @@
 #include <QOpenGLFunctions>
 #include <QTimer>
 #include <glm/glm.hpp>
-class Triangle : public QOpenGLWidget, protected QOpenGLFunctions {
+
+class ObjectLoader : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 
 public:
-    explicit Triangle(QWidget* parent = nullptr);
+    explicit ObjectLoader(QWidget* parent = nullptr);
 
 protected:
     void initializeGL() override;

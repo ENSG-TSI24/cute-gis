@@ -19,7 +19,7 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-        triangle.h triangle.cpp
+        objectloader.h objectloader.cpp
         tiny_obj_loader.h tiny_obj_loader.cc
 )
 
