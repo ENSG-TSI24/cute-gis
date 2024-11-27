@@ -15,7 +15,7 @@ include_directories(${GDAL_INCLUDE_DIR})
 link_directories(${GDAL_LIBRARY_DIRS})
 
 # Ajouter le fichier source principal
-add_executable(test_gdal main.cpp src/wfsdata.cpp src/wfsdata.h)
+add_executable(test_gdal main.cpp  codeZijian.cpp)
 
 # Lier l'exécutable avec GDAL
 target_link_libraries(test_gdal ${GDAL_LIBRARIES})
