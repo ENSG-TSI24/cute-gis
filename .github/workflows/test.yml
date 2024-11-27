@@ -27,7 +27,7 @@ jobs:
         ls /home/runner/work/cute-gis
         mkdir -p ./build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake ../.. -DCMAKE_BUILD_TYPE=Release
         cmake --build . -- -j$(nproc)
 
     # Étape 4 : Exécuter les tests (si disponibles)
