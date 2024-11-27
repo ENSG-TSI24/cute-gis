@@ -18,7 +18,7 @@ link_directories(${GDAL_LIBRARY_DIRS})
 add_executable(test_gdal 
     main.cpp  
     codeZijian.cpp
-    abstractdatavisitor.cpp)
+    dataextract/abstractdatavisitor.cpp)
 
 # Lier l'exécutable avec GDAL
 target_link_libraries(test_gdal ${GDAL_LIBRARIES})
