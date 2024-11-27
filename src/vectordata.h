@@ -8,7 +8,7 @@ class VectorData : public AbstractData
 public:
     VectorData();
 protected :
-    GDALDriver GeoJsonDriver;
+    GDALDriver *GeoJsonDriver;
 
 };
 
