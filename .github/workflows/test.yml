@@ -1,9 +1,8 @@
-name: back test
+name: Back Test
 
 on:
-  - push
-  - pull_request
-
+  push:
+  pull_request:
 
 jobs:
   build:
@@ -14,25 +13,24 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Étape 2 : Installer les dépendances
+    # Étape 2 : Vérifier la structure des fichiers
+    - name: Check file structure
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Files in directory:"
+        ls -R
+
+    # Étape 3 : Installer les dépendances
     - name: Install Qt
       run: |
         sudo apt-get update
         sudo apt install -y build-essential cmake qtbase5-dev qt5-qmake
         sudo apt-get install libgdal-dev
 
-    # Étape 3 : Configurer et compiler le projet
+    # Étape 4 : Configurer et compiler le projet
     - name: Configure and Build
       run: |
-        ls /home/runner/work/cute-gis
-        mkdir -p ./build
-        cd build
-        cmake ../.. -DCMAKE_BUILD_TYPE=Release
-        cmake --build . -- -j$(nproc)
-
-    # Étape 4 : Exécuter les tests (si disponibles)
-#    - name: Run Tests
-#      run: |
-#        cd build
-#        ctest --output-on-failure
-
+        mkdir -p build
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        cmake --build build -- -j$(nproc)
