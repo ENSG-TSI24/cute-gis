@@ -1,3 +1,0 @@
-/home/formation/Documents/Project/cute-gis/test_conv_shp2gjson/build/CMakeFiles/test_conv_shp2gjson.dir
-/home/formation/Documents/Project/cute-gis/test_conv_shp2gjson/build/CMakeFiles/edit_cache.dir
-/home/formation/Documents/Project/cute-gis/test_conv_shp2gjson/build/CMakeFiles/rebuild_cache.dir
