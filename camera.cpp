@@ -37,14 +37,17 @@ void Camera::moveRight(float step){
     this->x += step/zoom;
 }
 
-void Camera::setZoom(float zoom){
-    this->zoom = std::max(this->zoom + zoom, 0.1f);
+void Camera::setZoom(float zoomChange) {
+    float speedFactor = 0.2f;
+    float scale = 1.0f + speedFactor * this->zoom; //accelerate the zoom factor when already zoomed
+
+    this->zoom += zoomChange * scale;
+    this->zoom = std::max(this->zoom, 0.1f);
 }
 
 float Camera::getZoom(){
     return zoom;
 }
-
 
 void Camera::update() {
     glMatrixMode(GL_PROJECTION);
