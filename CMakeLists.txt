@@ -15,7 +15,10 @@ include_directories(${GDAL_INCLUDE_DIR})
 link_directories(${GDAL_LIBRARY_DIRS})
 
 # Ajouter le fichier source principal
-add_executable(test_gdal main.cpp  codeZijian.cpp)
+add_executable(test_gdal 
+    main.cpp  
+    codeZijian.cpp
+    abstractdatavisitor.cpp)
 
 # Lier l'exécutable avec GDAL
 target_link_libraries(test_gdal ${GDAL_LIBRARIES})
