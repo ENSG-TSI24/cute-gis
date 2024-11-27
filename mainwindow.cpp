@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Charger un fichier GeoJSON
-    const std::string geoJsonFile = "/home/formation/Bureau/test opengl/points_lumineux_bordeaux.geojson";
+    const std::string geoJsonFile = "/home/formation/Bureau/test opengl/HAIE.geojson";
     try {
         geoJsonViewer->loadGeoJSON(geoJsonFile);
     } catch (const std::exception& ex) {

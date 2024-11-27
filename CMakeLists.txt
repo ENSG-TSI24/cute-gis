@@ -22,6 +22,7 @@ set(PROJECT_SOURCES
         mainwindow.ui
         triangle.h triangle.cpp
         geojsonviewer.h geojsonviewer.cpp
+        camera.h camera.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

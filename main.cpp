@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 
+
 using json = nlohmann::json;
 
 int main(int argc, char *argv[])
@@ -13,7 +14,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     // Charger le fichier GeoJSON et gérer les erreurs
-    const std::string geoJsonFile = "/home/formation/Bureau/test opengl/points_lumineux_bordeaux.geojson";
+    const std::string geoJsonFile = "/home/formation/Bureau/test opengl/HAIE.geojson";
     try {
         // Tester si le fichier GeoJSON est accessible
         std::ifstream file(geoJsonFile);
@@ -28,7 +29,7 @@ int main(int argc, char *argv[])
 
     // Créer et afficher la fenêtre principale
     MainWindow w;
-    w.show();
 
+    w.show();
     return app.exec();
 }
