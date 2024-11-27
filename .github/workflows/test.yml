@@ -22,7 +22,7 @@ jobs:
         ls -R
 
     # Étape 3 : Installer les dépendances
-    - name: Install Qt
+    - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt install -y build-essential cmake qtbase5-dev qt5-qmake
@@ -31,6 +31,6 @@ jobs:
     # Étape 4 : Configurer et compiler le projet
     - name: Configure and Build
       run: |
-        mkdir -p build
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-        cmake --build build -- -j$(nproc)
+        mkdir -p cute-gis/build
+        cmake -S cute-gis -B cute-gis/build -DCMAKE_BUILD_TYPE=Release
+        cmake --build cute-gis/build -- -j$(nproc)
