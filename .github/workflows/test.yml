@@ -24,6 +24,7 @@ jobs:
     # Étape 3 : Configurer et compiler le projet
     - name: Configure and Build
       run: |
+        ls /home/runner/work/cute-gis/cute-gis
         mkdir -p ./build
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release
