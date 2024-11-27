@@ -1,3 +1,5 @@
 graph/uml.drawio
 CMakeLists.txt.user
 build
+data
+.vscode

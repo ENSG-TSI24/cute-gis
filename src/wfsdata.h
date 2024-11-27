@@ -13,6 +13,8 @@ public:
     void open(const char* link);
     void getData(const char* name);
     GDALDataset* GetDataset();
+    std::string ExportToGeoJSON(int n, const std::string& outputFilePath);
+    OGRLayer* GetLayer(const char* name = "");
 };
 
 #endif // WFSDATA_H
