@@ -8,9 +8,10 @@ class CityGMLFIle : public VectorData
 public:
     CityGMLFIle();
 private :
-    GDALDriver GetDriver() override;
-    GDALDataset GetDATA() override;
-    void closeDataSet() override;
+    GDALDriver GetDriver();
+    GDALDataset GetDATA();
+    void closeDataSet();
+
 };
 
 #endif // CITYGMLFILE_H
