@@ -37,16 +37,6 @@ set(TEST_SOURCES
     tests/wfsdataTest.cpp
     src/wfsdata.h
     src/wfsdata.cpp
-    src/geotifffile.h src/geotifffile.cpp
-    src/geojsonfile.h src/geojsonfile.cpp
-    src/geojsonfile.h src/geojsonfile.cpp
-    src/shpfile.h src/shpfile.cpp
-    src/citygmlfile.h src/citygmlfile.cpp
-    src/rasterdata.h src/rasterdata.cpp
-    src/DataManagement.h
-    src/abstractdata.h src/abstractdata.cpp
-    main.cpp
-    src/vectordata.h src/vectordata.cpp
 )
 
 add_executable(wfsdataTest ${TEST_SOURCES})
