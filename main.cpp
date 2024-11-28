@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     // Charger le fichier GeoJSON et gérer les erreurs
-    const std::string geoJsonFile = "/home/formation/Bureau/test opengl/HAIE.geojson";
+    const std::string geoJsonFile = "/home/formation/Bureau/test opengl/BATIMENT.geojson";
     try {
         // Tester si le fichier GeoJSON est accessible
         std::ifstream file(geoJsonFile);

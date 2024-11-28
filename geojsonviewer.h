@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <limits>
 #include "camera.h"
 
 class GeoJsonViewer : public QOpenGLWidget, protected QOpenGLFunctions {
@@ -21,10 +22,7 @@ protected:
     void resizeGL(int w, int h) override;
     void paintGL() override;
 
-    // Gestion des événements clavier
     void keyPressEvent(QKeyEvent* event) override;
-
-    // Gestion du zoom avec la molette
     void wheelEvent(QWheelEvent* event) override;
 
 private:
@@ -34,10 +32,13 @@ private:
 
     Camera camera;
 
+    // Normalisation des coordonnées
+    float minX, maxX, minY, maxY;
+    void normalizeCoordinates();
+
     void renderPoints();
     void renderLineStrings();
     void renderPolygons();
-
 };
 
 #endif // GEOJSONVIEWER_H
