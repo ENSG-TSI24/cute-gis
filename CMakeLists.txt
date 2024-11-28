@@ -1,31 +1,56 @@
 cmake_minimum_required(VERSION 3.5)
 
-# Nom du projet
-project(cute_GIS)
+project(cute-gis VERSION 0.1 LANGUAGES CXX)
 
-# Définit le standard C++
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+include ( CTest )
 
-# Trouver la bibliothèque GDAL
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+
+
+find_package(GTest REQUIRED)
 find_package(GDAL REQUIRED)
 
-# Inclure les headers et lier les bibliothèques GDAL
 include_directories(${GDAL_INCLUDE_DIR})
 link_directories(${GDAL_LIBRARY_DIRS})
 
-# Ajouter le fichier source principal
-add_executable(cute_GIS src/vectordata.h src/vectordata.cpp
-    src/geotifffile.h src/geotifffile.cpp
-    src/geojsonfile.h src/geojsonfile.cpp
-    src/geojsonfile.h src/geojsonfile.cpp
-    src/shpfile.h src/shpfile.cpp
-    src/citygmlfile.h src/citygmlfile.cpp
-    src/rasterdata.h src/rasterdata.cpp
-    src/DataManagement.h
-    src/abstractdata.h src/abstractdata.cpp
-    src/main.cpp)
+set(PROJECT_SOURCES
 
-# Lier l'exécutable avec GDAL
-target_link_libraries(cute_GIS ${GDAL_LIBRARIES})
+src/wfsdata.h
+src/wfsdata.cpp
+src/geotifffile.h src/geotifffile.cpp
+src/geojsonfile.h src/geojsonfile.cpp
+src/geojsonfile.h src/geojsonfile.cpp
+src/shpfile.h src/shpfile.cpp
+src/citygmlfile.h src/citygmlfile.cpp
+src/rasterdata.h src/rasterdata.cpp
+src/DataManagement.h
+src/abstractdata.h src/abstractdata.cpp
+main.cpp
+src/vectordata.h src/vectordata.cpp
+)
 
+set(TEST_SOURCES
+    tests/wfsdataTest.cpp
+    src/wfsdata.h
+    src/wfsdata.cpp
+)
+
+add_executable(wfsdataTest ${TEST_SOURCES})
+add_executable(cute-gis ${PROJECT_SOURCES})
+
+
+target_link_libraries(cute-gis PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${GDAL_LIBRARIES})
+target_link_libraries(wfsdataTest PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
+
+
+
+enable_testing()
+add_test(NAME wfsdataTest COMMAND wfsdataTest)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(cute-gis)
+endif()

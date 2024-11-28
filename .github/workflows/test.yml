@@ -1,0 +1,44 @@
+name: Back Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Check file structure
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Files in directory:"
+        ls -R
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake qt6-base-dev qt6-tools-dev-tools libgdal-dev libgl1-mesa-dev libglu1-mesa-dev libgtest-dev
+        # Compiler Google Test
+        cd /usr/src/gtest
+        sudo cmake .
+        sudo make
+        sudo mv lib/libgtest*.a /usr/lib/
+
+    - name: Configure project
+      run: |
+        mkdir -p build
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build project
+      run: |
+        cmake --build build -- -j$(nproc)
+
+    - name: Run tests
+      run: |
+        cd build
+        ctest --output-on-failure
