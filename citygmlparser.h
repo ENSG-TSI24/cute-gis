@@ -1,33 +1,36 @@
-#ifndef CITYGMLPARSER_H
-#define CITYGMLPARSER_H
+#ifndef CITY_GML_PARSER_H
+#define CITY_GML_PARSER_H
 
-#include <string>
 #include <vector>
+#include <string>
+#include <iostream>
+#include <fstream>
 #include <gdal/ogrsf_frmts.h>
 
-// Struct to represent a single feature's geometry and metadata
+// Feature struct to hold geometry and attributes
 struct Feature {
-    std::string id;                      // Unique feature ID
-    std::vector<float> vertices;         // Vertex positions (x, y, z)
-    std::vector<unsigned int> faces;     // Face indices for rendering
-    std::vector<std::pair<std::string, std::string>> attributes; // Metadata as key-value pairs
+    std::string id;
+    std::string objectName;
+    std::vector<float> vertices; // x, y, z triplets
+    std::vector<unsigned int> faces; // indices for faces
+    std::map<std::string, std::string> attributes; // Key-value pairs for attributes
 };
 
 class CityGMLParser {
-public:
-    CityGMLParser();                              // Constructor
-    ~CityGMLParser();                             // Destructor
-
-    bool openFile(const std::string& filePath);   // Open and load a CityGML file
-    const std::vector<Feature>& getFeatures() const; // Retrieve all parsed features
-
 private:
-    GDALDataset* dataset;                         // GDAL dataset for the CityGML file
-    std::vector<Feature> features;                // List of parsed features
+    GDALDataset* dataset;
+    std::vector<Feature> features;
 
-    void parseFeatures();                         // Parse features from the dataset
     void extractGeometry(OGRGeometry* geometry, std::vector<float>& vertices,
-                         std::vector<unsigned int>& faces, unsigned int& vertexOffset); // Extract geometry
+                         std::vector<unsigned int>& faces, unsigned int& vertexOffset);
+
+public:
+    CityGMLParser();
+    ~CityGMLParser();
+    bool openFile(const std::string& filePath);
+    void parseFeatures();
+    void exportToObj(const std::string& filePath) const;
+    void printFeature(const Feature& feature) const;
 };
 
-#endif // CITYGMLPARSER_H
+#
