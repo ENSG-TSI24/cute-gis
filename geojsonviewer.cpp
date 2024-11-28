@@ -1,6 +1,5 @@
 #include "geojsonviewer.h"
 
-
 using json = nlohmann::json;
 
 GeoJsonViewer::GeoJsonViewer(QWidget* parent) : QOpenGLWidget(parent) {
@@ -82,7 +81,7 @@ void GeoJsonViewer::keyPressEvent(QKeyEvent *event){
             this->camera.moveRight(step);
             break;
         case(Qt::Key_Z):
-            this->camera.moveRight(step);
+            this->camera.moveUp(step);
             break;
         case(Qt::Key_Q):
             this->camera.moveLeft(step);
@@ -94,9 +93,6 @@ void GeoJsonViewer::keyPressEvent(QKeyEvent *event){
             this->camera.moveDown(step);
             break;
     }
-
-
-
     camera.update();
     update();
 }

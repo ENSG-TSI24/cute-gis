@@ -4,7 +4,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , geoJsonViewer(new GeoJsonViewer(this)) // Initialisation du widget GeoJSON
+    , renderer(new Renderer(this)) // Initialisation du widget GeoJSON
     , refreshTimer(new QTimer(this))        // Initialisation du timer
 {
     ui->setupUi(this);
@@ -12,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
     // Charger un fichier GeoJSON
     const std::string geoJsonFile = "../cute-gis/points_lumineux_bordeaux.geojson";
     try {
-        geoJsonViewer->loadGeoJSON(geoJsonFile);
+        Geojsonloader geo =  Geojsonloader(geoJsonFile);
+        renderer->setCoordinates(geo.getCoordinates());
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Erreur", QString::fromStdString(ex.what()));
         return;
@@ -22,13 +23,13 @@ MainWindow::MainWindow(QWidget *parent)
     if (!ui->openGLWidget->layout()) {
         auto* layout = new QVBoxLayout(ui->openGLWidget);
         layout->setContentsMargins(0, 0, 0, 0);
-        layout->addWidget(geoJsonViewer);
+        layout->addWidget(renderer);
     } else {
-        ui->openGLWidget->layout()->addWidget(geoJsonViewer);
+        ui->openGLWidget->layout()->addWidget(renderer);
     }
 
     // Configurer le timer pour rafraîchir GeoJsonViewer
-    connect(refreshTimer, &QTimer::timeout, geoJsonViewer, QOverload<>::of(&QWidget::update));
+    connect(refreshTimer, &QTimer::timeout, renderer, QOverload<>::of(&QWidget::update));
     refreshTimer->start(16); // Appelle `update()` toutes les ~16 ms (60 FPS)
 }
 

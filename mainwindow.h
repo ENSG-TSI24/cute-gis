@@ -6,6 +6,8 @@
 
 #include "./ui_mainwindow.h"
 #include "geojsonviewer.h"
+#include "renderer.h"
+#include "geojsonloader.h"
 
 #include <QVBoxLayout>
 #include <QMessageBox>
@@ -26,8 +28,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    GeoJsonViewer* geoJsonViewer; // Widget GeoJSON
-    QTimer* refreshTimer;         // Timer pour rafraîchir l'affichage
+    Renderer* renderer; // Widget renderer
+    QTimer* refreshTimer;  // Timer pour rafraîchir l'affichage
 };
 
 #endif // MAINWINDOW_H

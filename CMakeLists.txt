@@ -22,6 +22,9 @@ set(PROJECT_SOURCES
         mainwindow.ui
         triangle.h triangle.cpp
         camera.h camera.cpp
+        controller.h controller.cpp
+        geojsonloader.h geojsonloader.cpp
+        renderer.h renderer.cpp
         geojsonviewer.h geojsonviewer.cpp
 )
 
