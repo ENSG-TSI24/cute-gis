@@ -43,11 +43,12 @@ add_executable(wfsdataTest ${TEST_SOURCES})
 add_executable(cute-gis ${PROJECT_SOURCES})
 
 
+
 target_link_libraries(cute-gis PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${GDAL_LIBRARIES})
 target_link_libraries(wfsdataTest PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
 
 
-
+target_link_libraries(cute_GIS ${GDAL_LIBRARIES})
 enable_testing()
 add_test(NAME wfsdataTest COMMAND wfsdataTest)
 
