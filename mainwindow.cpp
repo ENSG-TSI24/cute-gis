@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 
+#include "./ui_mainwindow.h"
+#include "objectloader.h"
+#include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Charger un fichier GeoJSON
-    const std::string geoJsonFile = "../cute-gis/points_lumineux_bordeaux.geojson";
+    const std::string geoJsonFile = "/home/laurent/Documents/m2_tsi/cute-gis/points_lumineux_bordeaux.geojson";
     try {
         Geojsonloader geo =  Geojsonloader(geoJsonFile);
         renderer->setCoordinates(geo.getCoordinates());
@@ -19,11 +22,14 @@ MainWindow::MainWindow(QWidget *parent)
         return;
     }
 
+    auto* openGLWidget = new ObjectLoader(this);
+
     // Ajouter GeoJsonViewer au layout
     if (!ui->openGLWidget->layout()) {
         auto* layout = new QVBoxLayout(ui->openGLWidget);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(renderer);
+        layout->addWidget(openGLWidget);
     } else {
         ui->openGLWidget->layout()->addWidget(renderer);
     }
