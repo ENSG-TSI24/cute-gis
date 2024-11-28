@@ -35,7 +35,7 @@ set(TEST_SOURCES
     src/rasterdata.h src/rasterdata.cpp
     src/DataManagement.h
     src/abstractdata.h src/abstractdata.cpp
-    src/main.cpp
+    
 )
 
 add_executable(wfsdataTest ${TEST_SOURCES})
