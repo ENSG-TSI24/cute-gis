@@ -24,6 +24,9 @@ private:
     std::vector<std::pair<float, float>> coordinates; // Points à dessiner
     Controller* controller; // Pointeur vers Controller
 
+    void keyPressEvent(QKeyEvent *event) override;
+    void wheelEvent(QWheelEvent* event) override;
+
     void renderPoints();
 };
 

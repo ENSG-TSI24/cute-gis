@@ -2,15 +2,13 @@
 
 Controller::Controller(QWidget* parent)
     : QWidget(parent), camera() {
-    setFocusPolicy(Qt::StrongFocus);
-    setFocusPolicy(Qt::WheelFocus);
 }
 
 Camera& Controller::getCamera() {
     return camera; // Retourne la référence à la caméra
 }
 
-void Controller::wheelEvent(QWheelEvent* event) {
+void Controller::ControllerwheelEvent(QWheelEvent* event) {
     std::cout <<"la vie cette sale race \n";
     float zoomStep = 1.0f;
     if (event->angleDelta().y() > 0) {
@@ -24,7 +22,7 @@ void Controller::wheelEvent(QWheelEvent* event) {
 }
 
 
-void Controller::keyPressEvent(QKeyEvent *event){
+void Controller::ControllerkeyPressEvent(QKeyEvent *event){
     float step = 10.0;
     switch (event->key()) {
         case( Qt::Key_Up):

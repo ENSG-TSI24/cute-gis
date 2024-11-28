@@ -25,7 +25,6 @@ set(PROJECT_SOURCES
         controller.h controller.cpp
         geojsonloader.h geojsonloader.cpp
         renderer.h renderer.cpp
-        geojsonviewer.h geojsonviewer.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -3,9 +3,18 @@
 Renderer::Renderer(QWidget* parent)
     : QOpenGLWidget(parent) {
     controller = new Controller(this); // Contrôleur enfant de Renderer
-    setFocusPolicy(Qt::NoFocus);
+    setFocusPolicy(Qt::StrongFocus);
+
 
 }
+
+void Renderer::keyPressEvent(QKeyEvent *event){
+    this->controller->ControllerkeyPressEvent(event);
+}
+void Renderer::wheelEvent(QWheelEvent* event) {
+    this->controller->ControllerwheelEvent(event);
+}
+
 
 void Renderer::initializeGL() {
     initializeOpenGLFunctions();
