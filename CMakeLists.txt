@@ -36,6 +36,7 @@ set(TEST_SOURCES
     src/DataManagement.h
     src/abstractdata.h src/abstractdata.cpp
     main.cpp
+    src/vectordata.h src/vectordata.cpp
 )
 
 add_executable(wfsdataTest ${TEST_SOURCES})
