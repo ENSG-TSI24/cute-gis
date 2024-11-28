@@ -18,8 +18,7 @@ protected :
     std::string GetPath() {return this->FilePath;}
     GDALDriver* GetDriver() {return this->data->GetDriver();}
     GDALDataset* GetDATA() {return this->data;}
-    void closeDataSet() const=0;
-
+    void closeDataSet() ;
 };
 
 #endif // ABSTRACTDATA_H

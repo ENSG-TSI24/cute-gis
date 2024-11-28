@@ -7,6 +7,10 @@ class GeoJsonFile : public VectorData
 {
 public:
     GeoJsonFile();
+    GeoJsonFile(char* path);
+    OGRSpatialReference* GetCRS();
+    char** GetMetadata();
+    void PrintGeoJsonAttributes();
 };
 
 #endif // GEOJSONFILE_H

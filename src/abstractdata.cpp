@@ -11,4 +11,6 @@ AbstractData::AbstractData(char* path): data(nullptr), FilePath(nullptr)
     this->data = (GDALDataset *) GDALOpenEx(path, GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
 }
 
-AbstractData::~AbstractData() {}
+AbstractData::~AbstractData() {
+    GDALClose(this->data);
+}

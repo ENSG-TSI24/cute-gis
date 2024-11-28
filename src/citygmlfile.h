@@ -11,6 +11,7 @@ private :
     GDALDriver GetDriver();
     GDALDataset GetDATA();
     void closeDataSet();
+
 };
 
 #endif // CITYGMLFILE_H
