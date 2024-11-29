@@ -6,36 +6,31 @@
 #include <QTimer>
 #include <glm/glm.hpp>
 
-class ObjectLoader : public QOpenGLWidget, protected QOpenGLFunctions {
+class ObjectLoader : public QObject { // Hérite de QObject
     Q_OBJECT
 
 public:
-    explicit ObjectLoader(QWidget* parent = nullptr);
+    explicit ObjectLoader(QObject* parent = nullptr);
 
-protected:
-    void initializeGL() override;
-    void resizeGL(int w, int h) override;
-    void paintGL() override;
+    bool loadOBJWithTinyObjLoader(
+        const char* path,
+        std::vector<glm::vec3>& out_vertices,
+        std::vector<glm::vec2>& out_uvs,
+        std::vector<glm::vec3>& out_normals);
+
+    float getAngle() const;
+    const std::vector<glm::vec3>& getVertices() const;
+    const std::vector<glm::vec3>& getNormals() const;
 
 private:
     QTimer* m_timer;
     float m_angle;
 
-     std::vector<glm::vec3> vertices;
-     std::vector<glm::vec3> normals;
-     std::vector<glm::vec2> uvs;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> uvs;
 
-    bool loadOBJWithTinyObjLoader(
-            const char* path,
-            std::vector<glm::vec3>& out_vertices,
-            std::vector<glm::vec2>& out_uvs,
-            std::vector<glm::vec3>& out_normals);
-
-private slots:
     void updateRotation();
 };
 
-
 #endif // TRIANGLE_H
-
-

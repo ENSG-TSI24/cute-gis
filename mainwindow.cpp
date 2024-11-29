@@ -22,14 +22,14 @@ MainWindow::MainWindow(QWidget *parent)
         return;
     }
 
-    auto* openGLWidget = new ObjectLoader(this);
+//    auto* openGLWidget = new ObjectLoader(this);
 
     // Ajouter GeoJsonViewer au layout
     if (!ui->openGLWidget->layout()) {
         auto* layout = new QVBoxLayout(ui->openGLWidget);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(renderer);
-        layout->addWidget(openGLWidget);
+//        layout->addWidget(openGLWidget);
     } else {
         ui->openGLWidget->layout()->addWidget(renderer);
     }
