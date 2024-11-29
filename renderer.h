@@ -6,6 +6,9 @@
 #include <vector>
 #include <utility>
 #include "controller.h"
+#include <QGraphicsSceneMouseEvent>
+
+#include <QMouseEvent>
 
 class Renderer : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -20,6 +23,11 @@ protected:
     void paintGL() override;
 
 
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+
+
 private:
     std::vector<std::pair<float, float>> coordinates; // Points à dessiner
     Controller* controller; // Pointeur vers Controller
@@ -27,7 +35,11 @@ private:
     void keyPressEvent(QKeyEvent *event) override;
     void wheelEvent(QWheelEvent* event) override;
 
+
     void renderPoints();
+
+    // is 3D
+    //bool get3D();
 };
 
 #endif // RENDERER_H

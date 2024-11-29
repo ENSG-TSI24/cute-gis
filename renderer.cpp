@@ -1,5 +1,7 @@
 #include "renderer.h"
 
+
+
 Renderer::Renderer(QWidget* parent)
     : QOpenGLWidget(parent) {
     controller = new Controller(this); // Contrôleur enfant de Renderer
@@ -8,13 +10,20 @@ Renderer::Renderer(QWidget* parent)
 
 }
 
+
 void Renderer::keyPressEvent(QKeyEvent *event){
     this->controller->ControllerkeyPressEvent(event);
 }
 void Renderer::wheelEvent(QWheelEvent* event) {
     this->controller->ControllerwheelEvent(event);
 }
+//void  Renderer::mousePressEvent(QMouseEvent *event){
+  //  this->controller->ControllerQMouseEvent(event);
+//}
 
+void Renderer::mousePressEvent(QMouseEvent* event) {
+    controller->ControllerMousePressEvent(event);
+}
 
 void Renderer::initializeGL() {
     initializeOpenGLFunctions();
@@ -46,3 +55,19 @@ void Renderer::renderPoints() {
 void Renderer::setCoordinates( std::vector<std::pair<float, float>> coordinates){
     this->coordinates = coordinates;
 }
+
+
+
+
+
+
+
+void Renderer::mouseReleaseEvent(QMouseEvent* event) {
+    controller->ControllerMouseReleaseEvent(event);
+}
+
+void Renderer::mouseMoveEvent(QMouseEvent* event) {
+    controller->ControllerMouseMoveEvent(event);
+    update(); // Redessine la scène après un déplacement
+}
+

@@ -5,7 +5,6 @@
 #include <QTimer>
 
 #include "./ui_mainwindow.h"
-#include "geojsonviewer.h"
 #include "renderer.h"
 #include "geojsonloader.h"
 
