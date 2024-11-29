@@ -11,7 +11,7 @@ ObjectLoader::ObjectLoader(QWidget* parent)
     connect(m_timer, &QTimer::timeout, this, &ObjectLoader::updateRotation);
     m_timer->start(16); // config for 16 ms (=60fps)
 
-    if (!loadOBJWithTinyObjLoader("/home/laurent/Documents/m2_tsi/cute-gis/city.obj", vertices, uvs, normals)) {
+    if (!loadOBJWithTinyObjLoader("/home/formation/Documents/projet/cute-gis/city.obj", vertices, uvs, normals)) {
         qWarning("Failed to load OBJ file!");
     } else {
         qDebug() << "OBJ vertex count:" << vertices.size();

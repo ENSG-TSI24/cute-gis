@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Charger un fichier GeoJSON
-    const std::string geoJsonFile = "/home/laurent/Documents/m2_tsi/cute-gis/points_lumineux_bordeaux.geojson";
+    const std::string geoJsonFile = "/home/formation/Documents/projet/cute-gis/points_lumineux_bordeaux.geojson";
     try {
         Geojsonloader geo =  Geojsonloader(geoJsonFile);
         renderer->setCoordinates(geo.getCoordinates());
