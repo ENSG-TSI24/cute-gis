@@ -24,7 +24,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private:
+private :
     Ui::MainWindow *ui;
     GeoJsonViewer* geoJsonViewer; // Widget GeoJSON
     QTimer* refreshTimer;         // Timer pour rafraîchir l'affichage
