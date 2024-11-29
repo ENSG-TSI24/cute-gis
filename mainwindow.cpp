@@ -37,9 +37,20 @@ MainWindow::MainWindow(QWidget *parent)
     // Configurer le timer pour rafraîchir GeoJsonViewer
     connect(refreshTimer, &QTimer::timeout, renderer, QOverload<>::of(&QWidget::update));
     refreshTimer->start(16); // Appelle `update()` toutes les ~16 ms (60 FPS)
+
+    connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+// Pop windoe: QFileDialog
+void MainWindow::onOpenFile()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "", "GeoJSON Files (*.geojson);;OBJ Files (*.obj);;All Files (*.*)");
+    if (!filePath.isEmpty()) {
+        qDebug() << "Selected File:" << filePath;
+    }
 }

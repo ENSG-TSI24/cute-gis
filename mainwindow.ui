@@ -98,7 +98,7 @@
      </spacer>
     </item>
     <item row="2" column="4">
-     <widget class="QPushButton" name="button_3d">
+     <widget class="QPushButton" name="button_switcher">
       <property name="text">
        <string>2D/3D</string>
       </property>

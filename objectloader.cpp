@@ -10,6 +10,12 @@ ObjectLoader::ObjectLoader(QWidget* parent)
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, &ObjectLoader::updateRotation);
     m_timer->start(16); // config for 16 ms (=60fps)
+
+    if (!loadOBJWithTinyObjLoader("/home/laurent/Documents/m2_tsi/cute-gis/city.obj", vertices, uvs, normals)) {
+        qWarning("Failed to load OBJ file!");
+    } else {
+        qDebug() << "OBJ vertex count:" << vertices.size();
+    }
 }
 
 void ObjectLoader::initializeGL() {
@@ -18,12 +24,6 @@ void ObjectLoader::initializeGL() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
-
-    if (!loadOBJWithTinyObjLoader("/home/laurent/Téléchargements/data/city.obj", vertices, uvs, normals)) {
-        qWarning("Failed to load OBJ file!");
-    } else {
-        qDebug() << "OBJ vertex count:" << vertices.size();
-    }
 }
 
 void ObjectLoader::resizeGL(int w, int h) {

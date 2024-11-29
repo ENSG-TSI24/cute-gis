@@ -15,7 +15,6 @@ void Renderer::wheelEvent(QWheelEvent* event) {
     this->controller->ControllerwheelEvent(event);
 }
 
-
 void Renderer::initializeGL() {
     initializeOpenGLFunctions();
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Fond blanc

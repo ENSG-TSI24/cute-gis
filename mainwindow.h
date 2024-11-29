@@ -10,6 +10,7 @@
 
 #include <QVBoxLayout>
 #include <QMessageBox>
+#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,6 +30,8 @@ private:
     Ui::MainWindow *ui;
     Renderer* renderer; // Widget renderer
     QTimer* refreshTimer;  // Timer pour rafraîchir l'affichage
+    void onOpenFile();
+
 };
 
 #endif // MAINWINDOW_H
