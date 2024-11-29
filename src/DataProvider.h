@@ -7,17 +7,15 @@ class DataProvider {
     public:
         DataProvider() ;
 
-        GDALDataset* GetDataset() ;
+        GDALDataset* getDataset() ;
 
         // Get Metadata
-        void displayMetadata() ;
+        void displayMetadata();
 
         bool isEmpty();
 
         // Crucial to free memory, otherwise bugs
         ~DataProvider() ;
-
-
 
     protected:
         const char* url;

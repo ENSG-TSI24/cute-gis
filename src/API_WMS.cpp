@@ -1,5 +1,4 @@
 #include "API_WMS.h"
-
 #include <curl/curl.h>
 #include <iostream>
 #include <sstream>
@@ -29,8 +28,8 @@ void API_WMS::loadDataset() {
     /* Display error message and exit program if dataset fails to open correctly ** to be replaced
         when the front end team finishes ( to reinsert or close window) */
     if (isEmpty()) {
-        std::cout << "Error: Impossible to connect to WMS or unsupported format" << std::endl;
-        exit(1); // ** to be replaced later
+        std::cerr << "Error: Impossible to connect to WMS or unsupported format" << std::endl;
+        throw std::runtime_error("Failed to load dataset"); // Lancer une exception au lieu d'exit
     }
 }
 
@@ -109,7 +108,7 @@ void API_WMS::loadTileGridToGeoTiff(const char* layerName, int zoom, int centerR
         GDALClose(m_dataset);     // Libère la mémoire associée au dataset
         //m_dataset = nullptr;      // Nullifie le pointeur pour éviter les références ultérieures
     }
-}
-*/
+}*/
+
 
 

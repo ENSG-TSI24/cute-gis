@@ -21,13 +21,6 @@ public:
     // Charge une grille de tuiles autour d'une position donnée et les convertit en GeoTIFF
     void loadTileGridToGeoTiff(const char* layerName, int zoom, int centerRow, int centerCol, int gridSize, const char* outputPrefix);
 
-    //check if dataset is empty or not to avoid memory leak
-    /*virtual bool isEmpty();
-
-    virtual void displayMetadata();*/
-    //~API_WMS() ;
-
-
 protected:
     const char* url;
 };
