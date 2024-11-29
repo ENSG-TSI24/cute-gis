@@ -39,7 +39,7 @@ void Camera::moveRight(float step){
 
 void Camera::setZoom(float zoomChange) {
     float speedFactor = 0.2f;
-    float scale = 1.0f + speedFactor * this->zoom; //accelerate the zoom factor when already zoomed
+    float scale = 1.0f + speedFactor * this->zoom;
 
     this->zoom += zoomChange * scale;
     this->zoom = std::max(this->zoom, 0.1f);

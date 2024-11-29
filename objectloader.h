@@ -6,11 +6,11 @@
 #include <QTimer>
 #include <glm/glm.hpp>
 
-class ObjectLoader : public QObject { // Hérite de QObject
+class ObjectLoader : public QObject {
     Q_OBJECT
 
 public:
-    explicit ObjectLoader(QObject* parent = nullptr);
+    explicit ObjectLoader(const std::string& filePath, QObject* parent = nullptr);
 
     bool loadOBJWithTinyObjLoader(
         const char* path,

@@ -16,7 +16,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class GeoJsonViewer; // Pré-déclaration
+class GeoJsonViewer;
 
 class MainWindow : public QMainWindow
 {
@@ -26,11 +26,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+
+
 private:
     Ui::MainWindow *ui;
-    Renderer* renderer; // Widget renderer
-    QTimer* refreshTimer;  // Timer pour rafraîchir l'affichage
+    Renderer* renderer;
+    QTimer* refreshTimer;
     void onOpenFile();
+    ObjectLoader *objectLoader = nullptr;
 
 };
 

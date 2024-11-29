@@ -1,87 +1,74 @@
 #include "mainwindow.h"
-
 #include "./ui_mainwindow.h"
 #include "objectloader.h"
 #include <QVBoxLayout>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , renderer(new Renderer(this)) // Initialisation du widget GeoJSON
-    , refreshTimer(new QTimer(this))        // Initialisation du timer
+    , renderer(new Renderer(this))
+    , refreshTimer(new QTimer(this))
 {
     ui->setupUi(this);
 
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
-
-//    // Charger un fichier GeoJSON
-//    const std::string geoJsonFile = "/home/formation/Documents/projet/cute-gis/data/geojson/points_lumineux_bordeaux.geojson";
-
-
-//    try {
-//        Geojsonloader geo =  Geojsonloader(geoJsonFile);
-//        renderer->setCoordinates(geo.getCoordinates());
-//    } catch (const std::exception& ex) {
-//        QMessageBox::critical(this, "Erreur", QString::fromStdString(ex.what()));
-//        return;
-//    }
-
-//    // Ajouter GeoJsonViewer au layout
-//    if (!ui->openGLWidget->layout()) {
-//        auto* layout = new QVBoxLayout(ui->openGLWidget);
-//        layout->setContentsMargins(0, 0, 0, 0);
-//        layout->addWidget(renderer);
-//    } else {
-//        ui->openGLWidget->layout()->addWidget(renderer);
-//    }
-
-//    // Configurer le timer pour rafraîchir GeoJsonViewer
-//    connect(refreshTimer, &QTimer::timeout, renderer, QOverload<>::of(&QWidget::update));
-//    refreshTimer->start(16); // Appelle `update()` toutes les ~16 ms (60 FPS)
 }
 
 MainWindow::~MainWindow()
 {
+    delete renderer;
+    delete refreshTimer;
     delete ui;
 }
 
-// Pop windoe: QFileDialog
 void MainWindow::onOpenFile()
 {
-    QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", "GeoJSON Files All Files (*.*);; (*.geojson);;OBJ Files (*.obj)");
-    if (!filePath.isEmpty()) {
-        qDebug() << "Selected File:" << filePath;
-    }
+    // Ouvrir un fichier avec QFileDialog
+        QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", "GeoJSON Files All Files (*.*);; (*.geojson);;OBJ Files (*.obj)");
 
-
-
-    // Charger un fichier GeoJSON
-    const std::string filedata = filePath.toStdString();
-
-    try {
-        Geojsonloader geo =  Geojsonloader(filedata);
-        renderer->setCoordinates(geo.getCoordinates());
-    } catch (const std::exception& ex) {
-        QMessageBox::critical(this, "Erreur", QString::fromStdString(ex.what()));
+    if (filePath.isEmpty()) {
+        qWarning() << "No file selected!";
         return;
     }
 
-    // Ajouter GeoJsonViewer au layout
+    qDebug() << "Selected File:" << filePath;
+
+    // Charger le fichier sélectionné
+    const std::string filedata = filePath.toStdString();
+
+    renderer->reset();
+
+    try {
+        if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
+            Geojsonloader geo(filedata);
+            renderer->setCoordinates(geo.getCoordinates());
+        } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
+            ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
+            renderer->setObjectLoader(objectLoader);
+            renderer->setIs3D(true);
+        } else {
+            throw std::runtime_error("Unsupported file format!");
+        }
+    } catch (const std::exception& ex) {
+        QMessageBox::critical(this, "Error", QString::fromStdString(ex.what()));
+        return;
+    }
+
     if (!ui->openGLWidget->layout()) {
         auto* layout = new QVBoxLayout(ui->openGLWidget);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(renderer);
     } else {
-        ui->openGLWidget->layout()->addWidget(renderer);
+        if (ui->openGLWidget->layout()->indexOf(renderer) == -1) {
+            ui->openGLWidget->layout()->addWidget(renderer);
+        }
     }
 
-    // Configurer le timer pour rafraîchir GeoJsonViewer
     connect(refreshTimer, &QTimer::timeout, renderer, QOverload<>::of(&QWidget::update));
-    refreshTimer->start(16); // Appelle `update()` toutes les ~16 ms (60 FPS)
-
-
+    if (!refreshTimer->isActive()) {
+        refreshTimer->start(16); // Rafraîchissement à ~60 FPS
+    }
 }
-
-
-
-

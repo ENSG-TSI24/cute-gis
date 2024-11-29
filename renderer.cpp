@@ -1,14 +1,24 @@
 #include "renderer.h"
+#include <QMatrix4x4>
+#include <QDebug>
+#include <QOpenGLFunctions>
+#include <glm/vec3.hpp>
 
 Renderer::Renderer(QWidget* parent)
-    : QOpenGLWidget(parent), objectLoader() {
+    : QOpenGLWidget(parent), objectLoader(nullptr) {
     controller = new Controller(this);
     setFocusPolicy(Qt::StrongFocus);
-
     is3D = false;
 }
 
-void Renderer::keyPressEvent(QKeyEvent *event) {
+Renderer::~Renderer() {
+    if (objectLoader) {
+        delete objectLoader;
+    }
+    delete controller;
+}
+
+void Renderer::keyPressEvent(QKeyEvent* event) {
     this->controller->ControllerkeyPressEvent(event);
 }
 
@@ -18,21 +28,16 @@ void Renderer::wheelEvent(QWheelEvent* event) {
 
 void Renderer::initializeGL() {
     initializeOpenGLFunctions();
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Fond noir
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    // modif 3D
     glEnable(GL_DEPTH_TEST);
 }
 
 void Renderer::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
 
-    controller->getCamera().update(); // Met à jour la caméra via le contrôleur
+    controller->getCamera().update();
 
-
-    // modif 3D
-
-    // projection matrix with perspective
     QMatrix4x4 projectionMatrix;
     projectionMatrix.perspective(45.0f, float(w) / float(h), 0.1f, 100.0f);
 
@@ -41,61 +46,47 @@ void Renderer::resizeGL(int w, int h) {
 }
 
 void Renderer::paintGL() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (!is3D) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    controller->getCamera().update();
-    renderPoints();
+        controller->getCamera().update();
+        renderPoints();
+    } else if (objectLoader) {
+        QMatrix4x4 viewMatrix;
+
+        QVector3D cameraPosition(0.0f, 4.0f, 3.0f);
+        QVector3D target(0.0f, 0.0f, 0.0f);
+        QVector3D upVector(0.0f, 1.0f, 0.0f);
+        viewMatrix.lookAt(cameraPosition, target, upVector);
+
+        QMatrix4x4 modelMatrix;
+        modelMatrix.translate(0.0f, 0.0f, -3.0f);
+        modelMatrix.rotate(objectLoader->getAngle(), 0.0f, 1.0f, 0.0f);
+        modelMatrix.scale(0.005f);
+
+        QMatrix4x4 modelViewMatrix = viewMatrix * modelMatrix;
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrixf(modelViewMatrix.constData());
+
+        glColor3f(1.0f, 1.0f, 0.0f);
+        glBegin(GL_TRIANGLES);
+
+        const auto& vertices = objectLoader->getVertices();
+        for (const auto& vertex : vertices) {
+            glVertex3f(vertex.x, vertex.y, vertex.z);
+        }
+
+        glEnd();
     } else {
-
-    // modif 3D
-
-    // create view matrix for the camera
-    QMatrix4x4 viewMatrix;
-
-    // setting position of camera
-    QVector3D cameraPosition(0.0f, 4.0f, 3.0f);
-
-    // center object position
-    QVector3D target(0.0f, 0.0f, 0.0f);
-
-    // set orientation top-bottom view
-    QVector3D upVector(0.0f, 1.0f, 0.0f);
-    viewMatrix.lookAt(cameraPosition, target, upVector);
-
-    // create model matrix
-    QMatrix4x4 modelMatrix;
-
-    // position of the object translate
-    modelMatrix.translate(0.0f, 0.0f, -3.0f);
-
-    // position of the object rotate
-    modelMatrix.rotate(objectLoader.getAngle(), 0.0f, 1.0f, 0.0f);
-
-    // scale of object
-    modelMatrix.scale(0.005f);
-
-    QMatrix4x4 modelViewMatrix = viewMatrix * modelMatrix;
-
-    // load matrix to opengl
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(modelViewMatrix.constData());
-
-    glColor3f(1.0f, 1.0f, 0.0f);
-    glBegin(GL_TRIANGLES);
-    const auto& vertices = objectLoader.getVertices();
-    for (size_t i = 0; i < vertices.size(); i++) {
-        const glm::vec3& vertex = vertices[i];
-        glVertex3f(vertex.x, vertex.y, vertex.z);
+        qWarning() << "No ObjectLoader assigned for 3D rendering.";
     }
-    glEnd();
-    }
-
 }
 
 void Renderer::renderPoints() {
-    glColor3f(0.0f, 0.0f, 1.0f); // Bleu
+    glColor3f(0.0f, 0.0f, 1.0f); // Couleur bleue
     glPointSize(5.0f);
+
     glBegin(GL_POINTS);
     for (const auto& coord : coordinates) {
         glVertex2f(coord.first, coord.second);
@@ -105,4 +96,28 @@ void Renderer::renderPoints() {
 
 void Renderer::setCoordinates(std::vector<std::pair<float, float>> coordinates) {
     this->coordinates = coordinates;
+}
+
+void Renderer::setObjectLoader(ObjectLoader* loader) {
+    if (objectLoader) {
+        delete objectLoader;
+    }
+    objectLoader = loader;
+}
+
+void Renderer::setIs3D(bool enabled) {
+    is3D = enabled;
+}
+
+void Renderer::reset() {
+    coordinates.clear();
+
+    if (objectLoader) {
+        delete objectLoader;
+        objectLoader = nullptr;
+    }
+
+    is3D = false;
+
+    update();
 }

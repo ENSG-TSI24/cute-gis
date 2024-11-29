@@ -3,16 +3,18 @@
 #include <tiny_obj_loader.h>
 #include <QTimer>
 
-ObjectLoader::ObjectLoader(QObject* parent)
-    : m_angle(0.0f) {
+ObjectLoader::ObjectLoader(const std::string& filePath, QObject* parent)
+    : m_angle(0.0f), QObject(parent) {
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, [this]() { updateRotation(); });
     m_timer->start(16); // 60 FPS
 
-    if (!loadOBJWithTinyObjLoader("/home/formation/Documents/projet/cute-gis/data/obj/city.obj", vertices, uvs, normals)) {
-        qWarning("Failed to load OBJ file!");
-    } else {
-        qDebug() << "OBJ vertex count:" << vertices.size();
+    if (!filePath.empty()) {
+        if (!loadOBJWithTinyObjLoader(filePath.c_str(), vertices, uvs, normals)) {
+            qWarning("Failed to load OBJ file!");
+        } else {
+            qDebug() << "OBJ vertex count:" << vertices.size();
+        }
     }
 }
 

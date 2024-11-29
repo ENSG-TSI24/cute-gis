@@ -9,7 +9,7 @@ Camera& Controller::getCamera() {
 }
 
 void Controller::ControllerwheelEvent(QWheelEvent* event) {
-    std::cout <<"la vie cette sale race \n";
+    std::cout <<"la vie cette sale race\n";
     float zoomStep = 1.0f;
     if (event->angleDelta().y() > 0) {
         camera.setZoom(zoomStep);
