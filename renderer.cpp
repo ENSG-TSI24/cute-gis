@@ -5,7 +5,7 @@ Renderer::Renderer(QWidget* parent)
     controller = new Controller(this);
     setFocusPolicy(Qt::StrongFocus);
 
-    is3D = true;
+    is3D = false;
 }
 
 void Renderer::keyPressEvent(QKeyEvent *event) {
@@ -84,16 +84,11 @@ void Renderer::paintGL() {
     glColor3f(1.0f, 1.0f, 0.0f);
     glBegin(GL_TRIANGLES);
     const auto& vertices = objectLoader.getVertices();
-        const auto& normals = objectLoader.getNormals();
-        for (size_t i = 0; i < vertices.size(); i++) {
-            if (!normals.empty()) {
-                const glm::vec3& normal = normals[i];
-                glNormal3f(normal.x, normal.y, normal.z);
-            }
-            const glm::vec3& vertex = vertices[i];
-            glVertex3f(vertex.x, vertex.y, vertex.z);
-        }
-        glEnd();
+    for (size_t i = 0; i < vertices.size(); i++) {
+        const glm::vec3& vertex = vertices[i];
+        glVertex3f(vertex.x, vertex.y, vertex.z);
+    }
+    glEnd();
     }
 
 }

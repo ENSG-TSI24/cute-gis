@@ -9,7 +9,7 @@ ObjectLoader::ObjectLoader(QObject* parent)
     connect(m_timer, &QTimer::timeout, [this]() { updateRotation(); });
     m_timer->start(16); // 60 FPS
 
-    if (!loadOBJWithTinyObjLoader("/home/formation/Documents/projet/cute-gis/city.obj", vertices, uvs, normals)) {
+    if (!loadOBJWithTinyObjLoader("/home/formation/Documents/projet/cute-gis/data/obj/city.obj", vertices, uvs, normals)) {
         qWarning("Failed to load OBJ file!");
     } else {
         qDebug() << "OBJ vertex count:" << vertices.size();
