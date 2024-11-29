@@ -8,6 +8,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+include ( CTest )
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -15,6 +17,7 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(GDAL REQUIRED)
 find_package(CURL REQUIRED)
+find_package(GTest REQUIRED)
 
 include_directories(${GDAL_INCLUDE_DIR})
 link_directories(${GDAL_LIBRARY_DIRS})
@@ -35,6 +38,12 @@ set(PROJECT_SOURCES
 
 )
 
+set(TEST_SOURCES
+    tests/API_WMSTest.cpp
+    src/API_WMS.h
+    src/API_WMS.cpp
+)
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(cute-gis
         MANUAL_FINALIZATION
@@ -53,13 +62,14 @@ else()
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(cute-gis
-            ${PROJECT_SOURCES}
-        )
+            ${PROJECT_SOURCES})
+        add_executable(API_WMSTest ${TEST_SOURCES})
+
     endif()
 endif()
 
 target_link_libraries(cute-gis  PRIVATE Qt${QT_VERSION_MAJOR}::Widgets CURL::libcurl ${GDAL_LIBRARIES})
-
+target_link_libraries(cute-gis PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
 
 set_target_properties(cute-gis PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -68,6 +78,9 @@ set_target_properties(cute-gis PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+
+enable_testing()
+add_test(NAME API_WMSTest COMMAND API_WMSTest)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(cute-gis)
