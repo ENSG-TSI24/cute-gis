@@ -1,134 +1,173 @@
 
-#include "API_WMTS.h"
+#include "src/API_WMTS.h"
 #include <iostream>
 #include <gdal_priv.h>
 #include <cpl_conv.h> // Pour CPLMalloc()
 #include <vector>
 #include <sstream>
+#include <QImage>
+#include <QGraphicsPixmapItem>
 
-wmtsdata::wmtsdata() : m_dataset(nullptr) {}
+ API_WMTS:: API_WMTS(const char* link) : url(link) {
+     GDALAllRegister();
+ }
 
-GDALDataset* wmtsdata::GetDataset() {
-    return this->m_dataset;
-}
+ void API_WMTS::loadDataset() {
+     // Ouvrir le dataset avec GDAL pour un flux WMS
+     m_dataset = static_cast<GDALDataset*>(
+         GDALOpenEx(url,GDAL_OF_ALL, nullptr, nullptr, nullptr));
 
-void wmtsdata::open(const char* link) {
-    // Ouvrir le dataset avec GDAL pour un flux WMTS
-    m_dataset = static_cast<GDALDataset*>(
-        GDALOpen(link, GA_ReadOnly));
+     /* Display error message and exit program if dataset fails to open correctly ** to be replaced
+         when the front end team finishes ( to reinsert or close window) */
+     if (isEmpty()) {
+         std::cout << "Error: Impossible to connect to WMS or unsupported format" << std::endl;
+         exit(1); // ** to be replaced later
+     }
+ }
 
-    if (m_dataset == nullptr) {
-        std::cerr << "Échec de l'ouverture du flux WMTS : " << link << std::endl;
-        exit(1);
-    }
-}
+ QImage API_WMTS::getTileAsImage(const char* layerName, int zoom, int row, int col) {
+     std::ostringstream tileUrlStream;
+     tileUrlStream << "https://data.geopf.fr/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile"
+                   << "&LAYER=" << layerName
+                   << "&STYLE=normal"
+                   << "&FORMAT=image/jpeg"  // Assurez-vous que le format est correct
+                   << "&TILEMATRIX=" << zoom
+                   << "&TILEMATRIXSET=PM"
+                   << "&TILEROW=" << row
+                   << "&TILECOL=" << col;
 
-void wmtsdata::getLayers() {
-    if (m_dataset == nullptr) {
-        std::cerr << "Le flux WMTS n'est pas ouvert." << std::endl;
-        return;
-    }
+     std::string tileUrl = tileUrlStream.str();
+     std::cout << "Requête envoyée au serveur : " << tileUrl << std::endl;
 
-    // Récupérer les métadonnées des couches disponibles
-    char** metadata = m_dataset->GetMetadata("SUBDATASETS");
-    if (metadata == nullptr) {
-        std::cerr << "Aucune couche WMTS disponible." << std::endl;
-        return;
-    }
+     GDALDataset* tileDataset = static_cast<GDALDataset*>(GDALOpen(tileUrl.c_str(), GA_ReadOnly));
+     if (!tileDataset) {
+         std::cerr << "Échec de l'ouverture de la tuile WMTS : " << tileUrl << std::endl;
+         return QImage();
+     }
 
-    std::cout << "Couches disponibles dans le flux WMTS :" << std::endl;
+     int width = tileDataset->GetRasterXSize();
+     int height = tileDataset->GetRasterYSize();
+     int bands = tileDataset->GetRasterCount();
 
-    for (int i = 0; metadata[i] != nullptr; i += 2) {
-                std::string subdataset(metadata[i]); // Convertir le char* en std::string
-                size_t pos = subdataset.find("layer="); // Trouver l'emplacement de "layer="
-                if (pos != std::string::npos) {
-                    std::string layerName = subdataset.substr(pos + 6); // Extraire la partie après "layer="
-                    std::cout << layerName << std::endl;
-                }
-            }
-}
+     if (bands < 1 || bands > 4) {
+         std::cerr << "Format d'image non pris en charge : " << bands << " bandes." << std::endl;
+         GDALClose(tileDataset);
+         return QImage();
+     }
 
-void wmtsdata::downloadTile(const char* layerName, const char* outputFile, int zoom, int row, int col) {
-    if (m_dataset == nullptr) {
-        std::cerr << "Le flux WMTS n'est pas ouvert." << std::endl;
-        return;
-    }
+     unsigned char* buffer = new unsigned char[width * height * 4];  // Pour RGBA, il y a 4 canaux
 
-    // Construire l'URL pour accéder à une tuile spécifique avec les paramètres WMTS
-    std::ostringstream tileUrlStream;
-    tileUrlStream << "https://data.geopf.fr/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile"
-                  << "&LAYER=" << layerName
-                  << "&STYLE=normal"
-                  << "&FORMAT=image/jpeg"
-                  << "&TILEMATRIX=" << zoom
-                  << "&TILEMATRIXSET=PM"  // Le tile matrix set peut être spécifique à chaque service WMTS
-                  << "&TILEROW=" << row
-                  << "&TILECOL=" << col;
+     if (bands == 1) {
+         std::cout << "1 bande" << std::endl;
+         GDALRasterBand* band = tileDataset->GetRasterBand(1);
+         CPLErr err = band->RasterIO(GF_Read, 0, 0, width, height, buffer, width, height, GDT_Byte, 0, 0);
+         if (err != CE_None) {
+             std::cerr << "Erreur lors de la lecture des données raster (grayscale)." << std::endl;
+             delete[] buffer;
+             GDALClose(tileDataset);
 
-    std::string tileUrl = tileUrlStream.str();
+             return QImage();
+         }
 
-    // Afficher la requête envoyée au serveur
-    std::cout << "Requête envoyée au serveur : " << tileUrl << std::endl;
+         // Convertir les données en image RGB
+         for (int i = 0; i < width * height; ++i) {
+             buffer[i * 4] = buffer[i];     // R
+             buffer[i * 4 + 1] = buffer[i]; // G
+             buffer[i * 4 + 2] = buffer[i]; // B
+             buffer[i * 4 + 3] = 255;       // Alpha (pleinement opaque)
+         }
+     } else if (bands == 3) {
+         std::cout << "3 bandes" << std::endl;
+         GDALRasterBand* bandR = tileDataset->GetRasterBand(1);
+         GDALRasterBand* bandG = tileDataset->GetRasterBand(2);
+         GDALRasterBand* bandB = tileDataset->GetRasterBand(3);
 
-    // Charger la tuile en tant que dataset
-    GDALDataset* tileDataset = static_cast<GDALDataset*>(
-        GDALOpen(tileUrl.c_str(), GA_ReadOnly));
+         CPLErr errR = bandR->RasterIO(GF_Read, 0, 0, width, height, buffer, width, height, GDT_Byte, 3, 0);
+         CPLErr errG = bandG->RasterIO(GF_Read, 0, 0, width, height, buffer + 1, width, height, GDT_Byte, 3, 0);
+         CPLErr errB = bandB->RasterIO(GF_Read, 0, 0, width, height, buffer + 2, width, height, GDT_Byte, 3, 0);
 
-    if (tileDataset == nullptr) {
-        std::cerr << "Échec de l'ouverture de la tuile WMTS." << std::endl;
-        return;
-    }
+         if (errR != CE_None || errG != CE_None || errB != CE_None) {
+             std::cerr << "Erreur lors de la lecture des données raster (RGB)." << std::endl;
+             delete[] buffer;
+             GDALClose(tileDataset);
 
-    // Sauvegarder la tuile sous forme de fichier (ex : PNG ou TIFF)
-    GDALDriver* driver = GetGDALDriverManager()->GetDriverByName("PNG");
-    if (driver == nullptr) {
-        std::cerr << "Pilote GDAL PNG introuvable." << std::endl;
-        GDALClose(tileDataset);
-        return;
-    }
+             return QImage();
+         }
 
-    if (driver->CreateCopy(outputFile, tileDataset, FALSE, nullptr, nullptr, nullptr) == nullptr) {
-        std::cerr << "Échec de la sauvegarde de la tuile WMTS." << std::endl;
-    } else {
-        std::cout << "Tuile WMTS sauvegardée dans : " << outputFile << std::endl;
-    }
+         // Ajouter un canal alpha par défaut (pleinement opaque)
+         for (int i = 0; i < width * height; ++i) {
+             buffer[i * 4 + 3] = 255; // Alpha
+         }
+     } else if (bands == 4) {  // Si l'image est déjà en RGBA
+          std::cout << "4 bandes" << std::endl;
+         GDALRasterBand* bandR = tileDataset->GetRasterBand(1);
+         GDALRasterBand* bandG = tileDataset->GetRasterBand(2);
+         GDALRasterBand* bandB = tileDataset->GetRasterBand(3);
+         GDALRasterBand* bandA = tileDataset->GetRasterBand(4);
 
-    // Libérer la mémoire
-    GDALClose(tileDataset);
-}
+         CPLErr errR = bandR->RasterIO(GF_Read, 0, 0, width, height, buffer, width, height, GDT_Byte, 4, 0);
+         CPLErr errG = bandG->RasterIO(GF_Read, 0, 0, width, height, buffer + 1, width, height, GDT_Byte, 4, 0);
+         CPLErr errB = bandB->RasterIO(GF_Read, 0, 0, width, height, buffer + 2, width, height, GDT_Byte, 4, 0);
+         CPLErr errA = bandA->RasterIO(GF_Read, 0, 0, width, height, buffer + 3, width, height, GDT_Byte, 4, 0);
 
+         if (errR != CE_None || errG != CE_None || errB != CE_None || errA != CE_None) {
+             std::cerr << "Erreur lors de la lecture des données raster (RGBA)." << std::endl;
+             delete[] buffer;
+             GDALClose(tileDataset);
+             std::cout << "4 bandes" << std::endl;
+             return QImage();
+         }
+     }
 
-std::vector<std::string> wmtsdata::loadTileGrid(const char* layerName, int zoom, int centerRow, int centerCol, int gridSize) {
-    std::vector<std::string> tilePaths;
+     QImage img(buffer, width, height, QImage::Format_RGBA8888);
+     GDALClose(tileDataset);
+     delete[] buffer;
 
-    if (m_dataset == nullptr) {
-        std::cerr << "Le flux WMTS n'est pas ouvert." << std::endl;
-        return tilePaths;
-    }
+     return img;
+ }
 
-    // Calculer les limites de la grille
-    int startRow = centerRow - gridSize / 2;
-    int startCol = centerCol - gridSize / 2;
-    int endRow = centerRow + gridSize / 2;
-    int endCol = centerCol + gridSize / 2;
+ void API_WMTS::displayTiles(const char* layerName, int zoom, int centerRow, int centerCol, int gridSize, QGraphicsScene* scene) {
+     if (!scene) {
+         std::cerr << "Erreur : Scène graphique invalide." << std::endl;
+         return;
+     }
 
-    for (int row = startRow; row <= endRow; ++row) {
-        for (int col = startCol; col <= endCol; ++col) {
-            std::ostringstream outputFileStream;
-            outputFileStream << "tile_" << zoom << "_" << row << "_" << col << ".png";
-            std::string outputFile = outputFileStream.str();
+     if (m_dataset == nullptr) {
+         std::cerr << "Erreur : Le flux WMTS n'est pas ouvert." << std::endl;
+         return;
+     }
 
-            downloadTile(layerName, outputFile.c_str(), zoom, row, col);
-            tilePaths.push_back(outputFile);
-        }
-    }
+     // Définir les dimensions supposées de chaque tuile (WMTS standard : 256x256 pixels)
+     const int tileSize = 256;
 
-    return tilePaths;
-}
+     // Calculer la position de départ en pixels pour centrer la grille
+     int startX = -(gridSize / 2) * tileSize;
+     int startY = -(gridSize / 2) * tileSize;
 
-void wmtsdata::close() {
-    if (m_dataset != nullptr) {
-        GDALClose(m_dataset);
-        m_dataset = nullptr;
-    }
-}
+     for (int row = 0; row < gridSize; ++row) {
+         for (int col = 0; col < gridSize; ++col) {
+             int wmtsRow = centerRow + row - (gridSize / 2);
+             int wmtsCol = centerCol + col - (gridSize / 2);
+
+             // Charger la tuile
+             QImage tileImage = getTileAsImage(layerName, zoom, wmtsRow, wmtsCol);
+             if (!tileImage.isNull()) {
+                 // Convertir l'image en QPixmap
+                 QPixmap pixmap = QPixmap::fromImage(tileImage);
+
+                 // Ajouter l'image à la scène
+                 QGraphicsPixmapItem* pixmapItem = scene->addPixmap(pixmap);
+
+                 // Positionner l'image correctement dans la grille
+                 pixmapItem->setPos(startX + col * tileSize, startY + row * tileSize);
+
+                 std::cout << "Tuile chargée : "
+                           << "row=" << wmtsRow << ", col=" << wmtsCol
+                           << " à la position (" << (startX + col * tileSize) << ", " << (startY + row * tileSize) << ")"
+                           << std::endl;
+             } else {
+                 std::cerr << "Impossible de charger la tuile : row=" << wmtsRow << ", col=" << wmtsCol << std::endl;
+             }
+         }
+     }
+ }
