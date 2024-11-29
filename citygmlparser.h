@@ -33,4 +33,4 @@ public:
     void printFeature(const Feature& feature) const;
 };
 
-#
+#endif // CITY_GML_PARSER_H
