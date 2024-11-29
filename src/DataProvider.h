@@ -1,22 +1,27 @@
-#ifndef DataProvider_H
-#define DataProvider_H
 
-#include <string>
+#include <gdal_priv.h>
+#include <ogrsf_frmts.h>
 #include <iostream>
-#include <fstream>
 
-class DataProvider
-{
-private:
-    const char* url;
-    
-public:
+class DataProvider {
+    public:
+        DataProvider() ;
 
-    virtual GDALDataset* getDataset() = 0;
-    virtual void displayMetadata() = 0;
-    virtual bool isEmpty();
+        GDALDataset* GetDataset() ;
 
+        // Get Metadata
+        void displayMetadata() ;
+
+        bool isEmpty();
+
+        // Crucial to free memory, otherwise bugs
+        ~DataProvider() ;
+
+
+
+    protected:
+        const char* url;
+        GDALDataset* m_dataset;
+        char** m_metadata;
 
 };
-
-#endif // DataProvider_H
