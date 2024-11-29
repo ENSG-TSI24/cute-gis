@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Charger un fichier GeoJSON
-    const std::string geoJsonFile = "/home/formation/Bureau/test opengl/BATIMENT.geojson";
+    const std::string geoJsonFile = "../cute-gis/geojson/COURS_D_EAU.geojson";
     try {
         geoJsonViewer->loadGeoJSON(geoJsonFile);
     } catch (const std::exception& ex) {

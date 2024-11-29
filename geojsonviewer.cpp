@@ -29,7 +29,7 @@ void GeoJsonViewer::loadGeoJSON(const std::string& filePath) {
         throw std::runtime_error("Erreur lors du parsing du fichier GeoJSON : " + std::string(e.what()));
     }
 
-    coordinates.clear();
+    points.clear();
     lineStrings.clear();
     polygons.clear();
 
@@ -46,7 +46,7 @@ void GeoJsonViewer::loadGeoJSON(const std::string& filePath) {
         if (type == "Point" && geometry.contains("coordinates")) {
             const auto& coord = geometry["coordinates"];
             if (coord.size() >= 2) {
-                coordinates.emplace_back(coord[0], coord[1]);
+                points.emplace_back(coord[0], coord[1]);
             }
         } else if (type == "LineString" && geometry.contains("coordinates")) {
             std::vector<std::pair<float, float>> line;
@@ -83,7 +83,7 @@ void GeoJsonViewer::loadGeoJSON(const std::string& filePath) {
 
 void GeoJsonViewer::normalizeCoordinates() {
     // Calculer les min/max des coordonnées
-    for (const auto& coord : coordinates) {
+    for (const auto& coord : points) {
         minX = std::min(minX, coord.first);
         maxX = std::max(maxX, coord.first);
         minY = std::min(minY, coord.second);
@@ -113,7 +113,7 @@ void GeoJsonViewer::normalizeCoordinates() {
         return (2.0f * (value - min) / (max - min)) - 1.0f;
     };
 
-    for (auto& coord : coordinates) {
+    for (auto& coord : points) {
         coord.first = normalize(coord.first, minX, maxX);
         coord.second = normalize(coord.second, minY, maxY);
     }
@@ -136,6 +136,8 @@ void GeoJsonViewer::normalizeCoordinates() {
 void GeoJsonViewer::initializeGL() {
     initializeOpenGLFunctions();
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    calculateBoundingBox(); // Calculer la boîte englobante
+    camera.centerOnBoundingBox(boundingBox); // Centrer la caméra
 }
 
 void GeoJsonViewer::resizeGL(int w, int h) {
@@ -156,7 +158,7 @@ void GeoJsonViewer::renderPoints() {
     glColor3f(0.0f, 0.0f, 1.0f);
     glPointSize(5.0f);
     glBegin(GL_POINTS);
-    for (const auto& coord : coordinates) {
+    for (const auto& coord : points) {
         glVertex2f(coord.first, coord.second);
     }
     glEnd();
@@ -188,33 +190,42 @@ void GeoJsonViewer::renderPolygons() {
     }
 }
 
-void GeoJsonViewer::keyPressEvent(QKeyEvent* event) {
-    const float step = 10.0f;
-    switch (event->key()) {
-    case Qt::Key_Up:
-        camera.moveUp(step);
-        break;
-    case Qt::Key_Down:
-        camera.moveDown(step);
-        break;
-    case Qt::Key_Left:
-        camera.moveLeft(step);
-        break;
-    case Qt::Key_Right:
-        camera.moveRight(step);
-        break;
-    default:
-        QOpenGLWidget::keyPressEvent(event);
-        return;
-    }
-    update();
-}
+void GeoJsonViewer::calculateBoundingBox() {
+    float minX = std::numeric_limits<float>::max();
+    float maxX = std::numeric_limits<float>::lowest();
+    float minY = std::numeric_limits<float>::max();
+    float maxY = std::numeric_limits<float>::lowest();
 
-void GeoJsonViewer::wheelEvent(QWheelEvent* event) {
-    if (event->angleDelta().y() > 0) {
-        camera.setZoomLevel(camera.getZoomLevel() * 1.05f);
-    } else {
-        camera.setZoomLevel(camera.getZoomLevel() / 1.05f);
+    // Inclure les points
+    for (const auto& point : points) {
+        minX = std::min(minX, point.first);
+        maxX = std::max(maxX, point.first);
+        minY = std::min(minY, point.second);
+        maxY = std::max(maxY, point.second);
     }
-    update();
+
+    // Inclure les LineStrings
+    for (const auto& line : lineStrings) {
+        for (const auto& coord : line) {
+            minX = std::min(minX, coord.first);
+            maxX = std::max(maxX, coord.first);
+            minY = std::min(minY, coord.second);
+            maxY = std::max(maxY, coord.second);
+        }
+    }
+
+    // Inclure les Polygons
+    for (const auto& polygon : polygons) {
+        for (const auto& ring : polygon) { // Chaque "anneau" du polygone
+            for (const auto& coord : ring) {
+                minX = std::min(minX, coord.first);
+                maxX = std::max(maxX, coord.first);
+                minY = std::min(minY, coord.second);
+                maxY = std::max(maxY, coord.second);
+            }
+        }
+    }
+
+    // Stocker la bounding box
+    boundingBox = {minX, maxX, minY, maxY};
 }

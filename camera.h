@@ -1,6 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+struct BoundingBox {
+    float minX, maxX, minY, maxY;
+};
+
 class Camera {
 public:
     Camera();
@@ -18,6 +22,7 @@ public:
     void moveLeft(float step);
     void moveRight(float step);
 
+    void centerOnBoundingBox(const BoundingBox& bbox);
     void apply(); // Applique les transformations de la caméra
 
 private:

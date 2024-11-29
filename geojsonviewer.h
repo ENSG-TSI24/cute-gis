@@ -21,16 +21,15 @@ protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
-
-    void keyPressEvent(QKeyEvent* event) override;
-    void wheelEvent(QWheelEvent* event) override;
+    void calculateBoundingBox();
 
 private:
-    std::vector<std::pair<float, float>> coordinates; // Points GeoJSON
+    std::vector<std::pair<float, float>> points; // Points GeoJSON
     std::vector<std::vector<std::pair<float, float>>> lineStrings; // LineStrings
     std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons; // Polygons
 
     Camera camera;
+    BoundingBox boundingBox;
 
     // Normalisation des coordonnées
     float minX, maxX, minY, maxY;
