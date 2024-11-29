@@ -14,11 +14,11 @@ int main(int argc, char *argv[])
     const char* layerName = "OI.OrthoimageCoverage";
 
     API_WMS wms(wmsUrl);
-    //wms.loadDataset();
-    //wms.isEmpty();
-    //wms.displayMetadata();
+    wms.loadDataset();
+    wms.isEmpty();
+    wms.displayMetadata();
     const char* outputFile = "/home/formation/minisig/cute-gis/src/tile_orthoimage.tiff";
 
     wms.downloadTileToGeoTiff(layerName,outputFile, 1,1,0);
-    return 0;
+    return a.exec();
 }
