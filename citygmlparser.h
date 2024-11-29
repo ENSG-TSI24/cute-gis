@@ -19,17 +19,19 @@ struct Feature {
 class CityGMLParser {
 private:
     GDALDataset* dataset;
-    std::vector<Feature> features;
+
 
     void extractGeometry(OGRGeometry* geometry, std::vector<float>& vertices,
                          std::vector<unsigned int>& faces, unsigned int& vertexOffset);
 
 public:
+    std::vector<Feature> features;
     CityGMLParser();
     ~CityGMLParser();
     bool openFile(const std::string& filePath);
     void parseFeatures();
     void exportToObj(const std::string& filePath) const;
+    void exportToMtl(const std::string& filePath) const;
     void printFeature(const Feature& feature) const;
 };
 
