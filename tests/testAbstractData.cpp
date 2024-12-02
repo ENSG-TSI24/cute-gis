@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "../src/abstractdata.h"
-#include "../src/vectordata.h"
-#include "../src/geojsonfile.h"
+#include "../src/back/abstractdata.h"
+#include "../src/back/vectordata.h"
+#include "../src/back/geojsonfile.h"
 #include "gdal.h"
 #include "ogrsf_frmts.h"
 

@@ -5,7 +5,7 @@
 #include <gdal_priv.h>
 #include <ogrsf_frmts.h>
 
-#include "../src/wfsdata.h"
+#include "../src/back/wfsdata.h"
 
 class WfsDatatest : public ::testing::Test {
     protected:
