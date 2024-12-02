@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>610</height>
+    <width>1060</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,39 +15,40 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Preferred</enum>
-      </property>
+    <item row="2" column="2">
+     <spacer name="horizontalSpacer">
       <property name="sizeHint" stdset="0">
        <size>
-        <width>50</width>
+        <width>40</width>
         <height>20</height>
        </size>
       </property>
      </spacer>
     </item>
-    <item row="0" column="1" colspan="4">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+    <item row="2" column="3">
+     <widget class="QPushButton" name="button_3d">
+      <property name="text">
+       <string>2D/3D</string>
       </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
+      <property name="iconSize">
+       <size>
+        <width>30</width>
+        <height>16</height>
+       </size>
       </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <spacer name="horizontalSpacer_4">
       <property name="sizeHint" stdset="0">
        <size>
-        <width>20</width>
-        <height>30</height>
+        <width>40</width>
+        <height>20</height>
        </size>
       </property>
      </spacer>
     </item>
-    <item row="0" column="0" rowspan="3">
+    <item row="0" column="0" rowspan="2">
      <widget class="QGroupBox" name="groupBox">
       <property name="enabled">
        <bool>true</bool>
@@ -61,56 +62,113 @@
        </font>
       </property>
       <property name="contextMenuPolicy">
-       <enum>Qt::DefaultContextMenu</enum>
+       <enum>Qt::NoContextMenu</enum>
       </property>
       <property name="title">
-       <string>Layers manager</string>
+       <string>Layer manager</string>
       </property>
       <property name="flat">
        <bool>false</bool>
       </property>
+      <widget class="QCheckBox" name="checkBox_1">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>161</width>
+         <height>40</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Sans Serif</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Layer 1</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>src/mapLight.png</normaloff>
+         <normalon>src/mapLight.png</normalon>
+         <disabledon>src/mapLight.png</disabledon>
+         <activeon>src/mapLight.png</activeon>
+         <selectedoff>src/mapLight.png</selectedoff>src/mapLight.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="tristate">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBox_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>161</width>
+         <height>40</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Sans Serif</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Layer 2</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>src/mapDark.png</normaloff>
+         <normalon>src/mapDark.png</normalon>
+         <disabledon>src/mapLight.png</disabledon>src/mapDark.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+      </widget>
      </widget>
     </item>
-    <item row="2" column="1">
-     <spacer name="horizontalSpacer_4">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+    <item row="2" column="0">
+     <spacer name="horizontalSpacer_2">
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
-        <width>40</width>
+        <width>50</width>
         <height>20</height>
        </size>
       </property>
      </spacer>
     </item>
-    <item row="2" column="2">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="2" column="4">
-     <widget class="QPushButton" name="button_switcher">
-      <property name="text">
-       <string>2D/3D</string>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>30</width>
-        <height>16</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" colspan="4">
+    <item row="0" column="1" rowspan="2" colspan="3">
      <widget class="QOpenGLWidget" name="openGLWidget"/>
     </item>
    </layout>
@@ -120,34 +178,163 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1060</width>
      <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuhere">
     <property name="title">
-     <string>Files</string>
+     <string>File</string>
     </property>
-    <addaction name="actionfiles"/>
+    <widget class="QMenu" name="menuOpen_File">
+     <property name="title">
+      <string>Open File...</string>
+     </property>
+     <addaction name="actionfiles"/>
+     <addaction name="actionFlux_Data"/>
+    </widget>
+    <addaction name="menuOpen_File"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_2"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuedition">
     <property name="title">
-     <string>edition</string>
+     <string>Edit</string>
     </property>
     <addaction name="actionaggregation"/>
+    <addaction name="actionStyle_Management"/>
+   </widget>
+   <widget class="QMenu" name="menuProjet">
+    <property name="title">
+     <string>Vector</string>
+    </property>
+    <widget class="QMenu" name="menuGeometric_Operations">
+     <property name="title">
+      <string>Geometric Operations</string>
+     </property>
+     <addaction name="actionBuffer"/>
+    </widget>
+    <addaction name="menuGeometric_Operations"/>
+    <addaction name="actionIntersection_Calculation"/>
+   </widget>
+   <widget class="QMenu" name="menuRastor">
+    <property name="title">
+     <string>Rastor</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menu3D_Map_View">
+     <property name="title">
+      <string>3D Map View</string>
+     </property>
+     <addaction name="actionNew_3D_View"/>
+     <addaction name="actionManage_3D_View"/>
+    </widget>
+    <addaction name="actionNew_Map_View"/>
+    <addaction name="menu3D_Map_View"/>
+    <addaction name="actionPan_Map"/>
+    <addaction name="actionZoom_in"/>
+    <addaction name="actionZoom_out"/>
+    <addaction name="actionIdentify_Feature"/>
+    <addaction name="actionMesure"/>
    </widget>
    <addaction name="menuhere"/>
    <addaction name="menuedition"/>
+   <addaction name="menuProjet"/>
+   <addaction name="menuRastor"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionfiles">
-   <property name="text">
-    <string>open wms layer</string>
-   </property>
-  </action>
   <action name="actionaggregation">
    <property name="text">
-    <string>aggregation</string>
+    <string>Aggregation</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionSave_2">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionfiles">
+   <property name="text">
+    <string>Local Data</string>
+   </property>
+  </action>
+  <action name="actionFlux_Data">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Flux Data</string>
+   </property>
+  </action>
+  <action name="actionIntersection_Calculation">
+   <property name="text">
+    <string>Intersection Calculation</string>
+   </property>
+  </action>
+  <action name="actionBuffer">
+   <property name="text">
+    <string>Buffer...</string>
+   </property>
+  </action>
+  <action name="actionNew_Map_View">
+   <property name="text">
+    <string>New Map View</string>
+   </property>
+  </action>
+  <action name="actionPan_Map">
+   <property name="text">
+    <string>Pan Map</string>
+   </property>
+  </action>
+  <action name="actionZoom_in">
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+  </action>
+  <action name="actionZoom_out">
+   <property name="text">
+    <string>Zoom out</string>
+   </property>
+  </action>
+  <action name="actionIdentify_Feature">
+   <property name="text">
+    <string>Identify Feature</string>
+   </property>
+  </action>
+  <action name="actionMesure">
+   <property name="text">
+    <string>Mesure</string>
+   </property>
+  </action>
+  <action name="actionNew_3D_View">
+   <property name="text">
+    <string>New 3D View</string>
+   </property>
+  </action>
+  <action name="actionManage_3D_View">
+   <property name="text">
+    <string>Manage 3D View</string>
+   </property>
+  </action>
+  <action name="actionStyle_Management">
+   <property name="text">
+    <string>Style Management</string>
    </property>
   </action>
  </widget>
