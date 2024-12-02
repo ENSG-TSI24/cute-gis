@@ -6,28 +6,50 @@
 #include <iostream>
 #include <fstream>
 #include <gdal/ogrsf_frmts.h>
-#include <map>
 
-// Feature struct to hold geometry and attributes
 struct Feature {
-    std::string id;
+    unsigned int id;
     std::string objectName;
-    std::vector<float> vertices; // x, y, z triplets
-    std::vector<unsigned int> faces; // indices for faces
-    std::map<std::string, std::string> attributes; // Key-value pairs for attributes
+    std::map<std::string, std::string> attributes;
+    std::vector<float> vertices;  // Scaled vertices (between -0.85f and 0.85f)
+    std::vector<float> VerticesGeoreferenced;  // Original Lambert-93 vertices (x, y, z)
+    std::vector<unsigned int> faces;
+    std::pair<double, double> lowerCorner; // Lower corner of bounding box (xmin, ymin)
+    std::pair<double, double> upperCorner; // Upper corner of bounding box (xmax, ymax)
 };
+
+
 
 class CityGMLParser {
 private:
     GDALDataset* dataset;
 
-public:
+
+    void extractGeometry(OGRGeometry* geometry, std::vector<float>& vertices,
+                         std::vector<unsigned int>& faces, unsigned int& vertexOffset);
+
+    float xMin, yMin, xMax, yMax;
     std::vector<Feature> features;
+
+public:
+
     CityGMLParser();
     ~CityGMLParser();
-
     bool openFile(const std::string& filePath);
+    void parseFeatures();
+    void exportToObj(float s, const std::string& filePath);
+    void exportToMtl(const std::string& filePath) const;
     void printFeature(const Feature& feature) const;
+    OGRCoordinateTransformation* createLambertTransformation();
+    void setInScale(float s);
+    void generateEnvelope();
+
+        // Getter methods for the envelope
+        float getXMin() const;
+        float getYMin() const;
+        float getXMax() const;
+        float getYMax() const;
+        std::vector<Feature> getFeatures() const;
 
 };
 
