@@ -101,6 +101,7 @@ void Renderer::renderLayers2d(){
         std::cout<<"------------ Layer : "<<i<< " ------------\n";
         layer.renderPoints();
         layer.renderLinestrings();
+        layer.renderPolygons();
         ++i;
     }
 }
