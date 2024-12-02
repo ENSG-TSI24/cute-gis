@@ -51,7 +51,7 @@ void MainWindow::onOpenFile()
 //            renderer->setPolygons(geo.getPolygons());
 
 //            renderer->calculateBoundingBox();
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.at(0).boundingBox);
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
 
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
