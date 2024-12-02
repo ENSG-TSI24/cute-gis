@@ -8,6 +8,9 @@
 #include <QMatrix4x4>
 #include "controller.h"
 #include "objectloader.h"
+#include <QGraphicsSceneMouseEvent>
+
+#include <QMouseEvent>
 
 class Renderer : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -39,6 +42,14 @@ private:
     Controller* controller;
     ObjectLoader* objectLoader;
     bool is3D;
+
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+
+
+    // is 3D
+    //bool get3D();
 };
 
 #endif // RENDERER_H

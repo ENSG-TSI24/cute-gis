@@ -4,6 +4,8 @@
 #include <QOpenGLFunctions>
 #include <glm/vec3.hpp>
 
+
+
 Renderer::Renderer(QWidget* parent)
     : QOpenGLWidget(parent), objectLoader(nullptr) {
     controller = new Controller(this);
@@ -18,12 +20,19 @@ Renderer::~Renderer() {
     delete controller;
 }
 
-void Renderer::keyPressEvent(QKeyEvent* event) {
+void Renderer::keyPressEvent(QKeyEvent *event){
     this->controller->ControllerkeyPressEvent(event);
 }
 
 void Renderer::wheelEvent(QWheelEvent* event) {
     this->controller->ControllerwheelEvent(event);
+}
+//void  Renderer::mousePressEvent(QMouseEvent *event){
+  //  this->controller->ControllerQMouseEvent(event);
+//}
+
+void Renderer::mousePressEvent(QMouseEvent* event) {
+    controller->ControllerMousePressEvent(event);
 }
 
 void Renderer::initializeGL() {
@@ -123,3 +132,18 @@ void Renderer::reset() {
 
     update();
 }
+
+
+
+
+
+
+void Renderer::mouseReleaseEvent(QMouseEvent* event) {
+    controller->ControllerMouseReleaseEvent(event);
+}
+
+void Renderer::mouseMoveEvent(QMouseEvent* event) {
+    controller->ControllerMouseMoveEvent(event);
+    update(); // Redessine la scène après un déplacement
+}
+

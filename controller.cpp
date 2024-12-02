@@ -1,15 +1,30 @@
 #include "controller.h"
 
 Controller::Controller(QWidget* parent)
-    : QWidget(parent), camera() {
-}
+    : QWidget(parent), camera(), isDragging(false) {}
+
+//Controller::Controller(QWidget* parent)
+//    : QWidget(parent), camera() {
+//}
 
 Camera& Controller::getCamera() {
     return camera; // Retourne la référence à la caméra
 }
 
+/**void Controller::ControllerQMouseEvent(QMouseEvent *event){
+
+    if(event->button()==Qt::LeftButton){
+         std::cout << "oui \n" <<std::endl;
+    }
+    if(event->button()!=Qt::LeftButton ){
+        std::cout << "non \n" <<std::endl;
+    }
+
+}
+**/
+
+
 void Controller::ControllerwheelEvent(QWheelEvent* event) {
-    std::cout <<"la vie cette sale race\n";
     float zoomStep = 1.0f;
     if (event->angleDelta().y() > 0) {
         camera.setZoom(zoomStep);
@@ -54,5 +69,32 @@ void Controller::ControllerkeyPressEvent(QKeyEvent *event){
     camera.update();
     update();
 }
+
+
+void Controller::ControllerMousePressEvent(QMouseEvent* event) {
+    if (event->button() == Qt::LeftButton) {
+        isDragging = true;
+        lastMousePosition = event->pos();
+    }
+}
+
+void Controller::ControllerMouseReleaseEvent(QMouseEvent* event) {
+    if (event->button() == Qt::LeftButton) {
+        isDragging = false;
+    }
+}
+
+void Controller::ControllerMouseMoveEvent(QMouseEvent* event) {
+    if (isDragging) {
+        float sensitivity = 0.25;
+        QPoint currentMousePosition = event->pos();
+        QPoint delta = currentMousePosition - lastMousePosition;
+        camera.moveRight(-delta.x() * sensitivity);
+        camera.moveUp(delta.y() * sensitivity);
+
+        lastMousePosition = currentMousePosition;
+    }
+}
+
 
 

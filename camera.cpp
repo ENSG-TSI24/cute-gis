@@ -58,3 +58,6 @@ void Camera::update() {
     float top = 90.0f /zoom + this->y;
     glOrtho(left, right, bottom, top, -1.0f, 1.0f);
 }
+
+
+
