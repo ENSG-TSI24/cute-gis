@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 6.0.2, 2024-11-27T17:01:24. -->
+<!-- Written by QtCreator 6.0.2, 2024-11-29T14:47:57. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -67,7 +67,13 @@
     <value type="bool" key="AutoTest.Framework.QtQuickTest">true</value>
     <value type="bool" key="AutoTest.Framework.QtTest">true</value>
    </valuemap>
-   <valuemap type="QVariantMap" key="AutoTest.CheckStates"/>
+   <valuemap type="QVariantMap" key="AutoTest.CheckStates">
+    <value type="Qt::CheckState" key="1@/home/jbolivier/Documents/ProjetGeo/cute-gis/tests/testAbstractData.cpp:AbstractDatatest">Checked</value>
+    <value type="Qt::CheckState" key="1@/home/jbolivier/Documents/ProjetGeo/cute-gis/tests/testAbstractData.cpp:ConstructorWithParameters">Checked</value>
+    <value type="Qt::CheckState" key="1@/home/jbolivier/Documents/ProjetGeo/cute-gis/tests/testAbstractData.cpp:DefaultConstructor">Checked</value>
+    <value type="Qt::CheckState" key="1@/home/jbolivier/Documents/ProjetGeo/cute-gis/tests/testAbstractData.cpp:GeoJsonFileTest">Checked</value>
+    <value type="Qt::CheckState" key="1@/home/jbolivier/Documents/ProjetGeo/cute-gis/tests/testAbstractData.cpp:GettersGeoJsonFile">Checked</value>
+   </valuemap>
    <value type="int" key="AutoTest.RunAfterBuild">0</value>
    <value type="bool" key="AutoTest.UseGlobal">true</value>
    <valuelist type="QVariantList" key="ClangCodeModel.CustomCommandLineKey"/>
@@ -104,7 +110,7 @@
 -DCMAKE_PREFIX_PATH:PATH=%{Qt:QT_INSTALL_PREFIX}
 -DCMAKE_C_COMPILER:FILEPATH=%{Compiler:Executable:C}
 -DCMAKE_CXX_COMPILER:FILEPATH=%{Compiler:Executable:Cxx}</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/jbolivier/Documents/ProjetGeo/build-cute-gis-Desktop-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/jbolivier/Documents/ProjetGeo/cute-gis/build</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <valuelist type="QVariantList" key="CMakeProjectManager.MakeStep.BuildTargets">
@@ -294,17 +300,34 @@
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">cute_GIS</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.cute_GIS</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">cute_GIS</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">cute-gis</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.cute-gis</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">cute-gis</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/jbolivier/Documents/ProjetGeo/build-cute-gis-Desktop-Debug</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/jbolivier/Documents/ProjetGeo/cute-gis/build</value>
    </valuemap>
-   <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">testAbstractData</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.testAbstractData</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">testAbstractData</value>
+    <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/jbolivier/Documents/ProjetGeo/cute-gis/build</value>
+   </valuemap>
+   <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">2</value>
   </valuemap>
  </data>
  <data>
