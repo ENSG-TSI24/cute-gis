@@ -1,62 +1,61 @@
 #include "camera.h"
-#include <GL/gl.h>
-#include <vector>
 
 
-Camera::Camera()
-    : x(0.0f), y(0.0f), zoomLevel(1.0f) {}
+Camera::Camera():x(0.0f),y(0.0f),zoom(1.0f){
 
-float Camera::getX() const {
+}
+
+float Camera::getX(){
     return x;
 }
 
-float Camera::getY() const {
+float Camera::getY(){
     return y;
 }
 
-void Camera::setX(float newX) {
-    x = newX;
+void Camera::setX(float x){
+    this->x=x;
 }
 
-void Camera::setY(float newY) {
-    y = newY;
+void Camera::setY(float y){
+    this->y=y;
 }
 
-float Camera::getZoomLevel() const {
-    return zoomLevel;
+void Camera::moveUp(float step){
+    this->y += step/zoom;
 }
 
-void Camera::setZoomLevel(float newZoom) {
-    if (newZoom > 0.1f) { // Empêche un zoom trop faible ou négatif
-        zoomLevel = newZoom;
-    }
+void Camera::moveDown(float step){
+    this->y -= step/zoom;
 }
 
-void Camera::moveUp(float step) {
-    y += step / zoomLevel;
+void Camera::moveLeft(float step){
+    this->x -= step/zoom;
 }
 
-void Camera::moveDown(float step) {
-    y -= step / zoomLevel;
+void Camera::moveRight(float step){
+    this->x += step/zoom;
 }
 
-void Camera::moveLeft(float step) {
-    x -= step / zoomLevel;
+void Camera::setZoom(float zoomChange) {
+    float speedFactor = 0.2f;
+    float scale = 1.0f + speedFactor * this->zoom;
+
+    this->zoom += zoomChange * scale;
+    this->zoom = std::max(this->zoom, 0.1f);
 }
 
-void Camera::moveRight(float step) {
-    x += step / zoomLevel;
+float Camera::getZoom(){
+    return zoom;
 }
 
-void Camera::apply() {
+void Camera::update() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-
-    float left = -180.0f / zoomLevel + x;
-    float right = 180.0f / zoomLevel + x;
-    float bottom = -90.0f / zoomLevel + y;
-    float top = 90.0f / zoomLevel + y;
-
+    float left = -180.0f /zoom + this->x;
+    float right = 180.0f /zoom + this->x;
+    float bottom = -90.0f /zoom + this->y;
+    float top = 90.0f /zoom + this->y;
     glOrtho(left, right, bottom, top, -1.0f, 1.0f);
 }
 
@@ -76,5 +75,5 @@ void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
     // Ajuster le zoom pour inclure la boîte
     float zoomX = 360.0f / width;
     float zoomY = 180.0f / height;
-    this->zoomLevel = std::min(zoomX, zoomY); // Garder le même facteur pour X et Y
+    this->zoom = std::min(zoomX, zoomY); // Garder le même facteur pour X et Y
 }

@@ -5,16 +5,18 @@
 #include <QTimer>
 
 #include "./ui_mainwindow.h"
-#include "geojsonviewer.h"
+#include "renderer.h"
+#include "geojsonloader.h"
 
 #include <QVBoxLayout>
 #include <QMessageBox>
+#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class GeoJsonViewer; // Pré-déclaration
+class GeoJsonViewer;
 
 class MainWindow : public QMainWindow
 {
@@ -24,10 +26,15 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private :
+
+
+private:
     Ui::MainWindow *ui;
-    GeoJsonViewer* geoJsonViewer; // Widget GeoJSON
-    QTimer* refreshTimer;         // Timer pour rafraîchir l'affichage
+    Renderer* renderer;
+    QTimer* refreshTimer;
+    void onOpenFile();
+    ObjectLoader *objectLoader = nullptr;
+
 };
 
 #endif // MAINWINDOW_H
