@@ -2,6 +2,10 @@
     <img src="images/logo_v15.png" alt="Cute-gis Logo" width="150"/>
 </p>
 
+<p align="center">
+    <img src="images/logo_v15.png" alt="Cute-gis Logo" width="150"/>
+</p>
+
 # GIS application project
 ![Build Status](https://github.com/ENSG-TSI24/cute-gis/actions/workflows/test.yml/badge.svg?branch=devback_visiteur)
 ![Commit Status](https://img.shields.io/github/commit-activity/t/ENSG-TSI24/cute-gis?)
