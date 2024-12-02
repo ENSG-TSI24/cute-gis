@@ -17,7 +17,7 @@ Geojsonloader::Geojsonloader(const std::string& filePath)
         throw std::runtime_error("Erreur lors du parsing du fichier GeoJSON : " + std::string(e.what()));
     }
 
-    coordinates.clear();
+    points.clear();
     if (geojson["type"] != "FeatureCollection") {
         throw std::runtime_error("Le fichier GeoJSON n'est pas de type FeatureCollection.");
     }
@@ -29,17 +29,49 @@ Geojsonloader::Geojsonloader(const std::string& filePath)
         if (geometry["type"] == "Point" && geometry.contains("coordinates")) {
             const auto& coord = geometry["coordinates"];
             if (coord.size() >= 2) {
-                coordinates.emplace_back(coord[0], coord[1]); // (longitude, latitude)
+                points.emplace_back(coord[0], coord[1]); // (longitude, latitude)
+            }
+
+        } else if (geometry["type"] == "LineString" && geometry.contains("coordinates")) {
+            std::vector<std::pair<float, float>> line;
+            for (const auto& coord : geometry["coordinates"]) {
+                if (coord.size() >= 2) {
+                    line.emplace_back(coord[0], coord[1]);
+                }
+            }
+            if (!line.empty()) {
+                linestrings.push_back(line);
+            }
+
+        } else if (geometry["type"] == "Polygon" && geometry.contains("coordinates")) {
+            std::vector<std::vector<std::pair<float, float>>> polygon;
+            for (const auto& ring : geometry["coordinates"]) {
+                std::vector<std::pair<float, float>> ringPoints;
+                for (const auto& coord : ring) {
+                    if (coord.size() >= 2) {
+                        ringPoints.emplace_back(coord[0], coord[1]);
+                    }
+                }
+                if (!ringPoints.empty()) {
+                    polygon.push_back(ringPoints);
+                }
+            }
+            if (!polygon.empty()) {
+                polygons.push_back(polygon);
             }
         }
     }
-
 }
 
 
-std::vector<std::pair<float, float>> Geojsonloader::getCoordinates(){
-    return this->coordinates;
+std::vector<std::pair<float, float>> Geojsonloader::getPoints(){
+    return this->points;
 }
 
+std::vector<std::vector<std::pair<float, float>>> Geojsonloader::getLinestrings(){
+    return this->linestrings;
+}
 
-
+std::vector<std::vector<std::vector<std::pair<float, float>>>> Geojsonloader::getPolygons(){
+    return this->polygons;
+}
