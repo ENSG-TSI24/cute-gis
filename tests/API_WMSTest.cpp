@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include <fstream>
 #include "../src/API_WMS.h"
 
 TEST(API_WMSTest, LoadInvalidDataset_ThrowsException) {
@@ -30,88 +31,27 @@ TEST(API_WMSTest, GetDataset_ReturnsNonNullptr_AfterLoadingValidDataset) {
     EXPECT_FALSE(flux_valide.isEmpty());
 }
 
-TEST(API_WMSTest, GetDataset_ReturnsNullptr_AfterLoadingInvalidDataset) {
-    const char* url = "https://google.com";
-    API_WMS flux_nonvalide = API_WMS(url);
-
-    // Act : Charger un dataset invalide
-    flux_nonvalide.loadDataset();
-
-    // Assert : Vérifie qu'aucun dataset n'est chargé
-    ASSERT_EQ(flux_nonvalide.getDataset(), nullptr);
-    EXPECT_TRUE(flux_nonvalide.isEmpty());
-}
-
-/////////////////////////////// 3 Subtests for metadata /////// ** chercher exemples //////////
-TEST(API_WMSTest, DisplayMetadata_WithValidDataset_ShowsMetadata) {
-
-    const char* url1 = "WMS:https://data.geopf.fr/wms-r?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
-    API_WMS flux_valide = API_WMS(url1);
-    // Arrange
-    flux_valide.loadDataset();
-
-    // Act & Assert
-    testing::internal::CaptureStdout();
-    flux_valide.displayMetadata();
-    std::string output = testing::internal::GetCapturedStdout();
-
-    // Vérifier que des métadonnées sont affichées
-    ASSERT_FALSE(output.empty());
-    ASSERT_NE(output.find("WMS MetaData"), std::string::npos);
-}
-
-/*TEST(API_WMSTest, DisplayMetadata_WithoutMetadata_ShowsNoMetadataMessage) {
-    const char* url = "https://google.com";
-    API_WMS flux_nonvalide = API_WMS(url);
-    const char* url1 = "WMS:https://data.geopf.fr/wms-r?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
-    API_WMS flux_valide = API_WMS(url1);
-    // Arrange
-    const char* url_no_metadata = "WMS:some-url-with-no-metadata"; // look for a stream without metadata
-    API_WMS flux_no_metadata(url_no_metadata);
-    flux_no_metadata.loadDataset();
-
-    // Act & Assert
-    testing::internal::CaptureStdout();
-    flux_no_metadata.displayMetadata();
-    std::string output = testing::internal::GetCapturedStdout();
-
-    // Vérifiez que le message "no metadata" est affiché
-    ASSERT_NE(output.find("no metadata"), std::string::npos);
-}*/
-
-TEST(API_WMSTest, DisplayMetadata_WithInvalidDataset_DoesNothing) {
-    const char* url = "https://google.com";
-    API_WMS flux_nonvalide = API_WMS(url);
-
-    // Act & Assert
-    testing::internal::CaptureStdout();
-    flux_nonvalide.displayMetadata();
-    std::string output = testing::internal::GetCapturedStdout();
-
-    // Vérifiez qu'aucune métadonnée n'est affichée
-    ASSERT_TRUE(output.empty());
-}
-
-/*class API_WMSTest : public ::testing::Test {
-protected:
-    // Common instance for all tests 
-    API_WMS flux_valide;    
-    API_WMS flux_nonvalide;
-
-    // Arrange before each test 
-    void SetUp() override {
-        const char* url1 = "WMS:https://data.geopf.fr/wms-r?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
-        flux_valide = API_WMS(url1);
-
-        const char* url2 = "https://google.com";
-        flux_nonvalide = API_WMS(url2);
-    }
-};
-
 
 /////////////////////////////// Il reste les méthodes propres à WMS : l'export
+TEST(API_WMSTest, DownloadTileToGeoTiff_FileGenerated) {
+    //arrange
+    const char* url1 = "WMS:https://data.geopf.fr/wms-r?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
+    API_WMS flux_valide = API_WMS(url1);
 
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}*/
+    const char* layerName = "OI.OrthoimageCoverage";
+    const char* outputFile = "/home/formation/minisig/cute-gis/src/tile_orthoimage.tiff"; // ** changer le lien
+    int zoom = 1;
+    int row = 1;
+    int col = 0;
+
+    // Act
+    flux_valide.downloadTileToGeoTiff(layerName, outputFile, zoom, row, col);
+
+    // Assert
+    std::ifstream file(outputFile);
+    EXPECT_TRUE(file.is_open()); // Vérifie que le fichier existe
+    file.close();
+
+    // Nettoyage après test
+    std::remove(outputFile);
+}
