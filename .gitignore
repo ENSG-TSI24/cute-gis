@@ -1,6 +1,5 @@
 graph/uml.drawio
-CMakeLists.txt.user
-
-build
+CMakeLists.txt.user*
+build/
 .vscode
 
