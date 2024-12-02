@@ -16,6 +16,7 @@ struct Feature {
     std::vector<unsigned int> faces;
     std::pair<double, double> lowerCorner; // Lower corner of bounding box (xmin, ymin)
     std::pair<double, double> upperCorner; // Upper corner of bounding box (xmax, ymax)
+
 };
 
 
@@ -23,15 +24,23 @@ struct Feature {
 class CityGMLParser {
 private:
     GDALDataset* dataset;
+    OGRCoordinateTransformation* transform = createLambertTransformation();
 
 
     void extractGeometry(OGRGeometry* geometry, std::vector<float>& vertices,
                          std::vector<unsigned int>& faces, unsigned int& vertexOffset);
 
-    float xMin, yMin, xMax, yMax;
+    float xMin, yMin, xMax, yMax, zMin, zMax;
+    bool SRSMatching;
     std::vector<Feature> features;
 
 public:
+
+
+
+
+        // Function declarations
+    OGRCoordinateTransformation* createLambertTransformation();
 
     CityGMLParser();
     ~CityGMLParser();
@@ -40,7 +49,7 @@ public:
     void exportToObj(float s, const std::string& filePath);
     void exportToMtl(const std::string& filePath) const;
     void printFeature(const Feature& feature) const;
-    OGRCoordinateTransformation* createLambertTransformation();
+
     void setInScale(float s);
     void generateEnvelope();
 
@@ -49,6 +58,8 @@ public:
         float getYMin() const;
         float getXMax() const;
         float getYMax() const;
+        float getZMin() const;
+        float getZMax() const;
         std::vector<Feature> getFeatures() const;
 
 };
