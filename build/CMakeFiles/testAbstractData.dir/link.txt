@@ -1,1 +1,0 @@
-/usr/bin/g++ -g CMakeFiles/testAbstractData.dir/tests/testAbstractData.cpp.o CMakeFiles/testAbstractData.dir/src/abstractdata.cpp.o CMakeFiles/testAbstractData.dir/src/geojsonfile.cpp.o CMakeFiles/testAbstractData.dir/src/vectordata.cpp.o -o testAbstractData  /usr/lib/libgdal.so /usr/lib/x86_64-linux-gnu/libgtest_main.a /usr/lib/x86_64-linux-gnu/libgtest.a 
