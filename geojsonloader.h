@@ -11,11 +11,14 @@ class Geojsonloader
 {
 public:
     Geojsonloader(const std::string& filePath);
-    std::vector<std::pair<float, float>> getCoordinates();
-
+    std::vector<std::pair<float, float>> getPoints();
+    std::vector<std::vector<std::pair<float, float>>> getLinestrings();
+    std::vector<std::vector<std::vector<std::pair<float, float>>>> getPolygons();
 
 private:
-        std::vector<std::pair<float, float>> coordinates;
+    std::vector<std::pair<float, float>> points;
+    std::vector<std::vector<std::pair<float, float>>> linestrings;
+    std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons;
 
 };
 

@@ -13,7 +13,9 @@
 #include <QOpenGLFunctions>
 
 
-
+struct BoundingBox {
+    float minX, maxX, minY, maxY;
+};
 
 /**
  * \class Camera
@@ -85,6 +87,7 @@ public:
     float getZoom();
     void setZoom(float zoom);
 
+    void centerOnBoundingBox(const BoundingBox& bbox);
 
 private:
     float x;

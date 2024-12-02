@@ -16,13 +16,17 @@ public:
     explicit Renderer(QWidget* parent = nullptr);
     virtual ~Renderer();
 
-    void setCoordinates(std::vector<std::pair<float, float>> coordinates);
+    void setPoints(std::vector<std::pair<float, float>> points);
+    void setLinestrings(std::vector<std::vector<std::pair<float, float>>> linestrings);
+    void setPolygons(std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons);
 
     void setIs3D(bool enabled);
 
     void setObjectLoader(ObjectLoader* loader);
     void reset();
-
+    void calculateBoundingBox();
+    BoundingBox boundingBox;
+    Controller* controller;
 
 protected:
     void initializeGL() override;
@@ -34,9 +38,12 @@ protected:
 
 private:
     void renderPoints();
+    void renderLinestrings();
+    void renderPolygons();
 
-    std::vector<std::pair<float, float>> coordinates;
-    Controller* controller;
+    std::vector<std::pair<float, float>> points;
+    std::vector<std::vector<std::pair<float, float>>> linestrings;
+    std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons;
     ObjectLoader* objectLoader;
     bool is3D;
 };

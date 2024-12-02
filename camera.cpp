@@ -58,3 +58,22 @@ void Camera::update() {
     float top = 90.0f /zoom + this->y;
     glOrtho(left, right, bottom, top, -1.0f, 1.0f);
 }
+
+void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
+    // Calculer le centre
+    float centerX = (bbox.minX + bbox.maxX) / 2.0f;
+    float centerY = (bbox.minY + bbox.maxY) / 2.0f;
+
+    // Calculer la taille de la boîte englobante
+    float width = bbox.maxX - bbox.minX;
+    float height = bbox.maxY - bbox.minY;
+
+    // Ajuster la caméra
+    this->x = centerX;
+    this->y = centerY;
+
+    // Ajuster le zoom pour inclure la boîte
+    float zoomX = 360.0f / width;
+    float zoomY = 180.0f / height;
+    this->zoom = std::min(zoomX, zoomY); // Garder le même facteur pour X et Y
+}
