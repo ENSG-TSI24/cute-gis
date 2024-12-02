@@ -53,6 +53,22 @@ glm::vec3 Camera::getPosition() {
     return glm::vec3(x, y, 0.0f);
 }
 
+
+QMatrix4x4 Camera::getViewMatrix() {
+    glm::vec3 position = this->getPosition();
+    QVector3D cameraPos(position.x, position.y, 3.0f);
+    QVector3D target(position.x, position.y, 0.0f);
+    QVector3D upVector(0.0f, 1.0f, 0.0f);
+
+    QMatrix4x4 viewMatrix;
+    viewMatrix.lookAt(cameraPos, target, upVector);
+    return viewMatrix;
+}
+
+QMatrix4x4 Camera::getModelViewMatrix(const QMatrix4x4& modelMatrix) {
+    QMatrix4x4 viewMatrix = getViewMatrix();
+    return viewMatrix * modelMatrix;
+}
 void Camera::update() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

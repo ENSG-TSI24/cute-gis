@@ -66,22 +66,12 @@ void Renderer::paintGL() {
     } else if (objectLoader) {
         controller->set2DMode(false);
 
-        QMatrix4x4 viewMatrix;
-
-        glm::vec3 cameraPosition = controller->getCamera().getPosition();
-        QVector3D cameraPos(cameraPosition.x, cameraPosition.y, 3.0f);
-        QVector3D target(cameraPosition.x, cameraPosition.y, 0.0f);
-        QVector3D upVector(0.0f, 1.0f, 0.0f);
-
-        viewMatrix.lookAt(cameraPos, target, upVector);
-
         QMatrix4x4 modelMatrix;
         modelMatrix.translate(0.0f, 0.0f, -3.0f);
         modelMatrix.rotate(objectLoader->getAngle(), 0.0f, 1.0f, 0.0f);
         modelMatrix.scale(0.005f);
 
-        QMatrix4x4 modelViewMatrix = viewMatrix * modelMatrix;
-
+        QMatrix4x4 modelViewMatrix = controller->getCamera().getModelViewMatrix(modelMatrix);
         glMatrixMode(GL_MODELVIEW);
         glLoadMatrixf(modelViewMatrix.constData());
 
@@ -199,6 +189,7 @@ void Renderer::setObjectLoader(ObjectLoader* loader) {
 void Renderer::setIs3D(bool enabled) {
     is3D = enabled;
 }
+
 
 void Renderer::reset() {
     points.clear();

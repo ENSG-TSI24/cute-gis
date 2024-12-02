@@ -30,6 +30,7 @@ private:
     bool isDragging;
     QPoint lastMousePosition;
     bool is2DMode;
+
 };
 
 #endif // CONTROLLER_H
