@@ -1,6 +1,6 @@
 #include "objectloader.h"
 #include <QDebug>
-#include <tiny_obj_loader.h>
+#include "./lib/tiny_obj_loader.h"
 #include <QTimer>
 
 ObjectLoader::ObjectLoader(const std::string& filePath, QObject* parent)

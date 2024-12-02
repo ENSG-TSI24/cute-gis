@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "src/front/mainwindow.h"
 #include <QApplication>
 #include <nlohmann/json.hpp>
 #include <fstream>
