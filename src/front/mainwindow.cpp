@@ -44,11 +44,15 @@ void MainWindow::onOpenFile()
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
             Geojsonloader geo(filedata);
-            renderer->setPoints(geo.getPoints());
-            renderer->setLinestrings(geo.getLinestrings());
-            renderer->setPolygons(geo.getPolygons());
-            renderer->calculateBoundingBox();
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->boundingBox);
+            renderer->lst_layers2d.push_back(geo);
+
+//            renderer->setPoints(geo.getPoints());
+//            renderer->setLinestrings(geo.getLinestrings());
+//            renderer->setPolygons(geo.getPolygons());
+
+//            renderer->calculateBoundingBox();
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
+
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->setObjectLoader(objectLoader);
