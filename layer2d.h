@@ -4,6 +4,7 @@
 #include <vector>
 #include <utility>
 #include "geojsonloader.h"
+#include "controller.h"
 
 
 
@@ -11,11 +12,17 @@ class Layer2d
 {
 public:
     Layer2d(Geojsonloader data);
+    ~Layer2d();
+    void renderPoints();
+    void renderLinestrings();
+    void renderPolygons();
+    void calculateBoundingBox();
+    BoundingBox boundingBox;
+
+private:
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;
     std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons;
-    ~Layer2d();
-
 };
 
 #endif // LAYER2D_H

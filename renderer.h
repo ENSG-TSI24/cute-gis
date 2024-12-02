@@ -31,6 +31,7 @@ public:
     void calculateBoundingBox();
     BoundingBox boundingBox;
     Controller* controller;
+
     std::vector<Layer2d> lst_layers2d;
 
 
