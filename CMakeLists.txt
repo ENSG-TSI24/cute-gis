@@ -19,28 +19,28 @@ include_directories(${GDAL_INCLUDE_DIR})
 link_directories(${GDAL_LIBRARY_DIRS})
 
 set(PROJECT_SOURCES
-src/wfsdata.h
-src/wfsdata.cpp
-src/geotifffile.h src/geotifffile.cpp
-src/geojsonfile.h src/geojsonfile.cpp
-src/shpfile.h src/shpfile.cpp
-src/citygmlfile.h src/citygmlfile.cpp
-src/rasterdata.h src/rasterdata.cpp
-src/DataManagement.h
-src/abstractdata.h src/abstractdata.cpp
+src/back/wfsdata.h
+src/back/wfsdata.cpp
+src/back/geotifffile.h src/back/geotifffile.cpp
+src/back/geojsonfile.h src/back/geojsonfile.cpp
+src/back/shpfile.h src/back/shpfile.cpp
+src/back/citygmlfile.h src/back/citygmlfile.cpp
+src/back/rasterdata.h src/back/rasterdata.cpp
+src/back/DataManagement.h
+src/back/abstractdata.h src/back/abstractdata.cpp
 main.cpp
-src/vectordata.h src/vectordata.cpp
+src/back/vectordata.h src/back/vectordata.cpp
 )
 
 set(TEST_SOURCES
     tests/testAbstractData.cpp
     tests/wfsdataTest.cpp
-    src/DataManagement.h
-    src/abstractdata.h src/abstractdata.cpp
-    src/geojsonfile.h src/geojsonfile.cpp
-    src/vectordata.h src/vectordata.cpp
-    src/wfsdata.h
-    src/wfsdata.cpp
+    src/back/DataManagement.h
+    src/back/abstractdata.h src/back/abstractdata.cpp
+    src/back/geojsonfile.h src/back/geojsonfile.cpp
+    src/back/vectordata.h src/back/vectordata.cpp
+    src/back/wfsdata.h
+    src/back/wfsdata.cpp
 )
 
 add_executable(testAbstractData ${TEST_SOURCES})
