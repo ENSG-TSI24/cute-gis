@@ -9,6 +9,7 @@
 #include "controller.h"
 #include "objectloader.h"
 #include <QGraphicsSceneMouseEvent>
+#include "layer2d.h"
 
 #include <QMouseEvent>
 
@@ -30,6 +31,9 @@ public:
     void calculateBoundingBox();
     BoundingBox boundingBox;
     Controller* controller;
+    std::vector<Layer2d> lst_layers2d;
+
+
 
 protected:
     void initializeGL() override;
@@ -43,6 +47,8 @@ private:
     void renderPoints();
     void renderLinestrings();
     void renderPolygons();
+
+    void renderLayers2d();
 
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;

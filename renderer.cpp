@@ -59,9 +59,10 @@ void Renderer::paintGL() {
 
     if (!objectLoader) {
         controller->getCamera().update();
-        renderPoints();
-        renderLinestrings();
-        renderPolygons();
+        renderLayers2d();
+//        renderPoints();
+//        renderLinestrings();
+//        renderPolygons();
     } else if (objectLoader) {
         QMatrix4x4 viewMatrix;
 
@@ -133,6 +134,22 @@ void Renderer::renderPolygons() {
     }
 }
 
+void Renderer::renderLayers2d(){
+    int i = 0;
+    for (const auto& layer: lst_layers2d){
+        std::cout<<"------------ Layer : "<<i<< " ------------\n";
+        glColor3f(0.0f, 0.0f, 1.0f); // Couleur bleue
+        glPointSize(5.0f);
+        glBegin(GL_POINTS);
+        for (const auto& coord : layer.points) {
+            glVertex2f(coord.first, coord.second);
+        }
+        glEnd();
+        ++i;
+
+    }
+}
+
 void Renderer::calculateBoundingBox() {
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
@@ -198,9 +215,9 @@ void Renderer::setIs3D(bool enabled) {
 }
 
 void Renderer::reset() {
-    points.clear();
-    linestrings.clear();
-    polygons.clear();
+//    points.clear();
+//    linestrings.clear();
+//    polygons.clear();
 
     if (objectLoader) {
         delete objectLoader;

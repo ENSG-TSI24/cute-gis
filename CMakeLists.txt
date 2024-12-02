@@ -22,6 +22,7 @@ set(PROJECT_SOURCES
         camera.h camera.cpp
         controller.h controller.cpp
         geojsonloader.h geojsonloader.cpp
+        layer2d.h layer2d.cpp
         renderer.h renderer.cpp
         objectloader.h objectloader.cpp
         tiny_obj_loader.h tiny_obj_loader.cc
