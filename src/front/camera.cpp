@@ -49,6 +49,10 @@ float Camera::getZoom(){
     return zoom;
 }
 
+glm::vec3 Camera::getPosition() {
+    return glm::vec3(x, y, 0.0f);
+}
+
 void Camera::update() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -77,3 +81,4 @@ void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
     float zoomY = 180.0f / height;
     this->zoom = std::min(zoomX, zoomY); // Garder le même facteur pour X et Y
 }
+

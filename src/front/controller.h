@@ -13,6 +13,7 @@ public:
     explicit Controller(QWidget* parent = nullptr);
 
     Camera& getCamera(); // Fournit un accès à la caméra
+    void set2DMode(bool is2D);
     void ControllerwheelEvent(QWheelEvent* event) ; // Gère les événements molette
     void ControllerkeyPressEvent(QKeyEvent* event) ; // Gère les événements clavier
     void ControllerQMouseEvent(QMouseEvent *event);
@@ -28,6 +29,7 @@ private:
     Camera camera; // Caméra contrôlée par Controller
     bool isDragging;
     QPoint lastMousePosition;
+    bool is2DMode;
 };
 
 #endif // CONTROLLER_H

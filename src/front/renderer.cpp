@@ -59,18 +59,21 @@ void Renderer::paintGL() {
 
     if (!objectLoader) {
         controller->getCamera().update();
+        controller->set2DMode(true);
         renderPoints();
         renderLinestrings();
         renderPolygons();
     } else if (objectLoader) {
+        controller->set2DMode(false);
+
         QMatrix4x4 viewMatrix;
 
-        QVector3D cameraPosition(controller->getCamera().getX(),
-                                 controller->getCamera().getY(),
-                                 controller->getCamera().getZoom());
-        QVector3D target(0.0f, 0.0f, 0.0f);
+        glm::vec3 cameraPosition = controller->getCamera().getPosition();
+        QVector3D cameraPos(cameraPosition.x, cameraPosition.y, 3.0f);
+        QVector3D target(cameraPosition.x, cameraPosition.y, 0.0f);
         QVector3D upVector(0.0f, 1.0f, 0.0f);
-        viewMatrix.lookAt(cameraPosition, target, upVector);
+
+        viewMatrix.lookAt(cameraPos, target, upVector);
 
         QMatrix4x4 modelMatrix;
         modelMatrix.translate(0.0f, 0.0f, -3.0f);
@@ -211,11 +214,6 @@ void Renderer::reset() {
 
     update();
 }
-
-
-
-
-
 
 void Renderer::mouseReleaseEvent(QMouseEvent* event) {
     controller->ControllerMouseReleaseEvent(event);

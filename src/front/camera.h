@@ -88,7 +88,7 @@ public:
     void setZoom(float zoom);
 
     void centerOnBoundingBox(const BoundingBox& bbox);
-
+    glm::vec3 getPosition();
 private:
     float x;
     float y;
