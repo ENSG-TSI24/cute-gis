@@ -48,13 +48,15 @@ void Renderer::resizeGL(int w, int h) {
 void Renderer::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (!is3D) {
+    if (!objectLoader) {
         controller->getCamera().update();
         renderPoints();
     } else if (objectLoader) {
         QMatrix4x4 viewMatrix;
 
-        QVector3D cameraPosition(0.0f, 4.0f, 3.0f);
+        QVector3D cameraPosition(controller->getCamera().getX(),
+                                 controller->getCamera().getY(),
+                                 controller->getCamera().getZoom());
         QVector3D target(0.0f, 0.0f, 0.0f);
         QVector3D upVector(0.0f, 1.0f, 0.0f);
         viewMatrix.lookAt(cameraPosition, target, upVector);
