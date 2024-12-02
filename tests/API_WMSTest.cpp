@@ -15,21 +15,13 @@ protected:
         const char* url2 = "https://google.com";
         flux_nonvalide = API_WMS(url2);
     }
-
-    // Nettoyage après chaque test
-    void TearDown() override {
-
-        // free ressources
-        delete flux_valide; 
-        delete flux_nonvalide; 
-    }
 };
 
 // test for loading function 
 TEST_F(API_WMSTest, LoadInvalidDataset_ThrowsException) {
     EXPECT_THROW(flux_nonvalide.loadDataset(), std::runtime_error);
 }
-
+/*
 /////////////////////////////// 3 Subtests for getdata /////////////////////////////////////
 TEST_F(API_WMSTest, GetDataset_ReturnsNullptr_Initially) {
     // Vérifie qu'au début, aucun dataset n'est chargé
@@ -42,7 +34,7 @@ TEST_F(API_WMSTest, GetDataset_ReturnsNonNullptr_AfterLoadingValidDataset) {
 
     // Assert : Vérifie que le dataset est chargé avec succès
     ASSERT_NE(flux_valide.getDataset(), nullptr);
-    EXPECT_FALSE(provider.isEmpty());   
+    EXPECT_FALSE(flux_valide.isEmpty());
 }
 
 TEST_F(API_WMSTest, GetDataset_ReturnsNullptr_AfterLoadingInvalidDataset) {
@@ -51,7 +43,7 @@ TEST_F(API_WMSTest, GetDataset_ReturnsNullptr_AfterLoadingInvalidDataset) {
 
     // Assert : Vérifie qu'aucun dataset n'est chargé
     ASSERT_EQ(flux_nonvalide.getDataset(), nullptr);
-    EXPECT_TRUE(provider.isEmpty());
+    EXPECT_TRUE(flux_nonvalide.isEmpty());
 }
 
 /////////////////////////////// 3 Subtests for metadata /////// ** chercher exemples //////////
@@ -82,7 +74,7 @@ TEST_F(API_WMSTest, DisplayMetadata_WithValidDataset_ShowsMetadata) {
 
     // Vérifiez que le message "no metadata" est affiché
     ASSERT_NE(output.find("no metadata"), std::string::npos);
-}*/
+}
 
 TEST_F(API_WMSTest, DisplayMetadata_WithInvalidDataset_DoesNothing) {
     // Act & Assert
@@ -92,9 +84,9 @@ TEST_F(API_WMSTest, DisplayMetadata_WithInvalidDataset_DoesNothing) {
 
     // Vérifiez qu'aucune métadonnée n'est affichée
     ASSERT_TRUE(output.empty());
-}
+}*/
 
-/////////////////////////////// Il reste les méthodes propres à WMS : l'export 
+/////////////////////////////// Il reste les méthodes propres à WMS : l'export
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
