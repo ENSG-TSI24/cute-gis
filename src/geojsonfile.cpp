@@ -3,13 +3,18 @@
 GeoJsonFile::GeoJsonFile()
     : VectorData()
 {}
-GeoJsonFile::GeoJsonFile(char* path)
+GeoJsonFile::GeoJsonFile(const char* path)
      : VectorData(path)
 {}
-OGRSpatialReference* GeoJsonFile::GetCRS() {
+const char* GeoJsonFile::GetCRS() {
     OGRLayer* layer = this->data->GetLayer(0); // Récupérer la première couche
     OGRSpatialReference* spatialRef = layer->GetSpatialRef();
-    return spatialRef;
+//    char* wkt = nullptr;
+//    spatialRef->exportToWkt(&wkt);
+//    std::cout << "CRS (WKT): " << wkt << std::endl;
+    const char* code = spatialRef->GetAuthorityCode(nullptr);
+
+    return code;
 }
 
 char** GeoJsonFile::GetMetadata() {
@@ -25,6 +30,7 @@ char** GeoJsonFile::GetMetadata() {
         }
     }
     */
+    GDALClose(this->data);
 }
 
 void GeoJsonFile::PrintGeoJsonAttributes() {
@@ -54,7 +60,7 @@ void GeoJsonFile::PrintGeoJsonAttributes() {
     }
 
     // Libérer les ressources
-    GDALClose(this->GetDATA());
+    GDALClose(this->data);
 }
 
 /*

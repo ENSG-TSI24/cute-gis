@@ -7,17 +7,17 @@ class AbstractData : public DataManagement
 {
 public:
     AbstractData();
-    AbstractData(char* Path);
+    AbstractData(const char* Path);
     ~AbstractData();
     // TODO LATER AbstractData(std::string Path, std::string CRS);
+    const char* GetPath() {return this->FilePath;}
+    GDALDriver* GetDriver() {return this->data->GetDriver();}
+    GDALDataset* GetDATA() {return this->data;}
 protected :
     GDALDataset* data;
 //    std::string FilePath;
-    char* FilePath;
+    const char* FilePath;
     // TODO LATER std::string CRS;
-    std::string GetPath() {return this->FilePath;}
-    GDALDriver* GetDriver() {return this->data->GetDriver();}
-    GDALDataset* GetDATA() {return this->data;}
     void closeDataSet() ;
 };
 

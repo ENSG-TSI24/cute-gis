@@ -4,7 +4,7 @@
 
 AbstractData::AbstractData() : data(nullptr), FilePath(nullptr) {}
 
-AbstractData::AbstractData(char* path): data(nullptr), FilePath(nullptr)
+AbstractData::AbstractData(const char* path): data(nullptr), FilePath(nullptr)
 {
     GDALAllRegister();
     this->FilePath = path;
@@ -12,5 +12,8 @@ AbstractData::AbstractData(char* path): data(nullptr), FilePath(nullptr)
 }
 
 AbstractData::~AbstractData() {
+    GDALClose(this->data);
+}
+void AbstractData::closeDataSet() {
     GDALClose(this->data);
 }

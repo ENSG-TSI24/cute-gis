@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.5)
 
 project(cute-gis VERSION 0.1 LANGUAGES CXX)
@@ -18,11 +19,9 @@ include_directories(${GDAL_INCLUDE_DIR})
 link_directories(${GDAL_LIBRARY_DIRS})
 
 set(PROJECT_SOURCES
-
 src/wfsdata.h
 src/wfsdata.cpp
 src/geotifffile.h src/geotifffile.cpp
-src/geojsonfile.h src/geojsonfile.cpp
 src/geojsonfile.h src/geojsonfile.cpp
 src/shpfile.h src/shpfile.cpp
 src/citygmlfile.h src/citygmlfile.cpp
@@ -34,22 +33,38 @@ src/vectordata.h src/vectordata.cpp
 )
 
 set(TEST_SOURCES
+    tests/testAbstractData.cpp
     tests/wfsdataTest.cpp
+    src/DataManagement.h
+    src/abstractdata.h src/abstractdata.cpp
+    src/geojsonfile.h src/geojsonfile.cpp
+    src/vectordata.h src/vectordata.cpp
     src/wfsdata.h
     src/wfsdata.cpp
 )
 
+add_executable(testAbstractData ${TEST_SOURCES})
+
 add_executable(wfsdataTest ${TEST_SOURCES})
+
 add_executable(cute-gis ${PROJECT_SOURCES})
 
 
 target_link_libraries(cute-gis PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${GDAL_LIBRARIES})
+
+target_link_libraries(testAbstractData PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
+
 target_link_libraries(wfsdataTest PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
 
 
 
+
 enable_testing()
+
+add_test(NAME testAbstractData COMMAND testAbstractData)
+
 add_test(NAME wfsdataTest COMMAND wfsdataTest)
+
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(cute-gis)
