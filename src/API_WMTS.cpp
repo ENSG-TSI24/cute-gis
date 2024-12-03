@@ -1,5 +1,5 @@
 
-#include "src/API_WMTS.h"
+#include "API_WMTS.h"
 #include <iostream>
 #include <gdal_priv.h>
 #include <cpl_conv.h> // Pour CPLMalloc()
