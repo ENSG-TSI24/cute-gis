@@ -25,6 +25,8 @@ set(PROJECT_SOURCES
         src/front/controller.cpp
         src/front/geojsonloader.h 
         src/front/geojsonloader.cpp
+        src/front/layer2d.h 
+        src/front/layer2d.cpp
         src/front/renderer.h 
         src/front/renderer.cpp
         src/front/objectloader.h 
