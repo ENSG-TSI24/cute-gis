@@ -21,9 +21,23 @@ jobs:
 
     - name: Install dependencies
       run: |
+        
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake qt6-base-dev qt6-tools-dev-tools libgdal-dev libgl1-mesa-dev libglu1-mesa-dev libgtest-dev
-        # Compiler Google Test
+        
+        sudo apt-get install -y build-essential cmake
+        
+        sudo apt-get install -y qtcreator qt6-tools-dev qt6-tools-dev-tools qt6-base-dev qt6-base-dev-tools qt6-declarative-dev qt6-multimedia-dev
+        
+        export PATH=/usr/lib/qt6/bin:$PATH
+        echo "export PATH=/usr/lib/qt6/bin:\$PATH" >> ~/.bashrc
+        source ~/.bashrc
+        
+        sudo apt-get install -y libgl1-mesa-dev libglew-dev libglfw3-dev libglu1-mesa-dev libgl-dev libxrandr-dev libxi-dev libxinerama-dev libx11-dev libglm-dev
+
+        sudo apt-get install -y gdal-bin libgdal-dev nlohmann-json3-dev
+
+        # Google Test
+        sudo apt-get install -y libgtest-dev
         cd /usr/src/gtest
         sudo cmake .
         sudo make
