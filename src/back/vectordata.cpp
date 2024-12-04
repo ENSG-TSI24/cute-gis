@@ -6,3 +6,5 @@ VectorData::VectorData()
 VectorData::VectorData(const char* path)
     : AbstractData(path)
 {}
+
+VectorData::~VectorData() {}

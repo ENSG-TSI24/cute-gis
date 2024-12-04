@@ -28,10 +28,11 @@ set(PROJECT_SOURCES
     src/back/citygmlfile.h src/back/citygmlfile.cpp
     src/back/rasterdata.h src/back/rasterdata.cpp
     src/back/DataManagement.h
-    src/back/dataextract/abstractdatavisitor.h src/back/dataextract/abstractdatavisitor.cpp
+    src/back/dataextract/abstractdatavisitor.h
     src/back/dataextract/geojsonvisitor.h src/back/dataextract/geojsonvisitor.cpp
     src/back/dataextract/intersectvisitor.h src/back/dataextract/intersectvisitor.cpp
     src/back/vectordata.h src/back/vectordata.cpp
+    src/back/abstractdata.h src/back/abstractdata.cpp
     # Frontend files
     src/front/mainwindow.cpp src/front/mainwindow.h src/front/mainwindow.ui
     src/front/camera.h src/front/camera.cpp

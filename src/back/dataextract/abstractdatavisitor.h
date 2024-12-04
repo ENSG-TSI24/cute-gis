@@ -6,11 +6,11 @@
 
 class AbstractDataVisitor {
 public:
-    virtual ~AbstractDataVisitor() = default;
-    virtual GDALDataset* visitGeojson(GDALDataset* geoJsonDataset);
-    virtual GDALDataset* visitSHP(GDALDataset* shpDataset);
-    virtual GDALDataset* visitSHP(GDALDataset* shpDataset, GDALDataset* shp_intersectedDataset);
-    virtual GDALDataset* visitGeojson(GDALDataset* geoJsonDataset, GDALDataset* geoJson_intersectedDataset);
+    virtual ~AbstractDataVisitor(){};
+    virtual void visitGeojson(GDALDataset* geoJsonDataset) = 0;
+    //virtual GDALDataset* visitSHP(GDALDataset* shpDataset);
+    //virtual GDALDataset* visitSHP(GDALDataset* shpDataset, GDALDataset* shp_intersectedDataset);
+    virtual GDALDataset* visitGeojson(GDALDataset* geoJsonDataset, GDALDataset* geoJson_intersectedDataset) = 0;
 };
 
 #endif

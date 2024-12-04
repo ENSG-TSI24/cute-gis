@@ -7,6 +7,8 @@ class RasterData : public AbstractData
 {
 public:
     RasterData();
+    RasterData(const char* path);
+    ~RasterData();
 
 };
 

@@ -11,8 +11,9 @@ private :
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;
     std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons;
-    void visit(GDALDataset data);
-    void setPoints(std::vector<std::pair<float, float>> points);
-    void setLineStrings(std::vector<std::vector<std::pair<float, float>>> linestrings);
-    void setPolygons(std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons);
+    void visitGeojson(GDALDataset* dataset);
+
+    std::vector<std::vector<std::vector<std::pair<float, float>>>> GetPolygons();
+    std::vector<std::vector<std::pair<float, float>>> GetLineStrings();
+    std::vector<std::pair<float, float>> GetPoints();
 };

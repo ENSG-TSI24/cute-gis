@@ -11,18 +11,10 @@ GeoJsonVisitor::GeoJsonVisitor(){
     this->polygons = std::vector<std::vector<std::vector<std::pair<float, float>>>>{};
 }
 GeoJsonVisitor::~GeoJsonVisitor(){
-    if (this->points.size() != 0) {
-        delete this->points;
-    }
-    if (this->linestrings.size() != 0) {
-        delete this->linestrings;
-    }
-    if (this->polygons.size() != 0) {
-        delete this->polygons;
-    }
+    delete this;
 }
 
-GeoJsonVisitor::visitGeojson(GDALDataset* dataset){
+void GeoJsonVisitor::visitGeojson(GDALDataset* dataset){
     if (!dataset) {
         throw std::runtime_error("Invalid GDALDataset pointer provided.");
     }
@@ -46,7 +38,7 @@ GeoJsonVisitor::visitGeojson(GDALDataset* dataset){
         switch (geometry->getGeometryType()) {
         case wkbPoint: {
             OGRPoint* point = geometry->toPoint();
-            this.points.emplace_back(point->getX(), point->getY());
+            this->points.emplace_back(point->getX(), point->getY());
             break;
         }
         case wkbLineString: {
@@ -55,7 +47,7 @@ GeoJsonVisitor::visitGeojson(GDALDataset* dataset){
             for (int i = 0; i < lineString->getNumPoints(); ++i) {
                 line.emplace_back(lineString->getX(i), lineString->getY(i));
             }
-            this.linestrings.push_back(line);
+            this->linestrings.push_back(line);
             break;
         }
         case wkbPolygon: {
@@ -72,7 +64,7 @@ GeoJsonVisitor::visitGeojson(GDALDataset* dataset){
                     polyRings.push_back(ringPoints);
                 }
             }
-            this.polygons.push_back(polyRings);
+            this->polygons.push_back(polyRings);
             break;
         }
         default:
@@ -85,26 +77,15 @@ GeoJsonVisitor::visitGeojson(GDALDataset* dataset){
     }
 }
 
-void GeojsonVisitor::setPoints(GDALDataset geoJsonDataset){
-    
-}
-void GeojsonVisitor::setLineStrings(GDALDataset geoJsonDataset){
-   
-    
-}
-void GeojsonVisitor::setPolygons(GDALDataset geoJsonDataset){
-    
+
+std::vector<std::pair<float, float>> GeoJsonVisitor::GetPoints(){
+    return this->points;
 }
 
-
-std::vector<std::pair<float, float>> GeojsonVisitor::getPoints(){
-    return this.points
+std::vector<std::vector<std::pair<float, float>>> GeoJsonVisitor::GetLineStrings(){
+    return this->linestrings;
 }
 
-std::vector<std::vector<std::pair<float, float>>> GeojsonVisitor::getLineStrings(){
-    return this.linestrings
-}
-
-std::vector<std::vector<std::vector<std::pair<float, float>>> GeojsonVisitor::getPolygons(){
-    return this.polygons
+std::vector<std::vector<std::vector<std::pair<float, float>>>> GeoJsonVisitor::GetPolygons(){
+    return this->polygons;
 }

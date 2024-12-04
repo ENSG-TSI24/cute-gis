@@ -8,7 +8,7 @@ class VectorData : public AbstractData
 public:
     VectorData();
     VectorData(const char* path);
-
+    ~VectorData();
 };
 
 #endif // VECTORDATA_H

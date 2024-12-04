@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 #include "../src/back/abstractdata.h"
 #include "../src/back/vectordata.h"
-#include "../src/back/geojsonfile.h"
 #include "gdal.h"
 #include "ogrsf_frmts.h"
 
@@ -28,15 +27,3 @@ TEST(AbstractDatatest, ConstructorWithParameters) {
 //    GDALClose(data.GetDATA());
 }
 
-TEST(GeoJsonFileTest, GettersGeoJsonFile) {
-    GDALAllRegister();
-    const char* inputFile = "../test_data/BASSIN_VERSANT.geojson";
-    GeoJsonFile data(inputFile);
-    GDALDataset *dataset = (GDALDataset *) GDALOpenEx(inputFile, GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
-    std::cout<<data.GetCRS()<<std::endl;
-//    std::cout<<data.GetMetadata()<<std::endl;
-//    data.PrintGeoJsonAttributes();
-//    char epsg = "2154";
-//    EXPECT_TRUE(data.GetCRS() == epsg);
-    GDALClose(dataset);
-}
