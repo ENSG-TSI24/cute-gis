@@ -3,6 +3,7 @@
 //#include <QApplication>
 // a basculer en fonction de flux
 #include "src/API_WMS.h"
+#include <filesystem>
 
 
 int main(int argc, char *argv[])
@@ -49,7 +50,8 @@ int main(int argc, char *argv[])
     wms.loadDataset();
     wms.isEmpty();
     wms.displayMetadata();
-    const char* outputFile = "/home/formation/minisig/cute-gis/src/tile_orthoimage.tiff";
+    std::filesystem::create_directories("../cute-gis/output_WMS");
+    const char* outputFile = "../cute-gis/output_WMS/tile_orthoimage.tiff";
 
     wms.downloadTileToGeoTiff(layerName,outputFile, 1,1,0);
     //return a.exec();
