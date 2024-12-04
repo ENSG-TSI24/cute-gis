@@ -45,17 +45,23 @@ void MainWindow::onOpenFile()
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
 
             //add layer2d
+            std::cout<<"############### ADD LAYER ################"<<std::endl;;
             Geojsonloader geo(filedata);
             renderer->lst_layers2d.push_back(geo);
 
+
             // add name layers
             std::string name = "Couche " + std::to_string(nb_layers);
+
+            renderer->lst_layers2d.back().name = name;
+
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
 
             renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
             renderer->setIs3D(false);
+
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->setObjectLoader(objectLoader);
@@ -93,6 +99,20 @@ void MainWindow::clearLayout(QLayout *layout) {
     }
 }
 
+void MainWindow::onCheckboxToggled(bool checked, std::string name) {
+
+    std::cout<<"-------------- checkbox clicked --------------"<<std::endl;
+    std::cout<<name<<std::endl;
+
+    for (auto& layer : renderer->lst_layers2d) {
+        if (layer.name == name) {
+            layer.isVisible = checked;
+        }
+    }
+
+}
+
+
 
 void MainWindow::setupCheckboxes(){
 
@@ -104,7 +124,6 @@ void MainWindow::setupCheckboxes(){
     QVBoxLayout *layout = new QVBoxLayout(ui->layer_manager);
 
     layout->setSizeConstraint(QLayout::SetMaximumSize);
-
     layout->setContentsMargins(10, 10, 10, 10);
 
     for (const auto& name : name_layers) {
@@ -117,8 +136,15 @@ void MainWindow::setupCheckboxes(){
                                 "            font-weight: normal;}"
                                 );
 
-        checkbox->setFixedHeight(20);
+        checkbox->setChecked(true);
 
+        connect(checkbox, &QCheckBox::toggled, [this, name](bool checked) {
+            onCheckboxToggled(checked, name);
+        });
+
+
+
+        checkbox->setFixedHeight(20);
         layout->addWidget(checkbox);
         layout->addSpacing(10);
     }
@@ -126,3 +152,4 @@ void MainWindow::setupCheckboxes(){
 
     ui->layer_manager->setLayout(layout);
 }
+

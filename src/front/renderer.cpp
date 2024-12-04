@@ -93,18 +93,15 @@ void Renderer::paintGL() {
     } else paintGl3D();
 }
 
-
 void Renderer::renderLayers2d(){
-    int i = 0;
     for (auto& layer: lst_layers2d){
-        std::cout<<"------------ Layer : "<<i<< " ------------\n";
-        layer.renderPoints();
-        layer.renderLinestrings();
-        layer.renderPolygons();
-        ++i;
+        if (layer.isVisible){
+            layer.renderPoints();
+            layer.renderLinestrings();
+            layer.renderPolygons();
+        }
     }
 }
-
 
 void Renderer::setObjectLoader(ObjectLoader* loader) {
     if (objectLoader) {
@@ -116,7 +113,6 @@ void Renderer::setObjectLoader(ObjectLoader* loader) {
 void Renderer::setIs3D(bool enabled) {
     is3D = enabled;
 }
-
 
 void Renderer::reset() {
 
