@@ -11,7 +11,7 @@
 #include <utility>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-
+#include <QMatrix4x4>
 
 struct BoundingBox {
     float minX, maxX, minY, maxY;
@@ -88,7 +88,10 @@ public:
     void setZoom(float zoom);
 
     void centerOnBoundingBox(const BoundingBox& bbox);
-
+    glm::vec3 getPosition();
+    QMatrix4x4 getViewMatrix(); // Matrice de vue pour le mode 3D
+    QMatrix4x4 getProjectionMatrix(int screenWidth, int screenHeight); // Projection 2D/3D
+    QMatrix4x4 getModelViewMatrix(const QMatrix4x4& modelMatrix);
 private:
     float x;
     float y;

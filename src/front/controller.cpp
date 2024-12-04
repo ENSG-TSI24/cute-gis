@@ -38,7 +38,7 @@ void Controller::ControllerwheelEvent(QWheelEvent* event) {
 
 
 void Controller::ControllerkeyPressEvent(QKeyEvent *event){
-    float step = 10.0;
+    float step = is3DMode ? 1.0f : 10.0f;
     switch (event->key()) {
         case( Qt::Key_Up):
             this->camera.moveUp(step);
@@ -86,7 +86,7 @@ void Controller::ControllerMouseReleaseEvent(QMouseEvent* event) {
 
 void Controller::ControllerMouseMoveEvent(QMouseEvent* event) {
     if (isDragging) {
-        float sensitivity = 0.25;
+        float sensitivity = is3DMode ? 0.02f : 0.25f;
         QPoint currentMousePosition = event->pos();
         QPoint delta = currentMousePosition - lastMousePosition;
         camera.moveRight(-delta.x() * sensitivity);
@@ -96,4 +96,6 @@ void Controller::ControllerMouseMoveEvent(QMouseEvent* event) {
     }
 }
 
-
+void Controller::set3DMode(bool is3D) {
+    is3DMode = is3D;
+}

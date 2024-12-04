@@ -31,7 +31,6 @@ public:
     void calculateBoundingBox();
     BoundingBox boundingBox;
     Controller* controller;
-
     std::vector<Layer2d> lst_layers2d;
 
 
@@ -48,8 +47,9 @@ private:
     void renderPoints();
     void renderLinestrings();
     void renderPolygons();
-
     void renderLayers2d();
+    void paintGl3D();
+    void paintGl2D();
 
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;

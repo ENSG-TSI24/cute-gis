@@ -54,44 +54,43 @@ void Renderer::resizeGL(int w, int h) {
     glLoadMatrixf(projectionMatrix.constData());
 }
 
+void Renderer::paintGl2D(){
+    controller->getCamera().update();
+    controller->set3DMode(false);
+    renderLayers2d();
+}
+
+void Renderer::paintGl3D(){
+    if (objectLoader) {
+            controller->set3DMode(true);
+
+            QMatrix4x4 modelMatrix;
+            modelMatrix.translate(0.0f, 0.0f, -3.0f);
+            modelMatrix.rotate(objectLoader->getAngle(), 0.0f, 1.0f, 0.0f);
+            modelMatrix.scale(0.005f);
+
+            QMatrix4x4 modelViewMatrix = controller->getCamera().getModelViewMatrix(modelMatrix);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadMatrixf(modelViewMatrix.constData());
+
+            glColor3f(1.0f, 1.0f, 0.0f);
+            glBegin(GL_TRIANGLES);
+
+            const auto& vertices = objectLoader->getVertices();
+            for (const auto& vertex : vertices) {
+                glVertex3f(vertex.x, vertex.y, vertex.z);
+            }
+            glEnd();
+        } else {
+            qWarning() << "No ObjectLoader assigned for 3D rendering.";
+        }
+}
+
 void Renderer::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    if (!objectLoader) {
-        controller->getCamera().update();
-        renderLayers2d();
-    } else if (objectLoader) {
-        QMatrix4x4 viewMatrix;
-
-        QVector3D cameraPosition(controller->getCamera().getX(),
-                                 controller->getCamera().getY(),
-                                 controller->getCamera().getZoom());
-        QVector3D target(0.0f, 0.0f, 0.0f);
-        QVector3D upVector(0.0f, 1.0f, 0.0f);
-        viewMatrix.lookAt(cameraPosition, target, upVector);
-
-        QMatrix4x4 modelMatrix;
-        modelMatrix.translate(0.0f, 0.0f, -3.0f);
-        modelMatrix.rotate(objectLoader->getAngle(), 0.0f, 1.0f, 0.0f);
-        modelMatrix.scale(0.005f);
-
-        QMatrix4x4 modelViewMatrix = viewMatrix * modelMatrix;
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(modelViewMatrix.constData());
-
-        glColor3f(1.0f, 1.0f, 0.0f);
-        glBegin(GL_TRIANGLES);
-
-        const auto& vertices = objectLoader->getVertices();
-        for (const auto& vertex : vertices) {
-            glVertex3f(vertex.x, vertex.y, vertex.z);
-        }
-
-        glEnd();
-    } else {
-        qWarning() << "No ObjectLoader assigned for 3D rendering.";
-    }
+    if (!is3D) {
+        paintGl2D();
+    } else paintGl3D();
 }
 
 
@@ -118,6 +117,7 @@ void Renderer::setIs3D(bool enabled) {
     is3D = enabled;
 }
 
+
 void Renderer::reset() {
 
     if (objectLoader) {
@@ -129,11 +129,6 @@ void Renderer::reset() {
 
     update();
 }
-
-
-
-
-
 
 void Renderer::mouseReleaseEvent(QMouseEvent* event) {
     controller->ControllerMouseReleaseEvent(event);
