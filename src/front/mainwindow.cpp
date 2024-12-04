@@ -5,9 +5,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDebug>
-
 #include "addFluxData.h"
-//#include "./ui_addFluxData.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -88,7 +86,7 @@ void MainWindow::on_actionFlux_Data_triggered() {
         QString layerURL = dialog.getLayerURL();    // Get the layer URL
 
         qDebug() << "Layer Name:" << layerName;
-        qDebug() << "Layer URL:" << layerURL;
+        qDebug() << "URL:" << layerURL;
     }
 }
 
