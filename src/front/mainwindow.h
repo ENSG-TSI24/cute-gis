@@ -9,6 +9,7 @@
 #include "geojsonloader.h"
 
 #include <QVBoxLayout>
+#include <QCheckBox>
 #include <QMessageBox>
 #include <QFileDialog>
 
@@ -30,6 +31,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    void setupCheckboxes();
     Renderer* renderer;
     QTimer* refreshTimer;
     void onOpenFile();

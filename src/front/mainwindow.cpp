@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     , refreshTimer(new QTimer(this))
 {
     ui->setupUi(this);
+    setupCheckboxes();
 
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
 }
@@ -45,12 +46,6 @@ void MainWindow::onOpenFile()
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
             Geojsonloader geo(filedata);
             renderer->lst_layers2d.push_back(geo);
-
-//            renderer->setPoints(geo.getPoints());
-//            renderer->setLinestrings(geo.getLinestrings());
-//            renderer->setPolygons(geo.getPolygons());
-
-//            renderer->calculateBoundingBox();
             renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
 
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
@@ -79,4 +74,27 @@ void MainWindow::onOpenFile()
     if (!refreshTimer->isActive()) {
         refreshTimer->start(16); // Rafraîchissement à ~60 FPS
     }
+}
+
+void MainWindow::setupCheckboxes(){
+
+    std::vector<std::string> names = {"Option 1", "Option 2", "Option 3"};
+    QVBoxLayout *layout = new QVBoxLayout(ui->layer_manager);
+    layout->setSpacing(0);
+
+    for (const auto& name : names) {
+        QCheckBox *checkbox = new QCheckBox(QString::fromStdString(name), ui->layer_manager);
+
+        checkbox->setStyleSheet("QCheckBox::indicator { width: 16px; height: 16px; }"
+                                "QCheckBox { padding-left: 5px; "
+                                "            font-family: Sans Serif;"
+                                "            font-size:    12pt; "
+                                "            font-weight: normal;}"
+                                );
+
+
+        layout->addWidget(checkbox);
+    }
+
+    ui->layer_manager->setLayout(layout);
 }
