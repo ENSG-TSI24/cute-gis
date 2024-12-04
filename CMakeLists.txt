@@ -25,13 +25,12 @@ set(PROJECT_SOURCES
     main.cpp
     # Backend files
     src/back/wfsdata.h src/back/wfsdata.cpp
-    src/back/geotifffile.h src/back/geotifffile.cpp
-    src/back/geojsonfile.h src/back/geojsonfile.cpp
-    src/back/shpfile.h src/back/shpfile.cpp
     src/back/citygmlfile.h src/back/citygmlfile.cpp
     src/back/rasterdata.h src/back/rasterdata.cpp
     src/back/DataManagement.h
-    src/back/abstractdata.h src/back/abstractdata.cpp
+    src/back/dataextract/abstractdatavisitor.h src/back/dataextract/abstractdatavisitor.cpp
+    src/back/dataextract/geojsonvisitor.h src/back/dataextract/geojsonvisitor.cpp
+    src/back/dataextract/intersectvisitor.h src/back/dataextract/intersectvisitor.cpp
     src/back/vectordata.h src/back/vectordata.cpp
     # Frontend files
     src/front/mainwindow.cpp src/front/mainwindow.h src/front/mainwindow.ui
@@ -49,7 +48,6 @@ set(TEST_SOURCES
     tests/wfsdataTest.cpp
     src/back/DataManagement.h
     src/back/abstractdata.h src/back/abstractdata.cpp
-    src/back/geojsonfile.h src/back/geojsonfile.cpp
     src/back/vectordata.h src/back/vectordata.cpp
     src/back/wfsdata.h src/back/wfsdata.cpp
 )
