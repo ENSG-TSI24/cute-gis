@@ -61,22 +61,13 @@ void Renderer::paintGL() {
         controller->getCamera().update();
         renderLayers2d();
     } else if (objectLoader) {
-        QMatrix4x4 viewMatrix;
-
-        QVector3D cameraPosition(controller->getCamera().getX(),
-                                 controller->getCamera().getY(),
-                                 controller->getCamera().getZoom());
-        QVector3D target(0.0f, 0.0f, 0.0f);
-        QVector3D upVector(0.0f, 1.0f, 0.0f);
-        viewMatrix.lookAt(cameraPosition, target, upVector);
 
         QMatrix4x4 modelMatrix;
         modelMatrix.translate(0.0f, 0.0f, -3.0f);
         modelMatrix.rotate(objectLoader->getAngle(), 0.0f, 1.0f, 0.0f);
         modelMatrix.scale(0.005f);
 
-        QMatrix4x4 modelViewMatrix = viewMatrix * modelMatrix;
-
+        QMatrix4x4 modelViewMatrix = controller->getCamera().getModelViewMatrix(modelMatrix);
         glMatrixMode(GL_MODELVIEW);
         glLoadMatrixf(modelViewMatrix.constData());
 
@@ -98,7 +89,7 @@ void Renderer::paintGL() {
 void Renderer::renderLayers2d(){
     int i = 0;
     for (auto& layer: lst_layers2d){
-        std::cout<<"------------ Layer : "<<i<< " ------------\n";
+        //std::cout<<"------------ Layer : "<<i<< " ------------\n";
         layer.renderPoints();
         layer.renderLinestrings();
         layer.renderPolygons();

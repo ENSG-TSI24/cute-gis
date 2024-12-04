@@ -27,9 +27,9 @@ Camera& Controller::getCamera() {
 void Controller::ControllerwheelEvent(QWheelEvent* event) {
     float zoomStep = 1.0f;
     if (event->angleDelta().y() > 0) {
-        camera.setZoom(zoomStep);
+        camera.setZ(zoomStep);
     } else if (event->angleDelta().y() < 0) {
-        camera.setZoom(-zoomStep);
+        camera.setZ(-zoomStep);
     }
 
     camera.update();
@@ -38,7 +38,7 @@ void Controller::ControllerwheelEvent(QWheelEvent* event) {
 
 
 void Controller::ControllerkeyPressEvent(QKeyEvent *event){
-    float step = 10.0;
+    float step = is2DMode ? 10.0f : 1.0f;
     switch (event->key()) {
         case( Qt::Key_Up):
             this->camera.moveUp(step);
@@ -86,7 +86,7 @@ void Controller::ControllerMouseReleaseEvent(QMouseEvent* event) {
 
 void Controller::ControllerMouseMoveEvent(QMouseEvent* event) {
     if (isDragging) {
-        float sensitivity = 0.25;
+        float sensitivity = is2DMode ? 0.25f : 0.02f;
         QPoint currentMousePosition = event->pos();
         QPoint delta = currentMousePosition - lastMousePosition;
         camera.moveRight(-delta.x() * sensitivity);
@@ -96,4 +96,6 @@ void Controller::ControllerMouseMoveEvent(QMouseEvent* event) {
     }
 }
 
-
+void Controller::set2DMode(bool is2D) {
+    is2DMode = is2D;
+}

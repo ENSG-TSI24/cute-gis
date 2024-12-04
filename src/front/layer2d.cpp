@@ -90,6 +90,6 @@ void Layer2d::calculateBoundingBox() {
 
     // Stocker la bounding box
     boundingBox = {minX, maxX, minY, maxY};
-    std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
+    //std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
 }
 
