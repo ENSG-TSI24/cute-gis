@@ -14,7 +14,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // Connecte l'action d'ouverture de fichier
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
+
+    // Configuration initiale de l'interface OpenGL
+    if (!ui->openGLWidget->layout()) {
+        auto* layout = new QVBoxLayout(ui->openGLWidget);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->addWidget(renderer);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -26,8 +34,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::onOpenFile()
 {
-    // Ouvrir un fichier avec QFileDialog
-        QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", "GeoJSON Files All Files (*.*);; (*.geojson);;OBJ Files (*.obj)");
+    QString filePath = QFileDialog::getOpenFileName(
+        this,
+        "Open File ...",
+        "../cute-gis/data",
+        "GeoJSON Files (*.geojson);;OBJ Files (*.obj);;TIF Files (*.tif *.tiff);;All Files (*.*)"
+    );
 
     if (filePath.isEmpty()) {
         qWarning() << "No file selected!";
@@ -36,9 +48,7 @@ void MainWindow::onOpenFile()
 
     qDebug() << "Selected File:" << filePath;
 
-    // Charger le fichier sélectionné
     const std::string filedata = filePath.toStdString();
-
     renderer->reset();
 
     try {
@@ -53,6 +63,8 @@ void MainWindow::onOpenFile()
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
+        } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
+            renderer->loadGeoTiff(filedata);
         } else {
             throw std::runtime_error("Unsupported file format!");
         }
@@ -61,6 +73,7 @@ void MainWindow::onOpenFile()
         return;
     }
 
+    // Ajout ou mise à jour du renderer dans le layout
     if (!ui->openGLWidget->layout()) {
         auto* layout = new QVBoxLayout(ui->openGLWidget);
         layout->setContentsMargins(0, 0, 0, 0);

@@ -1,6 +1,8 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
+
+
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QTimer>

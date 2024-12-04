@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+
 #include "glm/glm.hpp"
 #include "glm/gtx/transform.hpp"
 
@@ -13,9 +14,35 @@
 #include <QOpenGLFunctions>
 
 
+/*struct BoundingBox {
+    float minX, maxX, minY, maxY;
+};*/
+
 struct BoundingBox {
     float minX, maxX, minY, maxY;
+
+    // Surcharge de l'opérateur []
+    float& operator[](size_t index) {
+        switch (index) {
+            case 0: return minX;
+            case 1: return maxX;
+            case 2: return minY;
+            case 3: return maxY;
+            default: throw std::out_of_range("Index out of range");
+        }
+    }
+
+    const float& operator[](size_t index) const {
+        switch (index) {
+            case 0: return minX;
+            case 1: return maxX;
+            case 2: return minY;
+            case 3: return maxY;
+            default: throw std::out_of_range("Index out of range");
+        }
+    }
 };
+
 
 /**
  * \class Camera

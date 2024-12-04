@@ -4,10 +4,8 @@
 #include <QOpenGLFunctions>
 #include <glm/vec3.hpp>
 
-
-
 Renderer::Renderer(QWidget* parent)
-    : QOpenGLWidget(parent), objectLoader(nullptr) {
+    : QOpenGLWidget(parent), objectLoader(nullptr), geoTiffTextureId(0) {
     controller = new Controller(this);
     setFocusPolicy(Qt::StrongFocus);
     is3D = false;
@@ -18,29 +16,47 @@ Renderer::~Renderer() {
         delete objectLoader;
     }
     delete controller;
+
+    // Libérer la texture GeoTIFF si elle a été créée
+    if (geoTiffTextureId != 0) {
+        glDeleteTextures(1, &geoTiffTextureId);
+    }
 }
 
-void Renderer::keyPressEvent(QKeyEvent *event){
+void Renderer::keyPressEvent(QKeyEvent* event) {
     this->controller->ControllerkeyPressEvent(event);
 }
 
 void Renderer::wheelEvent(QWheelEvent* event) {
     this->controller->ControllerwheelEvent(event);
 }
-//void  Renderer::mousePressEvent(QMouseEvent *event){
-  //  this->controller->ControllerQMouseEvent(event);
-//}
 
 void Renderer::mousePressEvent(QMouseEvent* event) {
     controller->ControllerMousePressEvent(event);
 }
 
-void Renderer::initializeGL() {
-    initializeOpenGLFunctions();
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-    glEnable(GL_DEPTH_TEST);
+void Renderer::mouseReleaseEvent(QMouseEvent* event) {
+    controller->ControllerMouseReleaseEvent(event);
 }
+
+void Renderer::mouseMoveEvent(QMouseEvent* event) {
+    controller->ControllerMouseMoveEvent(event);
+    update(); // Redessine la scène après un déplacement
+}
+
+
+void Renderer::initializeGL() {
+
+
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+
+    GLint maxTextureSize;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    qDebug() << "Maximum texture size supported by OpenGL:" << maxTextureSize;
+}
+
+
 
 void Renderer::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
@@ -62,6 +78,7 @@ void Renderer::paintGL() {
         renderPoints();
         renderLinestrings();
         renderPolygons();
+        renderGeoTiff(); // Appeler le rendu GeoTIFF ici
     } else if (objectLoader) {
         QMatrix4x4 viewMatrix;
 
@@ -133,6 +150,60 @@ void Renderer::renderPolygons() {
     }
 }
 
+void Renderer::renderGeoTiff() {
+    if (geoTiffTextureId == 0) return; // Rien à rendre si la texture n'existe pas
+
+    // Accès explicite aux membres de boundingBox
+    double xMin = boundingBox.minX;
+    double xMax = boundingBox.maxX;
+    double yMin = boundingBox.minY;
+    double yMax = boundingBox.maxY;
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, geoTiffTextureId);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(xMin, yMin, 0.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(xMax, yMin, 0.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(xMax, yMax, 0.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(xMin, yMax, 0.0f);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+
+void Renderer::reset() {
+    points.clear();
+    linestrings.clear();
+    polygons.clear();
+
+    if (objectLoader) {
+        delete objectLoader;
+        objectLoader = nullptr;
+    }
+
+    if (geoTiffTextureId != 0) {
+        glDeleteTextures(1, &geoTiffTextureId);
+        geoTiffTextureId = 0;
+    }
+
+    is3D = false;
+    update(); // Redessine la scène après réinitialisation
+}
+
+void Renderer::setPoints(std::vector<std::pair<float, float>> points) {
+    this->points = std::move(points); // Évite une copie inutile
+}
+
+void Renderer::setLinestrings(std::vector<std::vector<std::pair<float, float>>> linestrings) {
+    this->linestrings = std::move(linestrings); // Évite une copie inutile
+}
+
+void Renderer::setPolygons(std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons) {
+    this->polygons = std::move(polygons); // Évite une copie inutile
+}
+
 void Renderer::calculateBoundingBox() {
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
@@ -171,57 +242,41 @@ void Renderer::calculateBoundingBox() {
 
     // Stocker la bounding box
     boundingBox = {minX, maxX, minY, maxY};
-    std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
-}
-
-void Renderer::setPoints(std::vector<std::pair<float, float>> points) {
-    this->points = points;
-}
-
-void Renderer::setLinestrings(std::vector<std::vector<std::pair<float, float>>> linestrings) {
-    this->linestrings = linestrings;
-}
-
-void Renderer::setPolygons(std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons) {
-    this->polygons = polygons;
+    std::cout << "BoundingBox - minX:" << minX << ", maxX:" << maxX
+              << ", minY:" << minY << ", maxY:" << maxY << std::endl;
 }
 
 void Renderer::setObjectLoader(ObjectLoader* loader) {
     if (objectLoader) {
-        delete objectLoader;
+        delete objectLoader; // Supprime l'ancien loader
     }
-    objectLoader = loader;
+    objectLoader = loader; // Attribue le nouveau loader
+    update(); // Redessine la scène
 }
 
 void Renderer::setIs3D(bool enabled) {
     is3D = enabled;
+    update(); // Redessine la scène avec les nouvelles configurations
 }
 
-void Renderer::reset() {
-    points.clear();
-    linestrings.clear();
-    polygons.clear();
-
-    if (objectLoader) {
-        delete objectLoader;
-        objectLoader = nullptr;
+void Renderer::loadGeoTiff(const std::string& filePath) {
+    if (!geoTiffLoader.loadGeoTiff(filePath)) {
+        throw std::runtime_error("Failed to load GeoTIFF file: " + filePath);
     }
 
-    is3D = false;
+    if (geoTiffTextureId != 0) {
+        glDeleteTextures(1, &geoTiffTextureId);
+    }
 
-    update();
+    textureCreator = new TextureGeoTiff();
+    geoTiffTextureId = textureCreator->createTextureFromRaster(
+        geoTiffLoader.getRasterData(),
+        geoTiffLoader.getWidth(),
+        geoTiffLoader.getHeight()
+    );
+
+    calculateBoundingBox();
+    update(); // Redessine la scène
 }
 
 
-
-
-
-
-void Renderer::mouseReleaseEvent(QMouseEvent* event) {
-    controller->ControllerMouseReleaseEvent(event);
-}
-
-void Renderer::mouseMoveEvent(QMouseEvent* event) {
-    controller->ControllerMouseMoveEvent(event);
-    update(); // Redessine la scène après un déplacement
-}
