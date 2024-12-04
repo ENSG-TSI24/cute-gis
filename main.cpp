@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     //wmts.displayMetadata();
     wmts.open(wmsUrl);
     //wmts.getData(layerName);
-    wmts.ExportToGeoJSON(123,"../mini-gis/test.geojson");
+    wmts.ExportToGeoJSON(123,"../cute-gis/test.geojson");
     //return a.exec();
     return 0;
 
