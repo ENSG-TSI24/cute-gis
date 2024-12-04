@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void clearLayout(QLayout *layout);
 
 
 
@@ -36,6 +37,8 @@ private:
     QTimer* refreshTimer;
     void onOpenFile();
     ObjectLoader *objectLoader = nullptr;
+    std::vector<std::string> name_layers;
+    int nb_layers = 0;
 
 };
 
