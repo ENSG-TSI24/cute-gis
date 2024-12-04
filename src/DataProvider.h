@@ -6,13 +6,12 @@
 class DataProvider {
     public:
         DataProvider() ;
-
         GDALDataset* getDataset() ;
 
         // Get Metadata
         void displayMetadata();
 
-        bool isEmpty();
+        bool isEmpty() ;
 
         // Crucial to free memory, otherwise bugs
         ~DataProvider() ;

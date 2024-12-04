@@ -12,6 +12,7 @@
      GDALAllRegister();
  }
 
+
  void API_WMTS::loadDataset() {
      // Ouvrir le dataset avec GDAL pour un flux WMS
      m_dataset = static_cast<GDALDataset*>(
@@ -24,6 +25,7 @@
          exit(1); // ** to be replaced later
      }
  }
+
 
  QImage API_WMTS::getTileAsImage(const char* layerName, int zoom, int row, int col) {
      std::ostringstream tileUrlStream;

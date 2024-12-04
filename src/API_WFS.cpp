@@ -12,7 +12,7 @@ API_WFS::API_WFS(const char* link) : url(link)
 void API_WFS::loadDataset() {
     // Ouvrir le dataset avec GDAL pour un flux WMS
     m_dataset = static_cast<GDALDataset*>(
-        GDALOpenEx(url,GDAL_OF_ALL, nullptr, nullptr, nullptr));
+        GDALOpenEx(url,GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
 
     /* Display error message and exit program if dataset fails to open correctly ** to be replaced
         when the front end team finishes ( to reinsert or close window) */
@@ -22,27 +22,12 @@ void API_WFS::loadDataset() {
     }
 }
 
-void API_WFS::open(const char* link)
-{
-    GDALAllRegister();
-    // Open the dataset using the GDALDataset class
-    m_dataset = static_cast<GDALDataset*>(
-        GDALOpenEx(link,
-                   GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
-
-    // Display error message and exit program if dataset fails to open correctly
-    if (m_dataset == nullptr)
-    {
-        std::cout << "Failed to open dataset." << std::endl;
-        exit(1);
-    }
-}
 
 void API_WFS::getData(const char* name)
 {
 
     std::cout << "oui";
-    if (m_dataset == nullptr)
+    if (isEmpty())
     {
         std::cout << "Dataset is not opened." << std::endl;
         return;
@@ -86,7 +71,7 @@ void API_WFS::getData(const char* name)
 
     while ((feature = layer->GetNextFeature()) != nullptr)
     {
-  /*      // Access feature definition
+       // Access feature definition
         OGRFeatureDefn* featureDefinition = layer->GetLayerDefn();
 
         for (int i = 0; i < featureDefinition->GetFieldCount(); i++)
@@ -110,7 +95,7 @@ void API_WFS::getData(const char* name)
                     break;
             }
         }
-*/
+
         // Access geometry and check if it's a point
         OGRGeometry* geometry = feature->GetGeometryRef();
         if (geometry != nullptr && wkbFlatten(geometry->getGeometryType()) == wkbPoint)
@@ -133,9 +118,37 @@ void API_WFS::getData(const char* name)
 
 }
 
+
+OGRLayer* API_WFS::GetLayer(const char* name)
+{
+    if (isEmpty())
+    {
+        std::cout << "Dataset is not opened." << std::endl;
+        return nullptr;
+    }
+
+    if (std::string(name).empty())
+    {
+        // Automatically select the only layer if there's just one
+        if (m_dataset->GetLayerCount() == 1)
+        {
+            return m_dataset->GetLayer(0);
+        }
+        else
+        {
+            std::cout << "Multiple layers present. Specify a layer name." << std::endl;
+            return nullptr;
+        }
+    }
+
+    // Get the layer by name
+    return m_dataset->GetLayerByName(name);
+}
+
+
 std::string API_WFS::ExportToGeoJSON(int n, const std::string& outputFilePath)
 {
-    if (m_dataset == nullptr)
+    if (isEmpty())
     {
         std::cout << "Dataset is not opened." << std::endl;
         return "";
@@ -211,29 +224,4 @@ std::string API_WFS::ExportToGeoJSON(int n, const std::string& outputFilePath)
     VSIUnlink("/vsimem/temp.geojson");
 
     return geoJsonContent;
-}
-OGRLayer* API_WFS::GetLayer(const char* name)
-{
-    if (m_dataset == nullptr)
-    {
-        std::cout << "Dataset is not opened." << std::endl;
-        return nullptr;
-    }
-
-    if (std::string(name).empty())
-    {
-        // Automatically select the only layer if there's just one
-        if (m_dataset->GetLayerCount() == 1)
-        {
-            return m_dataset->GetLayer(0);
-        }
-        else
-        {
-            std::cout << "Multiple layers present. Specify a layer name." << std::endl;
-            return nullptr;
-        }
-    }
-
-    // Get the layer by name
-    return m_dataset->GetLayerByName(name);
 }

@@ -12,34 +12,46 @@ GDALDataset* DataProvider::getDataset() {
     return m_dataset;
 }
 
-// Get Metadata
 void DataProvider::displayMetadata() {
     if (isEmpty()) {
-            std::cout << "Dataset is empty or not loaded." << std::endl;
+        std::cout << "Dataset is empty or not loaded." << std::endl;
+        return;
+    }
+
+    // Cas général pour WMS et WMTS (métadonnées classiques)
+    const char* keys[] = {"SUBDATASETS", "LAYERS", nullptr};
+    bool metadataFound = false;
+
+    for (int k = 0; keys[k] != nullptr; ++k) {
+        m_metadata = m_dataset->GetMetadata(keys[k]);
+        if (m_metadata != nullptr) {
+            metadataFound = true;
+            std::cout << "Metadata group: " << keys[k] << std::endl;
+            for (int i = 0; m_metadata[i] != nullptr; ++i) {
+                std::cout << "  " << m_metadata[i] << std::endl;
+            }
+        }
+    }
+
+    // Si aucune métadonnée n'a été trouvée pour WMS/WMTS, essayons pour WFS
+    if (!metadataFound) {
+        std::cout << "No WMS/WMTS metadata found. Checking for WFS layers..." << std::endl;
+
+        int layerCount = m_dataset->GetLayerCount();
+        if (layerCount == 0) {
+            std::cout << "No layers found in the dataset." << std::endl;
             return;
         }
-    else {
-        m_metadata = m_dataset->GetMetadata("SUBDATASETS");
-    // ** change it later to be displayed in a Qt textbox
 
-
-    if (m_metadata == nullptr) {
-        std::cout << "no metadata for this WMS dataset" <<std::endl;
-
-    } else {
-        const char* keys[] = {"SUBDATASETS", "LAYERS", nullptr}; // Essayez d'autres clés ici
-        for (int k = 0; keys[k] != nullptr; ++k) {
-            std::cout << "Checking metadata group: " << keys[k] << std::endl;
-
-            m_metadata = m_dataset->GetMetadata(keys[k]);
-            if (m_metadata != nullptr) {
-                for (int i = 0; m_metadata[i] != nullptr; ++i) {
-                    std::cout << m_metadata[i] << std::endl;
-                }
-
-    }
-    }
-}
+        std::cout << "Number of layers (FeatureTypes): " << layerCount << std::endl;
+        for (int i = 0; i < layerCount; ++i) {
+            OGRLayer* layer = m_dataset->GetLayer(i);
+            if (layer != nullptr) {
+                std::cout << "  Layer " << i + 1 << ": " << layer->GetName() << std::endl;
+            } else {
+                std::cout << "  Layer " << i + 1 << ": [Error accessing layer]" << std::endl;
+            }
+        }
     }
 }
 

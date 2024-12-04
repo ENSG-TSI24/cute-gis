@@ -41,19 +41,32 @@ int main(int argc, char *argv[])
 //    MainWindow w;
     w.show(); */
 
-
-    const char* wmsUrl = "WFS:https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities";
+    
+    const char* wfsUrl = "WFS:https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities";
 
     const char* layerName = "ADMINEXPRESS-COG.LATEST:chflieu_commune";
 
-    API_WFS wmts(wmsUrl);
-    wmts.loadDataset();
-    wmts.isEmpty();
-    //wmts.displayMetadata();
-    wmts.open(wmsUrl);
-    //wmts.getData(layerName);
-    wmts.ExportToGeoJSON(123,"../mini-gis/test.geojson");
+    API_WFS wfs(wfsUrl);
+    wfs.loadDataset();
+    wfs.isEmpty();
+    wfs.getDataset();
+    wfs.displayMetadata();
+   // wfs.getData(layerName);
+    wfs.ExportToGeoJSON(123,"../cute-gis/test.geojson");
     //return a.exec();
+    
+
+    /*const char* wmsUrl = "WMS:https://data.geopf.fr/wms-r?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
+
+        const char* layerName = "OI.OrthoimageCoverage";
+
+        API_WMS wms(wmsUrl);
+        wms.loadDataset();
+        wms.isEmpty();
+        wms.displayMetadata();
+        const char* outputFile = "/home/formation/minisig/cute-gis/src/tile_orthoimage.tiff";
+
+        wms.downloadTileToGeoTiff(layerName,outputFile, 1,1,0);*/
     return 0;
 
 }

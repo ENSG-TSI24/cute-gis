@@ -47,14 +47,26 @@ set(TEST_SOURCES_WMTS
     src/DataProvider.cpp
     src/DataProvider.h
 )
+
+set(TEST_SOURCES_WFS
+    tests/API_WFSTest.cpp
+    src/API_WFS.cpp
+    src/API_WFS.h
+    src/DataProvider.cpp
+    src/DataProvider.h
+)
 add_executable(API_WMSTest ${TEST_SOURCES})
 target_link_libraries(API_WMSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
+
+add_executable(API_WFSTest ${TEST_SOURCES_WFS})
+target_link_libraries(API_WFSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 
 add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
 target_link_libraries(API_WMTSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 
 add_test(NAME API_WMSTest COMMAND API_WMSTest)
 add_test(NAME API_WMTSTest COMMAND API_WMTSTest)
+add_test(NAME API_WFSTest COMMAND API_WFSTest)
 
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
