@@ -41,6 +41,7 @@ set(PROJECT_SOURCES
     src/front/renderer.h src/front/renderer.cpp
     src/front/objectloader.h src/front/objectloader.cpp
     src/lib/tiny_obj_loader.h src/lib/tiny_obj_loader.cc
+    src/front/layer2d.h src/front/layer2d.cpp
 )
 
 set(TEST_SOURCES
