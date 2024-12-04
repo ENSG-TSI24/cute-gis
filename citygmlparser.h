@@ -6,13 +6,17 @@
 #include <iostream>
 #include <fstream>
 #include <gdal/ogrsf_frmts.h>
+#include <glm/glm.hpp>
+
+#include <nlohmann/json.hpp>  //sudo apt install nlohmann-json3-dev
+using json = nlohmann::json;
 
 struct Feature {
     unsigned int id;
     std::string objectName;
     std::map<std::string, std::string> attributes;
-    std::vector<float> vertices;  // Scaled vertices (between -0.85f and 0.85f)
-    std::vector<float> VerticesGeoreferenced;  // Original Lambert-93 vertices (x, y, z)
+    std::vector<glm::vec3> vertices;  // Scaled vertices (between -0.85f and 0.85f)
+    std::vector<glm::vec3> VerticesGeoreferenced;  // Original Lambert-93 vertices (x, y, z)
     std::vector<unsigned int> faces;
     std::tuple<double, double, double> lowerCorner; // Lower corner of bounding box (xmin, ymin)
     std::tuple<double, double, double> upperCorner; // Upper corner of bounding box (xmax, ymax)
@@ -44,6 +48,7 @@ public:
 
     CityGMLParser();
     ~CityGMLParser();
+    std::vector<std::vector<std::vector<glm::vec3>>> processCoordinates(json& data);
     bool openFile(const std::string& filePath);
     void parseFeatures();
     void exportToObj(float s, const std::string& filePath);

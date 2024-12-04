@@ -1,4 +1,8 @@
 #include "citygmlparser.h"
+#include <vector>
+#include <glm/gtx/string_cast.hpp>
+#include <nlohmann/json.hpp>  //sudo apt install nlohmann-json3-dev
+using json = nlohmann::json;
 
 CityGMLParser::CityGMLParser() : dataset(nullptr) {
     xMin = 10000000;
@@ -241,83 +245,72 @@ void CityGMLParser::parseFeatures() {
         std::cerr << "No dataset loaded for parsing!" << std::endl;
         return;
     }
-    static OGRCoordinateTransformation* transform = createLambertTransformation();
+
     OGRLayer* layer = dataset->GetLayer(0);
     if (!layer) {
         std::cerr << "No layers found in the CityGML file!" << std::endl;
         return;
     }
+    OGRFeature* ogrfeature = layer->GetFeature(0);
+    int nbfeatures = layer -> GetFeatureCount();
 
-    OGRFeature* ogrFeature;
-    unsigned int vertexOffset = 0;
+    OGRGeometry* geometry = ogrfeature->GetGeometryRef();
+    std::cout << nbfeatures << std::endl;
+    std::cout << geometry -> getCoordinateDimension() << std::endl;
 
-    while ((ogrFeature = layer->GetNextFeature()) != nullptr) {
-        Feature feature;
-        feature.id = ogrFeature->GetFID();
-        feature.objectName = "Feature_" + std::to_string(ogrFeature->GetFID());
 
-        // Parse attributes
-        for (int i = 0; i < ogrFeature->GetFieldCount(); i++) {
-            const char* fieldName = ogrFeature->GetFieldDefnRef(i)->GetNameRef();
-            const char* fieldValue = ogrFeature->GetFieldAsString(i);
-            feature.attributes[fieldName] = fieldValue;
-        }
 
-        // Parse geometry
-        OGRGeometry* geometry = ogrFeature->GetGeometryRef();
-        char* wkt = nullptr;
-        geometry->exportToWkt(&wkt);
 
-        // Check if the geometry is 3D
-        int dimension = geometry->getCoordinateDimension();
-        if (dimension == 3) {
-            std::cout << "3D Geometry WKT: " << wkt << std::endl;
-        } else {
-            std::cout << "2D Geometry WKT: " << wkt << std::endl;
-        }
+    std::string tab = geometry -> exportToJson();
 
-        CPLFree(wkt);
+    json jsondata = json::parse(tab);
 
-        extractGeometry(geometry, feature.vertices, feature.faces, vertexOffset);
-        vertexOffset += feature.vertices.size() / 3;
-        feature.VerticesGeoreferenced = feature.vertices;
+    std::vector<std::vector<std::vector<glm::vec3>>> RepairedTab = processCoordinates(jsondata);
+    std::cout << glm::to_string(RepairedTab.at(0).at(0).at(0)) << std::endl;
 
-        // Assuming lowerCorner and upperCorner are extracted from the GML bounding box
-        OGRGeometry* boundedBy = ogrFeature->GetGeometryRef(); // Get the bounding box geometry (Envelope)
-        if (boundedBy) {
-            OGREnvelope env;
-            boundedBy->getEnvelope(&env); // Get the envelope of the bounding box
 
-            // Transform the lower corner (considering 3D)
-            double lowerLon = env.MinY;
-            double lowerLat = env.MinX;
-            double lowerZ = 0.0; // Default value for Z
+}
 
-            if (SRSMatching) {
-                transform->Transform(1, &lowerLon, &lowerLat); // Transform to Lambert-93
+std::vector<std::vector<std::vector<glm::vec3>>> CityGMLParser::processCoordinates(json& data) {
+    std::vector<std::vector<std::vector<glm::vec3>>> multipolygonList;
+    if (data.contains("coordinates")) {
+
+        for (auto& multiPolygon : data["coordinates"]) {
+            std::vector<std::vector<glm::vec3>> polygonList;
+            for (auto& polygon : multiPolygon) {
+                // Flatten the list of 2D points into a single list of floats
+                std::vector<float> flatList;
+                for (auto& coordinate : polygon) {
+                    for (auto& value : coordinate) {
+                        flatList.push_back(value);
+                    }
+                }
+
+                // Parse the flat list into 3D points
+                std::vector<glm::vec3> points3D;
+                for (size_t i = 0; i < flatList.size(); i += 3) {
+                    float x = flatList[i];
+                    float y = flatList[i + 1];
+                    float z = flatList[i + 2];
+                    points3D.push_back({x, y, z});
+                }
+
+                // Replace the original polygon with the new list of 3D points
+                polygonList.push_back(points3D);
             }
-            // Optionally get Z-value from bounding box if it is 3D (for example, via getZ() or custom logic)
-            feature.lowerCorner = std::make_tuple(lowerLon, lowerLat, lowerZ);
-
-            // Transform the upper corner (considering 3D)
-            double upperLon = env.MaxY;
-            double upperLat = env.MaxX;
-            double upperZ = 0.0; // Default value for Z
-
-            if (SRSMatching) {
-                transform->Transform(1, &upperLon, &upperLat); // Transform to Lambert-93
-            }
-            // Optionally get Z-value from bounding box if it is 3D (for example, via getZ() or custom logic)
-            feature.upperCorner = std::make_tuple(upperLon, upperLat, upperZ);
+            multipolygonList.push_back(polygonList);
         }
-
-        // Add the feature to the list
-        features.push_back(feature);
-        OGRFeature::DestroyFeature(ogrFeature);
+        return multipolygonList;
+    }
+    else{
+    return multipolygonList;
     }
 }
 
 
+
+
+/*
 void CityGMLParser::setInScale(float s) {
 
     generateEnvelope();
@@ -506,7 +499,7 @@ void CityGMLParser::printFeature(const Feature& feature) const {
     for (const auto& [key, value] : feature.attributes) {
         std::cout << "  " << key << ": " << value << std::endl;
     }*/
-
+/*
     // Print the bounding box (lower and upper corners)
     std::cout << "Lower Corner: ("
               << std::get<0>(feature.lowerCorner) << ", " // Accessing first value of the pair (x)
@@ -522,4 +515,4 @@ void CityGMLParser::printFeature(const Feature& feature) const {
     std::cout << "-----------------------------" << std::endl;
 }
 
-
+*/
