@@ -42,7 +42,7 @@ void API_WMS::downloadTileToGeoTiff(const char* layerName, const char* outputFil
         << "&EXCEPTIONS=text/xml&"
         << "FORMAT=image/tiff&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&"
         << "CRS=EPSG:4326&"
-        << "BBOX=47.34956960,3.25167353,47.38545104,3.30486151&WIDTH=256&HEIGHT=256";
+        << "BBOX=45.74845,4.79569,45.79108,4.86564&WIDTH=3000&HEIGHT=3000";
 
     std::cout << "Request URL: " << url.str() << std::endl;
 
