@@ -2,7 +2,7 @@
 
 //#include <QApplication>
 // a basculer en fonction de flux
-#include "src/API_WMS.h"
+#include "src/API_WFS.h"
 #include <filesystem>
 
 
@@ -42,18 +42,17 @@ int main(int argc, char *argv[])
     w.show(); */
 
 
-    const char* wmsUrl = "WMS:https://data.geopf.fr/wms-r?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
+    const char* wmsUrl = "WFS:https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities";
 
-    const char* layerName = "OI.OrthoimageCoverage";
+    const char* layerName = "ADMINEXPRESS-COG.LATEST:chflieu_commune";
 
-    API_WMS wms(wmsUrl);
-    wms.loadDataset();
-    wms.isEmpty();
-    wms.displayMetadata();
-    std::filesystem::create_directories("../cute-gis/output_WMS");
-    const char* outputFile = "../cute-gis/output_WMS/tile_orthoimage.tiff";
-
-    wms.downloadTileToGeoTiff(layerName,outputFile, 1,1,0);
+    API_WFS wmts(wmsUrl);
+    wmts.loadDataset();
+    wmts.isEmpty();
+    //wmts.displayMetadata();
+    wmts.open(wmsUrl);
+    //wmts.getData(layerName);
+    wmts.ExportToGeoJSON(123,"../mini-gis/test.geojson");
     //return a.exec();
     return 0;
 
