@@ -12,9 +12,9 @@ addFluxData::~addFluxData() {
 }
 
 QString addFluxData::getLayerName() const {
-    return ui->lineEdit_Name->text();  // Replace "lineEdit_Name" with the objectName in your UI
+    return ui->lineEdit_Name->text();
 }
 
 QString addFluxData::getLayerURL() const {
-    return ui->lineEdit_URL->text();  // Replace "lineEdit_URL" with the objectName in your UI
+    return ui->lineEdit_URL->text();
 }
