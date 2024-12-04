@@ -60,23 +60,30 @@ void CityGMLParser::generateEnvelope() {
 
     // Iterate through each feature to update the envelope
     for (const Feature& feature : features) {
-        // Update the minimum x and y values
-        if (feature.lowerCorner.first < xMin) {
-            xMin = feature.lowerCorner.first;
+        // Update the minimum x and y and z values
+        if (std::get<0>(feature.lowerCorner) < xMin) {  // Get X from lowerCorner
+            xMin = std::get<0>(feature.lowerCorner);  // Set X as minimum
         }
-        if (feature.lowerCorner.second < yMin) {
-            yMin = feature.lowerCorner.second;
+        if (std::get<1>(feature.lowerCorner) < yMin) {  // Get Y from lowerCorner
+            yMin = std::get<1>(feature.lowerCorner);  // Set Y as minimum
         }
-        // Update the maximum x and y values
-        if (feature.upperCorner.first > xMax)
-        {
-            xMax = feature.upperCorner.first;
+        if (std::get<2>(feature.upperCorner) < zMin) {  // Get Z from upperCorner
+            zMin = std::get<2>(feature.upperCorner);  // Set Z as minimum
         }
-        if (feature.upperCorner.second > yMax) {
-            yMax = feature.upperCorner.second;
-        }
-}
 
+        // Update the maximum x and y and z values
+        if (std::get<0>(feature.upperCorner) > xMax) {  // Get X from upperCorner
+            xMax = std::get<0>(feature.upperCorner);  // Set X as maximum
+        }
+        if (std::get<1>(feature.upperCorner) > yMax) {  // Get Y from upperCorner
+            yMax = std::get<1>(feature.upperCorner);  // Set Y as maximum
+        }
+        if (std::get<2>(feature.upperCorner) > zMax) {  // Get Z from upperCorner
+            zMax = std::get<2>(feature.upperCorner);  // Set Z as maximum
+        }
+
+
+}
 }
 
 
@@ -90,6 +97,29 @@ void CityGMLParser::extractGeometry(OGRGeometry* geometry, std::vector<float>& v
     // Coordinate transformation for lat/lon to Lambert-93
     static OGRCoordinateTransformation* transform = createLambertTransformation();
     OGRwkbGeometryType geomType = geometry->getGeometryType();
+
+    OGRMultiPolygon* multiPolygon = dynamic_cast<OGRMultiPolygon*>(geometry);
+
+    if (multiPolygon) {
+        for (int i = 0; i < multiPolygon->getNumGeometries(); ++i) {
+                    OGRPolygon* polygon = dynamic_cast<OGRPolygon*>(multiPolygon->getGeometryRef(i));
+                    if (polygon) {
+                        OGRLinearRing* ring = polygon->getExteriorRing();
+                        int numPoints = ring->getNumPoints();
+                        for (int j = 0; j < numPoints; ++j) {
+                            OGRPoint* coordinates = new OGRPoint();  // Create a new OGRPoint
+                                               ring->getPoint(j, coordinates);  // Get the point (either 2D or 3D)
+
+                                               // Store all three dimensions (x, y, z)
+                                               vertices.push_back(static_cast<float>(coordinates->getX()));  // x-coordinate
+                                               vertices.push_back(static_cast<float>(coordinates->getY()));  // y-coordinate
+                                               vertices.push_back(static_cast<float>(coordinates->getZ()));  // z-coordinate (0.0 if 2D)
+}
+                    // Optionally add faces (indices) for TIN
+                    // faces.push_back(...);  // You might need to define the face structure for TIN
+                }
+            }
+        }
 
     if (geomType == wkbMultiSurface || geomType == wkbMultiPolygon) {
         OGRMultiSurface* multiSurface = geometry->toMultiSurface();
@@ -123,8 +153,6 @@ void CityGMLParser::extractGeometry(OGRGeometry* geometry, std::vector<float>& v
                     vertices.push_back(static_cast<float>(lon));  // x (Lambert)
                     vertices.push_back(static_cast<float>(lat));  // y (Lambert)
                     vertices.push_back(static_cast<float>(z));    // z (elevation)
-
-                    // Also store the original lat/lon values in VerticesGeoreferenced if needed
                 }
                 // Store faces for the polygon
                 for (int i = 1; i < ring->getNumPoints() - 1; i++) {
@@ -137,16 +165,72 @@ void CityGMLParser::extractGeometry(OGRGeometry* geometry, std::vector<float>& v
     } else if (geomType == wkbPolyhedralSurfaceZ) {
         OGRPolyhedralSurface* polyedre = geometry->toPolyhedralSurface();
         if (polyedre) {
-            std::cout << "nb geo" << polyedre->getNumGeometries();
             for (auto i = 0; i < polyedre->getNumGeometries(); i++) {
                 OGRGeometry* subGeometry = polyedre->getGeometryRef(i);
                 extractGeometry(subGeometry, vertices, faces, vertexOffset);
             }
         }
-    } else {
-        std::cerr << "Unsupported geometry type: " << geometry->getGeometryName() << std::endl;
+    } else if (geomType == wkbTIN) {
+        OGRTriangulatedSurface* tin = geometry->toTriangulatedSurface();
+        if (tin) {
+            for (auto i = 0; i < tin->getNumGeometries(); i++) {
+                OGRGeometry* subGeometry = tin->getGeometryRef(i);
+                extractGeometry(subGeometry, vertices, faces, vertexOffset);
+            }
+        }
+    }else if (geomType == wkbTriangle) {
+        OGRTriangle* triangle = geometry->toTriangle();
+        if (triangle) {
+            OGRLinearRing* ring = triangle->getExteriorRing();
+            if (!ring) {
+                std::cerr << "Triangle has no exterior ring!" << std::endl;
+                std::cerr << "Geometry WKT: " << geometry->exportToWkt() << std::endl;
+                return; // Skip this triangle
+            }
+
+            if (ring->getNumPoints() > 3) {
+                std::cerr << "Triangle's exterior ring has more than 4 points!" << std::endl;
+                std::cerr << "Geometry WKT: " << geometry->exportToWkt() << std::endl;
+                return; // Skip this triangle
+            }
+            std::cout << "Geometry Type: " << geometry->getGeometryName() << std::endl;
+
+
+            unsigned int startVertex = vertices.size() / 3;
+
+            // Iterate through the first 3 points (triangles only have 3 vertices in the ring)
+            for (int i = 0; i < 3; i++) {
+                double x = ring->getX(i); // Retrieve X coordinate
+                double y = ring->getY(i); // Retrieve Y coordinate
+                double z = ring->getZ(i); // Retrieve Z coordinate
+
+
+
+                if (SRSMatching) {
+                    // Transform X (lon) and Y (lat) into Lambert-93 (x, y)
+                    transform->Transform(1, &x, &y);
+                }
+
+
+
+                // Push transformed and original coordinates into vertices
+                vertices.push_back(static_cast<float>(x)); // Lambert X or longitude
+                vertices.push_back(static_cast<float>(y)); // Lambert Y or latitude
+                vertices.push_back(static_cast<float>(z)); // Elevation (Z)
+            }
+
+            // Create a single face for the triangle
+            faces.push_back(startVertex);
+            faces.push_back(startVertex + 1);
+            faces.push_back(startVertex + 2);
+        } else {
+            std::cerr << "Failed to cast geometry to OGRTriangle!" << std::endl;
+            std::cerr << "Geometry type: " << geometry->getGeometryName() << std::endl;
+        }
     }
+
 }
+
 
 
 
@@ -166,6 +250,7 @@ void CityGMLParser::parseFeatures() {
 
     OGRFeature* ogrFeature;
     unsigned int vertexOffset = 0;
+
     while ((ogrFeature = layer->GetNextFeature()) != nullptr) {
         Feature feature;
         feature.id = ogrFeature->GetFID();
@@ -180,38 +265,53 @@ void CityGMLParser::parseFeatures() {
 
         // Parse geometry
         OGRGeometry* geometry = ogrFeature->GetGeometryRef();
+        char* wkt = nullptr;
+        geometry->exportToWkt(&wkt);
+
+        // Check if the geometry is 3D
+        int dimension = geometry->getCoordinateDimension();
+        if (dimension == 3) {
+            std::cout << "3D Geometry WKT: " << wkt << std::endl;
+        } else {
+            std::cout << "2D Geometry WKT: " << wkt << std::endl;
+        }
+
+        CPLFree(wkt);
+
         extractGeometry(geometry, feature.vertices, feature.faces, vertexOffset);
         vertexOffset += feature.vertices.size() / 3;
         feature.VerticesGeoreferenced = feature.vertices;
 
         // Assuming lowerCorner and upperCorner are extracted from the GML bounding box
-        // Example of how to set these:
         OGRGeometry* boundedBy = ogrFeature->GetGeometryRef(); // Get the bounding box geometry (Envelope)
         if (boundedBy) {
             OGREnvelope env;
             boundedBy->getEnvelope(&env); // Get the envelope of the bounding box
 
-            // Transform the lower corner
+            // Transform the lower corner (considering 3D)
             double lowerLon = env.MinY;
             double lowerLat = env.MinX;
-              // If not available, Z will be 0
+            double lowerZ = 0.0; // Default value for Z
+
             if (SRSMatching) {
                 transform->Transform(1, &lowerLon, &lowerLat); // Transform to Lambert-93
             }
-            // Transform the upper corner
+            // Optionally get Z-value from bounding box if it is 3D (for example, via getZ() or custom logic)
+            feature.lowerCorner = std::make_tuple(lowerLon, lowerLat, lowerZ);
+
+            // Transform the upper corner (considering 3D)
             double upperLon = env.MaxY;
             double upperLat = env.MaxX;
-              // If not available, Z will be 0
+            double upperZ = 0.0; // Default value for Z
+
             if (SRSMatching) {
                 transform->Transform(1, &upperLon, &upperLat); // Transform to Lambert-93
             }
-
-            // Assign the transformed coordinates to feature's bounding box
-            feature.lowerCorner = std::make_pair(lowerLon, lowerLat);
-            feature.upperCorner = std::make_pair(upperLon, upperLat);
-
-            // Optional: Add the Z values to the bounding box as well if needed
+            // Optionally get Z-value from bounding box if it is 3D (for example, via getZ() or custom logic)
+            feature.upperCorner = std::make_tuple(upperLon, upperLat, upperZ);
         }
+
+        // Add the feature to the list
         features.push_back(feature);
         OGRFeature::DestroyFeature(ogrFeature);
     }
@@ -409,12 +509,15 @@ void CityGMLParser::printFeature(const Feature& feature) const {
 
     // Print the bounding box (lower and upper corners)
     std::cout << "Lower Corner: ("
-              << feature.lowerCorner.first << ", " // Accessing first value of the pair (x)
-              << feature.lowerCorner.second << ")" << std::endl; // Accessing second value of the pair (y)
+              << std::get<0>(feature.lowerCorner) << ", " // Accessing first value of the pair (x)
+              << std::get<1>(feature.lowerCorner) << ", "
+              << std::get<2>(feature.lowerCorner) << ")" << std::endl; // Accessing second value of the pair (y)
 
     std::cout << "Upper Corner: ("
-              << feature.upperCorner.first << ", "  // Accessing first value of the pair (x)
-              << feature.upperCorner.second << ")" << std::endl; // Accessing second value of the pair (y)
+              << std::get<0>(feature.upperCorner) << ", " // Accessing first value of the pair (x)
+              << std::get<1>(feature.upperCorner) << ", "
+              << std::get<2>(feature.upperCorner) << ")" << std::endl; // Accessing second value of the pair (y)
+
 
     std::cout << "-----------------------------" << std::endl;
 }

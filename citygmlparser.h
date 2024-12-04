@@ -14,8 +14,8 @@ struct Feature {
     std::vector<float> vertices;  // Scaled vertices (between -0.85f and 0.85f)
     std::vector<float> VerticesGeoreferenced;  // Original Lambert-93 vertices (x, y, z)
     std::vector<unsigned int> faces;
-    std::pair<double, double> lowerCorner; // Lower corner of bounding box (xmin, ymin)
-    std::pair<double, double> upperCorner; // Upper corner of bounding box (xmax, ymax)
+    std::tuple<double, double, double> lowerCorner; // Lower corner of bounding box (xmin, ymin)
+    std::tuple<double, double, double> upperCorner; // Upper corner of bounding box (xmax, ymax)
 
 };
 
