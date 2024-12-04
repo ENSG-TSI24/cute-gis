@@ -34,19 +34,28 @@ set(PROJECT_SOURCES
 
 set(TEST_SOURCES
     tests/API_WMSTest.cpp
-    tests/API_WMTSTest.cpp
     src/API_WMS.cpp
     src/API_WMS.h
+    src/DataProvider.cpp
+    src/DataProvider.h
+)
+
+set(TEST_SOURCES_WMTS
+    tests/API_WMTSTest.cpp
     src/API_WMTS.cpp
     src/API_WMTS.h
     src/DataProvider.cpp
     src/DataProvider.h
 )
-
 add_executable(API_WMSTest ${TEST_SOURCES})
 target_link_libraries(API_WMSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 
+add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
+target_link_libraries(API_WMTSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
+
 add_test(NAME API_WMSTest COMMAND API_WMSTest)
+add_test(NAME API_WMTSTest COMMAND API_WMTSTest)
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(cute-gis

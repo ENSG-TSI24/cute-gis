@@ -20,7 +20,7 @@
      /* Display error message and exit program if dataset fails to open correctly ** to be replaced
          when the front end team finishes ( to reinsert or close window) */
      if (isEmpty()) {
-         std::cout << "Error: Impossible to connect to WMS or unsupported format" << std::endl;
+         std::cout << "Error: Impossible to connect to WMTS or unsupported format" << std::endl;
          exit(1); // ** to be replaced later
      }
  }
