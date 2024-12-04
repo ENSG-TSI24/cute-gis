@@ -9,6 +9,15 @@ Layer2d::Layer2d(Geojsonloader data)
     polygons = data.getPolygons();
     calculateBoundingBox();
 }
+Layer2d::Layer2d(Geojsonloader data, std::string name)
+{
+    this->name = name;
+    points = data.getPoints();
+    linestrings = data.getLinestrings();
+    polygons = data.getPolygons();
+    calculateBoundingBox();
+}
+
 
 
 Layer2d::~Layer2d(){
