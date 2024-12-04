@@ -28,6 +28,9 @@ public:
 
 
 
+private slots:
+    void on_actionFlux_Data_triggered();
+
 private:
     Ui::MainWindow *ui;
     Renderer* renderer;

@@ -14,24 +14,42 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
 find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
 
+#find_package(Qt5 REQUIRED COMPONENTS Widgets OpenGLWidgets)
+#target_link_libraries(cute-gis PRIVATE Qt5::Widgets Qt5::OpenGLWidgets)
+
+
+set(UI_FILES
+    src/front/addFluxData.ui
+)
+
+qt6_wrap_ui(UI_HEADERS ${UI_FILES})
+
 set(PROJECT_SOURCES
         main.cpp
         src/front/mainwindow.cpp
         src/front/mainwindow.h
         src/front/mainwindow.ui
-        src/front/camera.h 
+        src/front/camera.h
         src/front/camera.cpp
-        src/front/controller.h 
+        src/front/controller.h
         src/front/controller.cpp
-        src/front/geojsonloader.h 
+        src/front/geojsonloader.h
         src/front/geojsonloader.cpp
-        src/front/renderer.h 
+        src/front/renderer.h
         src/front/renderer.cpp
-        src/front/objectloader.h 
+        src/front/objectloader.h
         src/front/objectloader.cpp
-        src/lib/tiny_obj_loader.h 
+        src/lib/tiny_obj_loader.h
         src/lib/tiny_obj_loader.cc
+
+        src/front/addFluxData.ui
+        src/front/addFluxData.h
+        src/front/addFluxData.cpp
 )
+
+
+
+
 
 qt_add_executable(cute-gis
     MANUAL_FINALIZATION
