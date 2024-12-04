@@ -9,6 +9,7 @@
 #include "geojsonloader.h"
 
 #include <QVBoxLayout>
+#include <QCheckBox>
 #include <QMessageBox>
 #include <QFileDialog>
 
@@ -25,15 +26,19 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void clearLayout(QLayout *layout);
 
 
 
 private:
     Ui::MainWindow *ui;
+    void setupCheckboxes();
     Renderer* renderer;
     QTimer* refreshTimer;
     void onOpenFile();
     ObjectLoader *objectLoader = nullptr;
+    std::vector<std::string> name_layers;
+    int nb_layers = 0;
 
 };
 
