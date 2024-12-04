@@ -1,0 +1,4 @@
+#ifndef UI_ADDFLUXDATA_H
+#define UI_ADDFLUXDATA_H
+
+#endif // UI_ADDFLUXDATA_H

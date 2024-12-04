@@ -14,50 +14,49 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
 find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
 
-#find_package(Qt5 REQUIRED COMPONENTS Widgets OpenGLWidgets)
-#target_link_libraries(cute-gis PRIVATE Qt5::Widgets Qt5::OpenGLWidgets)
+# Include the build directory for generated header files
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+# Add your project sources
+set(PROJECT_SOURCES
+    main.cpp
+    src/front/mainwindow.cpp
+    src/front/mainwindow.h
+    src/front/mainwindow.ui
+    src/front/camera.h
+    src/front/camera.cpp
+    src/front/controller.h
+    src/front/controller.cpp
+    src/front/geojsonloader.h
+    src/front/geojsonloader.cpp
+    src/front/renderer.h
+    src/front/renderer.cpp
+    src/front/objectloader.h
+    src/front/objectloader.cpp
+    src/front/addFluxData.cpp
+    src/front/addFluxData.h
+    src/front/addFluxData.ui
+    src/lib/tiny_obj_loader.h
+    src/lib/tiny_obj_loader.cc
+)
 
-set(UI_FILES
+# Wrap the .ui files
+qt_wrap_ui(UI_HEADERS
+    src/front/mainwindow.ui
     src/front/addFluxData.ui
 )
 
-qt6_wrap_ui(UI_HEADERS ${UI_FILES})
-
-set(PROJECT_SOURCES
-        main.cpp
-        src/front/mainwindow.cpp
-        src/front/mainwindow.h
-        src/front/mainwindow.ui
-        src/front/camera.h
-        src/front/camera.cpp
-        src/front/controller.h
-        src/front/controller.cpp
-        src/front/geojsonloader.h
-        src/front/geojsonloader.cpp
-        src/front/renderer.h
-        src/front/renderer.cpp
-        src/front/objectloader.h
-        src/front/objectloader.cpp
-        src/lib/tiny_obj_loader.h
-        src/lib/tiny_obj_loader.cc
-
-        src/front/addFluxData.ui
-        src/front/addFluxData.h
-        src/front/addFluxData.cpp
-)
-
-
-
-
-
+# Define the executable
 qt_add_executable(cute-gis
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    ${UI_HEADERS}
 )
 
+# Link necessary libraries
 target_link_libraries(cute-gis PRIVATE Qt6::Widgets Qt6::OpenGLWidgets glfw GLEW libGLEW.so libGLU.so libGL.so)
 
+# Set target properties
 set_target_properties(cute-gis PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -66,4 +65,5 @@ set_target_properties(cute-gis PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+# Finalize the executable
 qt_finalize_executable(cute-gis)

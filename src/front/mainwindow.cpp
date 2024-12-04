@@ -7,7 +7,7 @@
 #include <QDebug>
 
 #include "addFluxData.h"
-#include "./ui_addFluxData.h"
+//#include "./ui_addFluxData.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -81,13 +81,14 @@ void MainWindow::onOpenFile()
 }
 
 
-void MainWindow::on_actionFlux_Data_triggered()
-{
-    addFluxData dialog(this);  // 创建对话框窗口
-    if (dialog.exec() == QDialog::Accepted) {  // 等待用户操作
-        QString layerName = dialog.getLayerName();  // 获取用户输入的图层名称
-        QString layerContent = dialog.getLayerContent();  // 获取用户输入的内容
+void MainWindow::on_actionFlux_Data_triggered() {
+    addFluxData dialog(this);  // Create the dialog instance
+    if (dialog.exec() == QDialog::Accepted) {  // Wait for user interaction
+        QString layerName = dialog.getLayerName();  // Get the layer name
+        QString layerURL = dialog.getLayerURL();    // Get the layer URL
+
         qDebug() << "Layer Name:" << layerName;
-        qDebug() << "URL:" << layerContent;
+        qDebug() << "Layer URL:" << layerURL;
     }
 }
+

@@ -26,8 +26,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-
-
 private slots:
     void on_actionFlux_Data_triggered();
 
