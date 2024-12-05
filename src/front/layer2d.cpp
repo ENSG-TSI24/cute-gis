@@ -2,22 +2,13 @@
 #include <QOpenGLFunctions>
 
 
-Layer2d::Layer2d(VectorData data)
+Layer2d::Layer2d(Geojsonloader data)
 {
-    points = data.GetPoints();
-    linestrings = data.GetLineStrings();
-    polygons = data.GetPolygons();
+    points = data.getPoints();
+    linestrings = data.getLinestrings();
+    polygons = data.getPolygons();
     calculateBoundingBox();
 }
-Layer2d::Layer2d(VectorData data, std::string name)
-{
-    this->name = name;
-    points = data.GetPoints();
-    linestrings = data.GetLineStrings();
-    polygons = data.GetPolygons();
-    calculateBoundingBox();
-}
-
 
 
 Layer2d::~Layer2d(){
@@ -30,7 +21,7 @@ void Layer2d::renderPoints() {
 
     glBegin(GL_POINTS);
     for (const auto& coord : points) {
-        glVertex2f(coord.first, coord.second);
+        glVertex3f(coord.first, coord.second, 0.0f);
     }
     glEnd();
 }
@@ -41,7 +32,7 @@ void Layer2d::renderLinestrings() {
     for (const auto& line : linestrings) {
         glBegin(GL_LINE_STRIP);
         for (const auto& coord : line) {
-            glVertex2f(coord.first, coord.second);
+            glVertex3f(coord.first, coord.second, 0.0f);
         }
         glEnd();
     }
@@ -54,7 +45,7 @@ void Layer2d::renderPolygons() {
         for (const auto& ring : polygon) {
             glBegin(GL_LINE_LOOP);
             for (const auto& coord : ring) {
-                glVertex2f(coord.first, coord.second);
+                glVertex3f(coord.first, coord.second, 0.0f);
             }
             glEnd();
         }
@@ -98,7 +89,7 @@ void Layer2d::calculateBoundingBox() {
     }
 
     // Stocker la bounding box
-    boundingBox = {minX, maxX, minY, maxY};
-    std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
+    this->boundingBox = {minX, maxX, minY, maxY};
+    //std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
 }
 
