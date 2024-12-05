@@ -53,8 +53,6 @@ void Camera::setZ(float zChange) {
     float scale = 1.0f + this->speedFactor;
     this->position[2] *= (zChange > 0) ? scale : 1.0f / scale;
     this->position[2] = std::max(this->position[2], 0.001f);
-
-    std::cout << "Camera Z position: " << this->position[2] << std::endl;
 }
 
 
@@ -65,7 +63,7 @@ float Camera::getZ(){
 
 QMatrix4x4 Camera::getViewMatrix() {
     glm::vec3 position = this->getPosition();
-    QVector3D cameraPos(position.x, position.y, 3.0f);
+    QVector3D cameraPos(position.x, position.y, position.z);
     QVector3D target(position.x, position.y, 0.0f);
     QVector3D upVector(0.0f, 1.0f, 0.0f);
 
