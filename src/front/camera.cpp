@@ -1,5 +1,6 @@
 #include "camera.h"
 #include <GL/glu.h>
+#include <cmath>
 
 
 Camera::Camera():position(0.0f,0.0f,1.0f){
@@ -39,9 +40,8 @@ void Camera::moveRight(float step){
 }
 
 void Camera::setZ(float zChange) {
-    //float scale = 1.0f + this->speedFactor;
-    //this->position[2] *= (zChange > 0) ? scale : 1.0f / scale;
-    this->position[2] += zChange;
+    float scale = 1.0f + this->speedFactor;
+    this->position[2] *= (zChange > 0) ? scale : 1.0f / scale;
     this->position[2] = std::max(this->position[2], 0.1f);
 
     std::cout << "Camera Z position: " << this->position[2] << std::endl;
@@ -54,6 +54,30 @@ float Camera::getZ(){
 
 void Camera::update() {
 
+    // Passer en mode projection
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    // Calculer les limites de la projection orthographique
+    float FoV = 45.0f;
+    float FoVRadian = FoV * M_PI / 180.0;
+
+    float halfWidth = position[2] * tan(FoVRadian/2); // Ajuster la largeur selon le zoom.
+    float halfHeight = position[2] * tan(FoVRadian/2); // Ajuster la hauteur selon le zoom
+
+    float left = position[0] - halfWidth;   // Décaler à gauche
+    float right = position[0] + halfWidth; // Décaler à droite
+    float bottom = position[1] - halfHeight; // Décaler en bas
+    float top = position[1] + halfHeight;   // Décaler en haut
+
+    // Définir la matrice de projection orthographique
+    glOrtho(left, right, bottom, top, -1.0f, 1.0f);
+
+    // Passer en mode modèle
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    /*
     // Configurer la projection 3D standard
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -69,16 +93,7 @@ void Camera::update() {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(modelViewMatrix.constData());
-
-    /*
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    float left = -180.0f /position[2] + this->position[0];
-    float right = 180.0f /position[2] + this->position[0];
-    float bottom = -90.0f /position[2] + this->position[1];
-    float top = 90.0f /position[2] + this->position[1];
-    glOrtho(left, right, bottom, top, -1.0f, 1.0f);
-    */
+*/
 
 }
 
@@ -95,23 +110,10 @@ void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
     this->position[0] = centerX;
     this->position[1] = centerY;
 
-    // Ajuster la distance en Z pour inclure tous les points
-    float aspectRatio = 1.0f; // Ajustez en fonction de votre viewport si nécessaire
-    float fovY = 45.0f;       // Champ de vision vertical
-    float fovYRad = glm::radians(fovY);
-
-    float distanceZHeight = height / (2.0f * std::tan(fovYRad / 2.0f));
-    float distanceZWidth = width / (2.0f * std::tan(fovYRad / 2.0f) * aspectRatio);
-
-    this->position[2] = std::max(distanceZHeight, distanceZWidth) + 1.0f; // +1 pour éviter tout clipping
-
-
-    std::cout << "BoundingBox (" << "minX : " << bbox.minX << ", " << "maxX : " << bbox.maxX
-              << ", " << "minY : " << bbox.minY << ", " << "maxY : " << bbox.maxY << ")" << std::endl;
-
-    std::cout << "Camera centered on Layer2D at (" << position[0] << ", " << position[1]
-              << ", " << position[2] << ")" << std::endl;
-
+    // Adapter le zoom pour inclure la bounding box
+    float zoomX = 360.0f / width;   // 360 correspond à 2x180, largeur de l'écran
+    float zoomY = 180.0f / height; // 2x90, hauteur de l'écran
+    this->position[2] = std::min(zoomX, zoomY); // Garder un zoom qui inclut la box tout en respectant les proportions
 }
 
 
