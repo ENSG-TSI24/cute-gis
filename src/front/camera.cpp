@@ -1,8 +1,9 @@
 #include "camera.h"
+#include <GL/glu.h>
 
 
 Camera::Camera():position(0.0f,0.0f,1.0f){
-
+    this->speedFactor = 1.2f; // defaut
 }
 
 float Camera::getX(){
@@ -38,18 +39,38 @@ void Camera::moveRight(float step){
 }
 
 void Camera::setZ(float zChange) {
-    float speedFactor = 0.2f;
+    //float scale = 1.0f + this->speedFactor;
+    //this->position[2] *= (zChange > 0) ? scale : 1.0f / scale;
+    this->position[2] += zChange;
+    this->position[2] = std::max(this->position[2], 0.1f);
 
-    this->position[2] += zChange * speedFactor;
-    this->position[2] = std::max(this->position[2], 0.000000000000000000001f);
-    std::cout<<position[2]<<std::endl;
+    std::cout << "Camera Z position: " << this->position[2] << std::endl;
 }
+
 
 float Camera::getZ(){
     return position[2];
 }
 
 void Camera::update() {
+
+    // Configurer la projection 3D standard
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // Vous pouvez ajuster les valeurs pour adapter la perspective
+    gluPerspective(45.0f, 1.0f, 0.1f, 100.0f);  // Perspective classique pour 3D (par exemple)
+
+    // Configurer la matrice de modèle/vue
+    QMatrix4x4 modelMatrix;
+    modelMatrix.translate(0.0f, 0.0f, -position[2]);  // Caméra positionnée en Z
+
+    QMatrix4x4 modelViewMatrix;
+    modelViewMatrix.translate(-position[0], -position[1], 0.0f);  // Centrage de la caméra
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(modelViewMatrix.constData());
+
+    /*
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     float left = -180.0f /position[2] + this->position[0];
@@ -57,6 +78,8 @@ void Camera::update() {
     float bottom = -90.0f /position[2] + this->position[1];
     float top = 90.0f /position[2] + this->position[1];
     glOrtho(left, right, bottom, top, -1.0f, 1.0f);
+    */
+
 }
 
 void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
@@ -64,19 +87,33 @@ void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
     float centerX = (bbox.minX + bbox.maxX) / 2.0f;
     float centerY = (bbox.minY + bbox.maxY) / 2.0f;
 
-    // Calculer la taille de la boîte englobante
+    // Calculer la taille
     float width = bbox.maxX - bbox.minX;
     float height = bbox.maxY - bbox.minY;
 
-    // Ajuster la caméra
+    // Positionner la caméra
     this->position[0] = centerX;
     this->position[1] = centerY;
 
-    // Ajuster le zoom pour inclure la boîte
-    float zoomX = 360.0f / width;
-    float zoomY = 180.0f / height;
-    this->position[2] = std::min(zoomX, zoomY); // Garder le même facteur pour X et Y
+    // Ajuster la distance en Z pour inclure tous les points
+    float aspectRatio = 1.0f; // Ajustez en fonction de votre viewport si nécessaire
+    float fovY = 45.0f;       // Champ de vision vertical
+    float fovYRad = glm::radians(fovY);
+
+    float distanceZHeight = height / (2.0f * std::tan(fovYRad / 2.0f));
+    float distanceZWidth = width / (2.0f * std::tan(fovYRad / 2.0f) * aspectRatio);
+
+    this->position[2] = std::max(distanceZHeight, distanceZWidth) + 1.0f; // +1 pour éviter tout clipping
+
+
+    std::cout << "BoundingBox (" << "minX : " << bbox.minX << ", " << "maxX : " << bbox.maxX
+              << ", " << "minY : " << bbox.minY << ", " << "maxY : " << bbox.maxY << ")" << std::endl;
+
+    std::cout << "Camera centered on Layer2D at (" << position[0] << ", " << position[1]
+              << ", " << position[2] << ")" << std::endl;
+
 }
+
 
 glm::vec3 Camera::getPosition() {
     return position;

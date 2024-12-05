@@ -27,9 +27,9 @@ Camera& Controller::getCamera() {
 void Controller::ControllerwheelEvent(QWheelEvent* event) {
     float zoomStep = 1.0f;
     if (event->angleDelta().y() > 0) {
-        camera.setZ(zoomStep);
-    } else if (event->angleDelta().y() < 0) {
         camera.setZ(-zoomStep);
+    } else if (event->angleDelta().y() < 0) {
+        camera.setZ(zoomStep);
     }
 
     camera.update();

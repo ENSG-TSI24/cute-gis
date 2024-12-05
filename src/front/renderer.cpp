@@ -60,11 +60,11 @@ void Renderer::paintGL() {
     if (!objectLoader) {
         controller->getCamera().update();
         renderLayers2d();
+        //this->controller->getCamera().centerOnBoundingBox(this->lst_layers2d.back().boundingBox);
     } else if (objectLoader) {
 
         QMatrix4x4 modelMatrix;
         modelMatrix.translate(0.0f, 0.0f, -3.0f);
-        modelMatrix.rotate(objectLoader->getAngle(), 0.0f, 1.0f, 0.0f);
         modelMatrix.scale(0.005f);
 
         QMatrix4x4 modelViewMatrix = controller->getCamera().getModelViewMatrix(modelMatrix);
@@ -76,7 +76,7 @@ void Renderer::paintGL() {
 
         const auto& vertices = objectLoader->getVertices();
         for (const auto& vertex : vertices) {
-            glVertex3f(vertex.x, vertex.y, vertex.z);
+            glVertex3f(vertex.x, vertex.z, vertex.y);
         }
 
         glEnd();

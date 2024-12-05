@@ -21,7 +21,7 @@ void Layer2d::renderPoints() {
 
     glBegin(GL_POINTS);
     for (const auto& coord : points) {
-        glVertex2f(coord.first, coord.second);
+        glVertex3f(coord.first, coord.second, 0.0f);
     }
     glEnd();
 }
@@ -32,7 +32,7 @@ void Layer2d::renderLinestrings() {
     for (const auto& line : linestrings) {
         glBegin(GL_LINE_STRIP);
         for (const auto& coord : line) {
-            glVertex2f(coord.first, coord.second);
+            glVertex3f(coord.first, coord.second, 0.0f);
         }
         glEnd();
     }
@@ -45,7 +45,7 @@ void Layer2d::renderPolygons() {
         for (const auto& ring : polygon) {
             glBegin(GL_LINE_LOOP);
             for (const auto& coord : ring) {
-                glVertex2f(coord.first, coord.second);
+                glVertex3f(coord.first, coord.second, 0.0f);
             }
             glEnd();
         }
@@ -89,7 +89,7 @@ void Layer2d::calculateBoundingBox() {
     }
 
     // Stocker la bounding box
-    boundingBox = {minX, maxX, minY, maxY};
+    this->boundingBox = {minX, maxX, minY, maxY};
     //std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
 }
 

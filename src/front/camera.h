@@ -84,7 +84,7 @@ public:
     */
 
     void update();
-
+    float speedFactor;
     float getZ();
     void setZ(float z);
     glm::vec3 getPosition();
