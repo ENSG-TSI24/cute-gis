@@ -27,6 +27,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void clearLayout(QLayout *layout);
+    void onCheckboxToggled(bool checked, std::string name);
 
 
 
