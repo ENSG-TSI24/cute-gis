@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QTimer>
-
 #include "./ui_mainwindow.h"
 #include "renderer.h"
 #include "geojsonloader.h"
@@ -26,10 +25,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
     void clearLayout(QLayout *layout);
     void onCheckboxToggled(bool checked, std::string name);
-
-
 
 private:
     Ui::MainWindow *ui;
@@ -41,6 +39,8 @@ private:
     std::vector<std::string> name_layers;
     int nb_layers = 0;
 
+    // 新增删除层的槽函数声明
+    void onDeleteLayer(size_t index); 
 };
 
 #endif // MAINWINDOW_H

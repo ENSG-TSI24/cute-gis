@@ -114,21 +114,26 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
 
 
 
-void MainWindow::setupCheckboxes(){
-
+void MainWindow::setupCheckboxes() {
+    // 清理旧的布局
     if (ui->layer_manager->layout()) {
         clearLayout(ui->layer_manager->layout());
         delete ui->layer_manager->layout();
     }
 
+    // 创建新的布局
     QVBoxLayout *layout = new QVBoxLayout(ui->layer_manager);
 
     layout->setSizeConstraint(QLayout::SetMaximumSize);
     layout->setContentsMargins(10, 10, 10, 10);
 
-    for (const auto& name : name_layers) {
-        QCheckBox *checkbox = new QCheckBox(QString::fromStdString(name), ui->layer_manager);
+    // 创建新的复选框和删除按钮
+    for (size_t i = 0; i < name_layers.size(); ++i) {
+        const auto& name = name_layers[i];
 
+        QHBoxLayout *hLayout = new QHBoxLayout();
+        QCheckBox *checkbox = new QCheckBox(QString::fromStdString(name), ui->layer_manager);
+        
         checkbox->setStyleSheet("QCheckBox::indicator { width: 16px; height: 16px; }"
                                 "QCheckBox { padding-left: 5px; "
                                 "            font-family: Sans Serif;"
@@ -138,18 +143,53 @@ void MainWindow::setupCheckboxes(){
 
         checkbox->setChecked(true);
 
+        // 连接复选框的信号
         connect(checkbox, &QCheckBox::toggled, [this, name](bool checked) {
             onCheckboxToggled(checked, name);
         });
 
-
-
         checkbox->setFixedHeight(20);
-        layout->addWidget(checkbox);
+
+        // 删除按钮
+        QPushButton *deleteButton = new QPushButton("Delete", ui->layer_manager);
+        deleteButton->setStyleSheet("font-size: 10pt;");
+        deleteButton->setFixedSize(60, 20);
+
+        // 连接删除按钮的信号
+        connect(deleteButton, &QPushButton::clicked, [this, i]() {
+            onDeleteLayer(i);
+        });
+
+        // 添加到布局
+        hLayout->addWidget(checkbox);
+        hLayout->addWidget(deleteButton);
+        layout->addLayout(hLayout);
         layout->addSpacing(10);
     }
+
+    // 添加拉伸，保证布局填满空间
     layout->addStretch();
 
+    // 设置新的布局
     ui->layer_manager->setLayout(layout);
 }
+
+void MainWindow::onDeleteLayer(size_t index) {
+    if (index >= renderer->lst_layers2d.size()) {
+        qWarning() << "Invalid layer index!";
+        return;
+    }
+
+    // 删除图层
+    renderer->lst_layers2d.erase(renderer->lst_layers2d.begin() + index);
+    name_layers.erase(name_layers.begin() + index);
+
+    // 删除与该图层相关的复选框和删除按钮
+    setupCheckboxes();
+
+    // 重新渲染
+    renderer->update();
+    qDebug() << "Layer deleted at index:" << index;
+}
+
 
