@@ -14,10 +14,6 @@ DataManagment::DataManagment(const char* Path) {
 }
 
 DataManagment::~DataManagment() {
-    closeDataSet();
-}
-
-DataManagment::closeDataSet() {
     GDALClose(data);
 }
 

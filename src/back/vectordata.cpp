@@ -1,11 +1,9 @@
 #include "vectordata.h"
 
-VectorData::VectorData()
-    : AbstractData()
-{}
-VectorData::VectorData(const char* path)
-    : AbstractData(path)
-{}
+VectorData::VectorData() : filePath(nullptr) {}
+
+VectorData::VectorData(const char* path) : filePath(path) {}
+
 
 VectorData::~VectorData() {
     GDALClose(GetDATA());

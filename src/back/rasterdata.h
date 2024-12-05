@@ -1,9 +1,9 @@
 #ifndef RASTERDATA_H
 #define RASTERDATA_H
 
-#include "abstractdata.h"
+#include "datamanagment.h"
 
-class RasterData : public AbstractData
+class RasterData : public DataManagment
 {
 public:
     RasterData();

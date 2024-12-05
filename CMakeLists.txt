@@ -27,8 +27,8 @@ set(PROJECT_SOURCES
     src/back/wfsdata.h src/back/wfsdata.cpp
     src/back/citygmlfile.h src/back/citygmlfile.cpp
     src/back/rasterdata.h src/back/rasterdata.cpp
-    src/back/datamanagement.h src/back/datamanagement.cpp
-    src/back/dataextract/abstractdatavisitor.h src/back/dataextract/abstractdatavisitor.cpp
+    src/back/datamanagment.h src/back/datamanagment.cpp
+    src/back/dataextract/abstractdatavisitor.h
     src/back/dataextract/intersectvisitor.h src/back/dataextract/intersectvisitor.cpp
     src/back/vectordata.h src/back/vectordata.cpp
     # Frontend files
@@ -45,7 +45,7 @@ set(PROJECT_SOURCES
 set(TEST_SOURCES
     tests/testAbstractData.cpp
     tests/wfsdataTest.cpp
-    src/back/datamanagement.h src/back/datamanagement.cpp
+    src/back/datamanagment.h src/back/datamanagment.cpp
     src/back/vectordata.h src/back/vectordata.cpp
     src/back/wfsdata.h src/back/wfsdata.cpp
 )

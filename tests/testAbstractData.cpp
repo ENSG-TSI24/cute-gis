@@ -6,17 +6,17 @@
 #include <ogrsf_frmts.h>
 
 
-TEST(AbstractDatatest, DefaultConstructor) {
-    AbstractData data;
+TEST(DataManagment, DefaultConstructor) {
+    DataManagment data;
     EXPECT_TRUE(data.GetDATA() == nullptr);
     EXPECT_TRUE(data.GetPath() == nullptr);
     GDALClose(data.GetDATA());
 }
 
 
-TEST(AbstractDatatest, ConstructorWithParameters) {
+TEST(DataManagment, ConstructorWithParameters) {
     const char* inputFile = "../test_data/BASSIN_VERSANT.geojson";
-    AbstractData data(inputFile);
+    DataManagment data(inputFile);
     GDALDataset *dataset = (GDALDataset *) GDALOpenEx(inputFile, GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
 
     EXPECT_TRUE(data.GetDATA()->GetLayerCount  ()  == dataset->GetLayerCount  () );
