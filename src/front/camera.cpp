@@ -9,9 +9,9 @@ Camera::Camera():position(0.0f,0.0f,1.0f){
 
 
 void Camera::resetCamera(){
-    this->x=0.0;
-    this->y=0.0;
-    this->zoom=1.0;
+    this->setX(0.0);
+    this->setY(0.0);
+    this->setZ(1.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
@@ -62,10 +62,6 @@ float Camera::getZ(){
     return position[2];
 }
 
-glm::vec3 Camera::getPosition() {
-    return glm::vec3(x, y, 0.0f);
-}
-
 
 QMatrix4x4 Camera::getViewMatrix() {
     glm::vec3 position = this->getPosition();
@@ -77,6 +73,7 @@ QMatrix4x4 Camera::getViewMatrix() {
     viewMatrix.lookAt(cameraPos, target, upVector);
     return viewMatrix;
 }
+
 
 QMatrix4x4 Camera::getModelViewMatrix(const QMatrix4x4& modelMatrix) {
     QMatrix4x4 viewMatrix = getViewMatrix();
@@ -160,22 +157,6 @@ void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
 
 glm::vec3 Camera::getPosition() {
     return position;
-}
-
-QMatrix4x4 Camera::getViewMatrix() {
-    glm::vec3 position = this->getPosition();
-    QVector3D cameraPos(position.x, position.y, 3.0f);
-    QVector3D target(position.x, position.y, 0.0f);
-    QVector3D upVector(0.0f, 1.0f, 0.0f);
-
-    QMatrix4x4 viewMatrix;
-    viewMatrix.lookAt(cameraPos, target, upVector);
-    return viewMatrix;
-}
-
-QMatrix4x4 Camera::getModelViewMatrix(const QMatrix4x4& modelMatrix) {
-    QMatrix4x4 viewMatrix = getViewMatrix();
-    return viewMatrix * modelMatrix;
 }
 
 int Camera::getRHeight(){

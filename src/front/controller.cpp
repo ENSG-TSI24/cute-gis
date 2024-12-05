@@ -86,7 +86,7 @@ void Controller::ControllerMouseReleaseEvent(QMouseEvent* event) {
 
 void Controller::ControllerMouseMoveEvent(QMouseEvent* event) {
     if (isDragging) {
-        float sensitivity = is3DMode ? 0.02f : 0.25f;
+        float sensitivity = is3DMode ? 0.02f : 0.02f;
         QPoint currentMousePosition = event->pos();
         QPoint delta = currentMousePosition - lastMousePosition;
         camera.moveRight(-delta.x() * sensitivity);
