@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include "addFluxData.h"
+#include "../back/API_WFS.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -79,14 +80,38 @@ void MainWindow::onOpenFile()
 }
 
 
+
 void MainWindow::on_actionFlux_Data_triggered() {
-    addFluxData dialog(this);  // Create the dialog instance
-    if (dialog.exec() == QDialog::Accepted) {  // Wait for user interaction
+    addFluxData dialog(this);  // Create the dialog
+    if (dialog.exec() == QDialog::Accepted) {
         QString layerName = dialog.getLayerName();  // Get the layer name
-        QString layerURL = dialog.getLayerURL();    // Get the layer URL
+        QString layerURL = dialog.getLayerURL();    // Get the URL
 
         qDebug() << "Layer Name:" << layerName;
         qDebug() << "URL:" << layerURL;
+
+
+        // Instantiate the backend class
+        API_WFS wfs(layerURL.toStdString().c_str());
+
+        try {
+            // Load the dataset
+            wfs.loadDataset();
+            qDebug() << "Dataset loaded successfully!";
+
+            // Fetch data and display metadata
+            wfs.getData(layerName.toStdString().c_str());
+
+            // Example: Export to GeoJSON
+            std::string outputFiletemp = "../../data/geojson/" + layerName.toStdString() + ".geojson";
+            const char* outputFile = outputFiletemp.c_str();
+            wfs.ExportToGeoJSON(123, outputFile);
+            qDebug() << "GeoJSON exported to:" << QString::fromStdString(outputFile);
+        } catch (const std::exception& ex) {
+            QMessageBox::critical(this, "Error", QString::fromStdString(ex.what()));
+            return;
+        }
     }
 }
+
 
