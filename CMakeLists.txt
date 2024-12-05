@@ -58,7 +58,7 @@ set(TEST_SOURCES
     src/back/wfsdata.h src/back/wfsdata.cpp
 )
 
-set(TEST_SOURCES
+set(TEST_SOURCES_WMS
     tests/API_WMSTest.cpp
     src/back/API_WMS.cpp
     src/back/API_WMS.h
@@ -85,7 +85,7 @@ set(TEST_SOURCES_WFS
 # Backend tests
 add_executable(testAbstractData ${TEST_SOURCES})
 add_executable(wfsdataTest ${TEST_SOURCES})
-add_executable(API_WMSTest ${TEST_SOURCES})
+add_executable(API_WMSTest ${TEST_SOURCES_WMS})
 add_executable(API_WFSTest ${TEST_SOURCES_WFS})
 add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
 
