@@ -7,22 +7,22 @@
 
 #include "../src/back/wfsdata.h"
 
-class WfsDatatest : public ::testing::Test {
+class WfsDataTest : public ::testing::Test {
     protected:
         WFSData wfsdata;
 };
 
-TEST_F(WfsDatatest, OpenWFSData)
+TEST_F(WfsDataTest, OpenWFSData)
     {
     wfsdata = WFSData();
     wfsdata.open("https://qgisserver.hautsdefrance.fr/cgi-bin/qgis_mapserv.fcgi?MAP=/var/www/data/qgis/applications/politique_ville.qgz&request=GetFeature&service=WFS&typename=cvcb_points&outputformat=geojson");
-    wfsdata.getData("hautdefrance.geojson");
+    wfsdata.getData("../data/hautdefrance.geojson");
     OGRLayer* datasetlayer = wfsdata.GetLayer();
     ASSERT_NE(datasetlayer, nullptr);
     GDALClose(datasetlayer);
 }
 
-TEST_F(WfsDatatest, IsGeoJSONValid) {
+TEST_F(WfsDataTest, IsGeoJSONValid) {
     wfsdata = WFSData();
     wfsdata.open("https://qgisserver.hautsdefrance.fr/cgi-bin/qgis_mapserv.fcgi?MAP=/var/www/data/qgis/applications/politique_ville.qgz&request=GetFeature&service=WFS&typename=cvcb_points&outputformat=geojson");
     std::string geojsonContent = wfsdata.ExportToGeoJSON(0, "../data/output.geojson");

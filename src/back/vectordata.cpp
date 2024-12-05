@@ -3,14 +3,16 @@
 
 VectorData::VectorData() : filePath(nullptr) {}
 
-VectorData::VectorData(const char* path) : filePath(path) {}
+VectorData::VectorData(const char* path) : DataManagment(path) {}
 
 
 VectorData::~VectorData() {
-    GDALClose(GetDATA());
+    if (data) {
+        GDALClose(data);
+    }
 }
 
- std::vector<std::pair<float, float>> VectorData::GetPoints(){
+std::vector<std::pair<float, float>> VectorData::GetPoints(){
     std::vector<std::pair<float, float>> points;
     GDALDataset* dataset = GetDATA();
     if (!dataset) {

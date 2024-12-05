@@ -3,7 +3,17 @@
 #include <ogrsf_frmts.h>
 #include <fstream>
 
-WFSData::WFSData() : m_dataset(nullptr) {}
+WFSData::WFSData() : m_dataset(nullptr) {
+    
+}
+
+WFSData::~WFSData()
+{
+    if (m_dataset != nullptr)
+    {
+        GDALClose(m_dataset);
+    }
+}
 
 GDALDataset* WFSData::GetDataset(){
     return m_dataset;

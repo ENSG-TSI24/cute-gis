@@ -13,7 +13,7 @@ public:
     std::vector<std::vector<std::pair<float, float>>> GetLineStrings();
     std::vector<std::pair<float, float>> GetPoints();
 protected:
-    std::string filePath;
+    const char* filePath;
 };
 
 #endif // VECTORDATA_H
