@@ -15,8 +15,8 @@ struct Feature {
     unsigned int id;
     std::string objectName;
     std::map<std::string, std::string> attributes;
-    std::vector<glm::vec3> vertices;  // Scaled vertices (between -0.85f and 0.85f)
-    std::vector<glm::vec3> VerticesGeoreferenced;  // Original Lambert-93 vertices (x, y, z)
+    std::vector<std::vector<std::vector<glm::vec3>>> vertices;  // Scaled vertices (between -0.85f and 0.85f)
+    std::vector<std::vector<std::vector<glm::vec3>>> VerticesGeoreferenced;  // Original Lambert-93 vertices (x, y, z)
     std::vector<unsigned int> faces;
     std::tuple<double, double, double> lowerCorner; // Lower corner of bounding box (xmin, ymin)
     std::tuple<double, double, double> upperCorner; // Upper corner of bounding box (xmax, ymax)
@@ -31,11 +31,8 @@ private:
     OGRCoordinateTransformation* transform = createLambertTransformation();
 
 
-    void extractGeometry(OGRGeometry* geometry, std::vector<float>& vertices,
-                         std::vector<unsigned int>& faces, unsigned int& vertexOffset);
-
     float xMin, yMin, xMax, yMax, zMin, zMax;
-    bool SRSMatching;
+
     std::vector<Feature> features;
 
 public:
@@ -56,7 +53,7 @@ public:
     void printFeature(const Feature& feature) const;
 
     void setInScale(float s);
-    void generateEnvelope();
+
 
         // Getter methods for the envelope
         float getXMin() const;
