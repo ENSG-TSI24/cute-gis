@@ -5,7 +5,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDebug>
-
+#include "../back/vectordata.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -37,16 +37,17 @@ void MainWindow::onOpenFile()
     qDebug() << "Selected File:" << filePath;
 
     // Charger le fichier sélectionné
-    const std::string filedata = filePath.toStdString();
+    // désolé mais maitenant j'ai besoin de const char*
+    const char* filedata = filePath.toStdString().c_str();;
 
     renderer->reset();
 
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
-            Geojsonloader geo(filedata);
-            renderer->setPoints(geo.getPoints());
-            renderer->setLinestrings(geo.getLinestrings());
-            renderer->setPolygons(geo.getPolygons());
+            VectorData geo(filedata);
+            renderer->setPoints(geo.GetPoints());
+            renderer->setLinestrings(geo.GetLineStrings());
+            renderer->setPolygons(geo.GetPolygons());
             renderer->calculateBoundingBox();
             renderer->controller->getCamera().centerOnBoundingBox(renderer->boundingBox);
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {

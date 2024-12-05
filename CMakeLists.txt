@@ -35,7 +35,6 @@ set(PROJECT_SOURCES
     src/front/mainwindow.cpp src/front/mainwindow.h src/front/mainwindow.ui
     src/front/camera.h src/front/camera.cpp
     src/front/controller.h src/front/controller.cpp
-    src/front/geojsonloader.h src/front/geojsonloader.cpp
     src/front/renderer.h src/front/renderer.cpp
     src/front/objectloader.h src/front/objectloader.cpp
     src/lib/tiny_obj_loader.h src/lib/tiny_obj_loader.cc

@@ -2,19 +2,19 @@
 #include <QOpenGLFunctions>
 
 
-Layer2d::Layer2d(Geojsonloader data)
+Layer2d::Layer2d(VectorData data)
 {
-    points = data.getPoints();
-    linestrings = data.getLinestrings();
-    polygons = data.getPolygons();
+    points = data.GetPoints();
+    linestrings = data.GetLineStrings();
+    polygons = data.GetPolygons();
     calculateBoundingBox();
 }
-Layer2d::Layer2d(Geojsonloader data, std::string name)
+Layer2d::Layer2d(VectorData data, std::string name)
 {
     this->name = name;
-    points = data.getPoints();
-    linestrings = data.getLinestrings();
-    polygons = data.getPolygons();
+    points = data.GetPoints();
+    linestrings = data.GetLineStrings();
+    polygons = data.GetPolygons();
     calculateBoundingBox();
 }
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <utility>
-#include "geojsonloader.h"
+#include "../back/vectordata.h"
 #include "controller.h"
 
 
@@ -11,8 +11,8 @@
 class Layer2d
 {
 public:
-    Layer2d(Geojsonloader data);
-    Layer2d(Geojsonloader data, std::string name);
+    Layer2d(VectorData data);
+    Layer2d(VectorData data, std::string name);
     ~Layer2d();
     void renderPoints();
     void renderLinestrings();
