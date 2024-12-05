@@ -33,6 +33,7 @@ set(PROJECT_SOURCES
     src/back/DataManagement.h
     src/back/abstractdata.h src/back/abstractdata.cpp
     src/back/vectordata.h src/back/vectordata.cpp
+    src/back/citygmlparser.h src/back/citygmlparser.cpp
     # Frontend files
     src/front/mainwindow.cpp src/front/mainwindow.h src/front/mainwindow.ui
     src/front/camera.h src/front/camera.cpp
@@ -46,16 +47,19 @@ set(PROJECT_SOURCES
 set(TEST_SOURCES
     tests/testAbstractData.cpp
     tests/wfsdataTest.cpp
+    tests/gmltest.cpp
     src/back/DataManagement.h
     src/back/abstractdata.h src/back/abstractdata.cpp
     src/back/geojsonfile.h src/back/geojsonfile.cpp
     src/back/vectordata.h src/back/vectordata.cpp
     src/back/wfsdata.h src/back/wfsdata.cpp
+    src/back/citygmlparser.h src/back/citygmlparser.cpp
 )
 
 # Backend tests
 add_executable(testAbstractData ${TEST_SOURCES})
 add_executable(wfsdataTest ${TEST_SOURCES})
+add_executable(gmltest ${TEST_SOURCES})
 
 # Main application
 qt_add_executable(cute-gis
@@ -67,6 +71,7 @@ qt_add_executable(cute-gis
 target_link_libraries(cute-gis PRIVATE Qt6::Widgets Qt6::OpenGLWidgets glfw GLEW libGLEW.so libGLU.so libGL.so ${GDAL_LIBRARIES})
 target_link_libraries(testAbstractData PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
 target_link_libraries(wfsdataTest PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
+target_link_libraries(gmltest PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
 
 # Finalize application
 qt_finalize_executable(cute-gis)
@@ -75,3 +80,4 @@ qt_finalize_executable(cute-gis)
 enable_testing()
 add_test(NAME testAbstractData COMMAND testAbstractData)
 add_test(NAME wfsdataTest COMMAND wfsdataTest)
+add_test(NAME gmltest COMMAND gmltest)
