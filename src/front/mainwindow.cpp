@@ -112,50 +112,6 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
 
 }
 
-
-
-//void MainWindow::setupCheckboxes(){
-//    std::vector<std::string> names = {"Option 1", "Option 2", "Option 3"};
-
-//    if (ui->layer_manager->layout()) {
-//        clearLayout(ui->layer_manager->layout());
-//        delete ui->layer_manager->layout();
-//    }
-
-//    QVBoxLayout *layout = new QVBoxLayout(ui->layer_manager);
-
-//    layout->setSizeConstraint(QLayout::SetMaximumSize);
-//    layout->setContentsMargins(10, 10, 10, 10);
-
-//    for (const auto& name : names) {
-//        QCheckBox *checkbox = new QCheckBox(QString::fromStdString(name), ui->layer_manager);
-
-//        checkbox->setStyleSheet("QCheckBox::indicator { width: 16px; height: 16px; }"
-//                                "QCheckBox { padding-left: 5px; "
-//                                "            font-family: Sans Serif;"
-//                                "            font-size:    12pt; "
-//                                "            font-weight: normal;}"
-//                                );
-
-//        checkbox->setChecked(true);
-
-//        connect(checkbox, &QCheckBox::toggled, [this, name](bool checked) {
-//            onCheckboxToggled(checked, name);
-//        });
-
-
-
-//        checkbox->setFixedHeight(20);
-//        layout->addWidget(checkbox);
-//        layout->addSpacing(10);
-//    }
-//    layout->addStretch();
-
-//    ui->layer_manager->setLayout(layout);
-//}
-
-
-
 void MainWindow::setupCheckboxes() {
 
     // Clear the layout_manager
