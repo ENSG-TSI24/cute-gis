@@ -42,7 +42,7 @@ void Camera::moveRight(float step){
 void Camera::setZ(float zChange) {
     float scale = 1.0f + this->speedFactor;
     this->position[2] *= (zChange > 0) ? scale : 1.0f / scale;
-    this->position[2] = std::max(this->position[2], 0.1f);
+    this->position[2] = std::max(this->position[2], 0.001f);
 
     std::cout << "Camera Z position: " << this->position[2] << std::endl;
 }
@@ -98,23 +98,31 @@ void Camera::update() {
 }
 
 void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
-    // Calculer le centre
+    float FoV = 45.0f;
+    float FoVRadian = FoV * M_PI / 180.0;
+    float aspectRatio = 1.0f;
+
+    // Calculer le centre de la bounding box
     float centerX = (bbox.minX + bbox.maxX) / 2.0f;
     float centerY = (bbox.minY + bbox.maxY) / 2.0f;
 
-    // Calculer la taille
+    // Calculer la taille de la bounding box
     float width = bbox.maxX - bbox.minX;
     float height = bbox.maxY - bbox.minY;
 
-    // Positionner la caméra
+    // Positionner la caméra au centre
     this->position[0] = centerX;
     this->position[1] = centerY;
 
-    // Adapter le zoom pour inclure la bounding box
-    float zoomX = 360.0f / width;   // 360 correspond à 2x180, largeur de l'écran
-    float zoomY = 180.0f / height; // 2x90, hauteur de l'écran
-    this->position[2] = std::min(zoomX, zoomY); // Garder un zoom qui inclut la box tout en respectant les proportions
+    // Adapter la distance (position[2]) pour inclure la bounding box
+    // Choisir la plus grande dimension selon le ratio d'aspect
+    float effectiveFoV = (aspectRatio > 1.0f) ? FoVRadian : FoVRadian / aspectRatio;
+    float dimension = (aspectRatio > 1.0f) ? width : height;
+
+    // Calculer la distance Z pour inclure la bounding box
+    this->position[2] = dimension / (2.0f * tan(effectiveFoV / 2.0f));
 }
+
 
 
 glm::vec3 Camera::getPosition() {
