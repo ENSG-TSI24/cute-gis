@@ -91,11 +91,16 @@ void MainWindow::onOpenFile()
 }
 
 void MainWindow::clearLayout(QLayout *layout) {
-    while (QLayoutItem* item = layout->takeAt(0)) {
-        if (QWidget* widget = item->widget()) {
-            widget->deleteLater();
+    // 清除所有布局项
+    if (layout) {
+        QLayoutItem* item;
+        while ((item = layout->takeAt(0)) != nullptr) {
+            if (item->widget()) {
+                qDebug() << "Deleting widget:" << item->widget();
+                item->widget()->deleteLater();  // 删除 widget
+            }
+            delete item;  // 删除 layoutItem
         }
-        delete item;
     }
 }
 
@@ -119,11 +124,12 @@ void MainWindow::setupCheckboxes() {
     if (ui->layer_manager->layout()) {
         clearLayout(ui->layer_manager->layout());
         delete ui->layer_manager->layout();
+        qDebug() << "Cleared the existing layout";
+
     }
 
     // 创建新的布局
     QVBoxLayout *layout = new QVBoxLayout(ui->layer_manager);
-
     layout->setSizeConstraint(QLayout::SetMaximumSize);
     layout->setContentsMargins(10, 10, 10, 10);
 
@@ -133,6 +139,7 @@ void MainWindow::setupCheckboxes() {
 
         QHBoxLayout *hLayout = new QHBoxLayout();
         QCheckBox *checkbox = new QCheckBox(QString::fromStdString(name), ui->layer_manager);
+        qDebug() << "Creating checkbox for layer:" << QString::fromStdString(name);
         
         checkbox->setStyleSheet("QCheckBox::indicator { width: 16px; height: 16px; }"
                                 "QCheckBox { padding-left: 5px; "
@@ -172,6 +179,9 @@ void MainWindow::setupCheckboxes() {
 
     // 设置新的布局
     ui->layer_manager->setLayout(layout);
+
+    ui->layer_manager->update();
+    qDebug() << "Checkboxes and layout updated";
 }
 
 void MainWindow::onDeleteLayer(size_t index) {
@@ -179,17 +189,22 @@ void MainWindow::onDeleteLayer(size_t index) {
         qWarning() << "Invalid layer index!";
         return;
     }
+    qDebug() << "Deleting layer at index:" << index;
 
     // 删除图层
     renderer->lst_layers2d.erase(renderer->lst_layers2d.begin() + index);
     name_layers.erase(name_layers.begin() + index);
+    qDebug() << "Remaining layers:" << name_layers.size();
+
+    clearLayout(ui->layer_manager->layout());
+
 
     // 删除与该图层相关的复选框和删除按钮
     setupCheckboxes();
 
     // 重新渲染
-    renderer->update();
-    qDebug() << "Layer deleted at index:" << index;
+    ui->layer_manager->update();
+    qDebug() << "UI updated after layer deletion";
 }
 
 
