@@ -1,10 +1,14 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "objectloader.h"
+#include "geotiffloader.h"
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDebug>
+
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -59,7 +63,29 @@ void MainWindow::onOpenFile()
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
-        } else {
+        } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
+            QImage image = GeoTiffLoader::loadGeoTIFF(filePath);
+
+            QGraphicsScene* scene = new QGraphicsScene(this);
+            scene->addPixmap(QPixmap::fromImage(image));
+
+            QGraphicsView* view = new QGraphicsView(scene);
+            view->setRenderHint(QPainter::Antialiasing, true);
+            view->setRenderHint(QPainter::SmoothPixmapTransform, true);
+
+            // Nettoyage préalable
+            if (ui->openGLWidget->layout()) {
+                clearLayout(ui->openGLWidget->layout());
+            } else {
+                auto* layout = new QVBoxLayout(ui->openGLWidget);
+                layout->setContentsMargins(0, 0, 0, 0);
+                ui->openGLWidget->setLayout(layout);
+            }
+
+            ui->openGLWidget->layout()->addWidget(view);
+
+        }
+        else {
             throw std::runtime_error("Unsupported file format!");
         }
     } catch (const std::exception& ex) {

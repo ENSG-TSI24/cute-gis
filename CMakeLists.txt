@@ -11,8 +11,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
+find_package(QT NAMES Qt6 COMPONENTS Widgets OpenGLWidgets)
 find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
+find_package(GDAL REQUIRED)
+include_directories(${GDAL_INCLUDE_DIR})
+link_directories(${GDAL_LIBRARY_DIRS})
 
 set(PROJECT_SOURCES
         main.cpp
@@ -33,6 +36,7 @@ set(PROJECT_SOURCES
         src/front/objectloader.cpp
         src/lib/tiny_obj_loader.h 
         src/lib/tiny_obj_loader.cc
+        src/front/geotiffloader.h src/front/geotiffloader.cpp
 )
 
 qt_add_executable(cute-gis
@@ -40,7 +44,7 @@ qt_add_executable(cute-gis
     ${PROJECT_SOURCES}
 )
 
-target_link_libraries(cute-gis PRIVATE Qt6::Widgets Qt6::OpenGLWidgets glfw GLEW libGLEW.so libGLU.so libGL.so)
+target_link_libraries(cute-gis PRIVATE  GDAL::GDAL Qt6::Widgets Qt6::OpenGLWidgets glfw GLEW libGLEW.so libGLU.so libGL.so ${GDAL_LIBRARIES})
 
 set_target_properties(cute-gis PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
