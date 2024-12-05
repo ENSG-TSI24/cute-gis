@@ -59,11 +59,14 @@ void Camera::update() {
     glLoadIdentity();
 
     // Calculer les limites de la projection orthographique
-    float FoV = 45.0f;
-    float FoVRadian = FoV * M_PI / 180.0;
+    float aspectRatio = static_cast<float>(renderer_width) / static_cast<float>(renderer_height);
 
-    float halfWidth = position[2] * tan(FoVRadian/2); // Ajuster la largeur selon le zoom.
-    float halfHeight = position[2] * tan(FoVRadian/2); // Ajuster la hauteur selon le zoom
+    float verticalFOV = 45.0f*(M_PI / 180.0f); // Exemple en degrés, remplacez par votre FOV vertical
+    float horizontalFOV = 2.0f * atan(tan(verticalFOV * 0.5f) * aspectRatio);
+
+
+    float halfWidth = position[2] * tan(horizontalFOV/2); // Ajuster la largeur selon le zoom.
+    float halfHeight = position[2] * tan(verticalFOV/2); // Ajuster la hauteur selon le zoom
 
     float left = position[0] - halfWidth;   // Décaler à gauche
     float right = position[0] + halfWidth; // Décaler à droite
