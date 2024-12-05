@@ -18,6 +18,8 @@ public:
     void renderPolygons();
     void calculateBoundingBox();
     BoundingBox boundingBox;
+    bool isVisible = true;
+    std::string name = "no name";
 
 private:
     std::vector<std::pair<float, float>> points;
