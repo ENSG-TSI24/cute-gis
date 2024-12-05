@@ -40,6 +40,9 @@ void Renderer::initializeGL() {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
+
+    controller->getCamera().setRHeight(height());
+    controller->getCamera().setRWidth(width());
 }
 
 void Renderer::resizeGL(int w, int h) {
