@@ -24,19 +24,19 @@ void Camera::setY(float y){
 }
 
 void Camera::moveUp(float step){
-    this->position[1] += step/position[2];
+    this->position[1] += step*(position[2]*0.1);
 }
 
 void Camera::moveDown(float step){
-    this->position[1] -= step/position[2];
+    this->position[1] -= step*(position[2]*0.1);
 }
 
 void Camera::moveLeft(float step){
-    this->position[0] -= step/position[2];
+    this->position[0] -= step*(position[2]*0.1);
 }
 
 void Camera::moveRight(float step){
-    this->position[0] += step/position[2];
+    this->position[0] += step*(position[2]*0.1);
 }
 
 void Camera::setZ(float zChange) {

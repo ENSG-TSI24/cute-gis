@@ -38,7 +38,7 @@ void Controller::ControllerwheelEvent(QWheelEvent* event) {
 
 
 void Controller::ControllerkeyPressEvent(QKeyEvent *event){
-    float step = is2DMode ? 10.0f : 1.0f;
+    float step = is2DMode ? 1.0f : 1.0f;
     switch (event->key()) {
         case( Qt::Key_Up):
             this->camera.moveUp(step);
