@@ -2,85 +2,83 @@ cmake_minimum_required(VERSION 3.5)
 
 project(cute-gis VERSION 0.1 LANGUAGES CXX)
 
-include(CTest)
-enable_testing()
-
+include ( CTest )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(GTest REQUIRED)
 find_package(GDAL REQUIRED)
 find_package(CURL REQUIRED)
-find_package(GTest REQUIRED)
-
 
 include_directories(${GDAL_INCLUDE_DIR})
 link_directories(${GDAL_LIBRARY_DIRS})
 
 set(PROJECT_SOURCES
     main.cpp
-    src/API_WMS.cpp
-    src/API_WMS.h
-    src/API_WMTS.cpp
-    src/API_WMTS.h
-    src/API_WFS.cpp
-    src/API_WFS.h
-    src/DataProvider.cpp
-    src/DataProvider.h
+    # Backend files
+    src/back/API_WMS.h src/back/API_WMS.cpp
+    src/back/API_WMTS.h src/back/API_WMTS.cpp
+    src/back/API_WFS.h src/back/API_WFS.cpp
+    src/back/DataProvider.h src/back/DataProvider.cpp
+    # Frontend files
+
 )
 
 set(TEST_SOURCES
     tests/API_WMSTest.cpp
-    src/API_WMS.cpp
-    src/API_WMS.h
-    src/DataProvider.cpp
-    src/DataProvider.h
+    src/back/API_WMS.cpp
+    src/back/API_WMS.h
+    src/back/DataProvider.cpp
+    src/back/DataProvider.h
 )
 
 set(TEST_SOURCES_WMTS
     tests/API_WMTSTest.cpp
-    src/API_WMTS.cpp
-    src/API_WMTS.h
-    src/DataProvider.cpp
-    src/DataProvider.h
+    src/back/API_WMTS.cpp
+    src/back/API_WMTS.h
+    src/back/DataProvider.cpp
+    src/back/DataProvider.h
 )
 
 set(TEST_SOURCES_WFS
     tests/API_WFSTest.cpp
-    src/API_WFS.cpp
-    src/API_WFS.h
-    src/DataProvider.cpp
-    src/DataProvider.h
+    src/back/API_WFS.cpp
+    src/back/API_WFS.h
+    src/back/DataProvider.cpp
+    src/back/DataProvider.h
 )
+
+# Backend tests
 add_executable(API_WMSTest ${TEST_SOURCES})
-target_link_libraries(API_WMSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
-
 add_executable(API_WFSTest ${TEST_SOURCES_WFS})
-target_link_libraries(API_WFSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
-
 add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
+
+# Main application
+qt_add_executable(cute-gis
+    MANUAL_FINALIZATION
+    ${PROJECT_SOURCES}
+)
+
+# Link libraries
+target_link_libraries(cute-gis PRIVATE Qt6::Widgets Qt6::OpenGLWidgets glfw GLEW libGLEW.so libGLU.so libGL.so CURL::libcurl ${GDAL_LIBRARIES})
+target_link_libraries(API_WMSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
+target_link_libraries(API_WFSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WMTSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 
-add_test(NAME API_WMSTest COMMAND API_WMSTest)
-add_test(NAME API_WMTSTest COMMAND API_WMTSTest)
-add_test(NAME API_WFSTest COMMAND API_WFSTest)
 
+# Finalize application
+qt_finalize_executable(cute-gis)
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(cute-gis
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-else()
-    add_executable(cute-gis ${PROJECT_SOURCES})
-endif()
-
-target_link_libraries(cute-gis PRIVATE Qt${QT_VERSION_MAJOR}::Widgets CURL::libcurl ${GDAL_LIBRARIES})
-
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(cute-gis)
-endif()
+# Enable testing
+enable_testing()
+add_test(NAME testAbstractData COMMAND testAbstractData)
+add_test(NAME wfsdataTest COMMAND wfsdataTest)

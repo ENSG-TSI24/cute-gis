@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include <fstream>
-#include "../src/API_WMS.h"
+#include "../src/back/API_WMS.h"
 
 TEST(API_WMSTest, LoadInvalidDataset_ThrowsException) {
     const char* url = "https://google.com";
