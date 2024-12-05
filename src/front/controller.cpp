@@ -27,9 +27,9 @@ Camera& Controller::getCamera() {
 void Controller::ControllerwheelEvent(QWheelEvent* event) {
     float zoomStep = 1.0f;
     if (event->angleDelta().y() > 0) {
-        camera.setZoom(zoomStep);
+        camera.setZ(-zoomStep);
     } else if (event->angleDelta().y() < 0) {
-        camera.setZoom(-zoomStep);
+        camera.setZ(zoomStep);
     }
 
     camera.update();
@@ -38,7 +38,7 @@ void Controller::ControllerwheelEvent(QWheelEvent* event) {
 
 
 void Controller::ControllerkeyPressEvent(QKeyEvent *event){
-    float step = is3DMode ? 1.0f : 10.0f;
+    float step = is3DMode ? 1.0f : 1.0f;
     switch (event->key()) {
         case( Qt::Key_Up):
             this->camera.moveUp(step);

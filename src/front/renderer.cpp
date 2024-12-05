@@ -38,11 +38,16 @@ void Renderer::initializeGL() {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
+
+    controller->getCamera().setRHeight(height());
+    controller->getCamera().setRWidth(width());
 }
 
 void Renderer::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
 
+    controller->getCamera().setRHeight(h);
+    controller->getCamera().setRWidth(w);
     controller->getCamera().update();
 
     QMatrix4x4 projectionMatrix;
@@ -53,8 +58,6 @@ void Renderer::resizeGL(int w, int h) {
 }
 
 void Renderer::paintGl2D(){
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
     controller->getCamera().update();
     renderLayers2d();
 }
