@@ -42,7 +42,9 @@ TEST_F(DataMangmentTest, VectorDatagetpoints) {
     vectordata = VectorData(inputFile);
     auto points = vectordata.GetPoints();
     EXPECT_TRUE(points.size() !=0);
-    for (int i = 0; i<points.size(); )
+    for (int i = 0; i<2; i++) {
+    std::cout << "Point " << i << ": (" << points[i].first << ", " << points[i].second << ")" << std::endl;
+    }
 }
 
 TEST_F(DataMangmentTest, VectorGetLineStrings) {

@@ -42,17 +42,20 @@ set(PROJECT_SOURCES
     src/front/layer2d.h src/front/layer2d.cpp
 )
 
-set(TEST_SOURCES
+set(TEST_SOURCES_1
     tests/testDataManagment.cpp
-    tests/wfsdataTest.cpp
     src/back/datamanagment.h src/back/datamanagment.cpp
     src/back/vectordata.h src/back/vectordata.cpp
-    src/back/wfsdata.h src/back/wfsdata.cpp
+)
+
+set(TEST_SOURCES_2
+    tests/wfsdataTest.cpp
+    src/back/datamanagment.h src/back/datamanagment.cpp
 )
 
 # Backend tests
-add_executable(testDataManagment ${TEST_SOURCES})
-add_executable(wfsdataTest ${TEST_SOURCES})
+add_executable(testDataManagment ${TEST_SOURCES_1})
+add_executable(wfsdataTest ${TEST_SOURCES_2})
 
 # Main application
 qt_add_executable(cute-gis
@@ -70,5 +73,5 @@ qt_finalize_executable(cute-gis)
 
 # Enable testing
 enable_testing()
-add_test(NAME testDataManagment COMMAND testAbstractData)
+add_test(NAME testDataManagment COMMAND testDataManagment)
 add_test(NAME wfsdataTest COMMAND wfsdataTest)
