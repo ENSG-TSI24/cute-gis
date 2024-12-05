@@ -1,7 +1,7 @@
 #include "controller.h"
 
 Controller::Controller(QWidget* parent)
-    : QWidget(parent), camera(), isDragging(false) {}
+    : QWidget(parent), camera(), isDragging(false),is3DMode(false) {}
 
 //Controller::Controller(QWidget* parent)
 //    : QWidget(parent), camera() {

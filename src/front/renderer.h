@@ -23,7 +23,10 @@ public:
     void setIs3D(bool enabled);
 
     void setObjectLoader(ObjectLoader* loader);
-    void reset();
+    //void reset();
+    void reset2D();
+    void reset3D();
+
     void calculateBoundingBox();
     BoundingBox boundingBox;
     Controller* controller;
