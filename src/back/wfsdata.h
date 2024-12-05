@@ -10,6 +10,7 @@ private:
     GDALDataset* m_dataset; // Use GDALDataset instead of OGRDataSource
 public:
     WFSData();
+    ~WFSData();
     void open(const char* link);
     void getData(const char* name);
     GDALDataset* GetDataset();

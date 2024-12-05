@@ -6,7 +6,6 @@
 
 #include "./ui_mainwindow.h"
 #include "renderer.h"
-#include "geojsonloader.h"
 
 #include <QVBoxLayout>
 #include <QMessageBox>
