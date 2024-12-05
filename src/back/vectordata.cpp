@@ -6,15 +6,12 @@ VectorData::VectorData() : filePath(nullptr) {}
 VectorData::VectorData(const char* path) : DataManagment(path) {}
 
 
-VectorData::~VectorData() {
-    if (data) {
-        GDALClose(data);
-    }
-}
+VectorData::~VectorData() {}
 
 std::vector<std::pair<float, float>> VectorData::GetPoints(){
     std::vector<std::pair<float, float>> points;
-    GDALDataset* dataset = GetDATA();
+    GDALAllRegister();
+    GDALDataset* dataset = (GDALDataset *) GDALOpenEx(this->GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
     if (!dataset) {
         throw std::runtime_error("Invalid GDALDataset pointer provided.");
     }
@@ -49,12 +46,14 @@ std::vector<std::pair<float, float>> VectorData::GetPoints(){
         // Libérer la mémoire de l'entité
         OGRFeature::DestroyFeature(feature);
     }
+    GDALClose(dataset);
     return points;
 }
 
 std::vector<std::vector<std::pair<float, float>>>  VectorData::GetLineStrings(){
     std::vector<std::vector<std::pair<float, float>>> linestrings;
-    GDALDataset* dataset = GetDATA();
+    GDALAllRegister();
+    GDALDataset* dataset = (GDALDataset *) GDALOpenEx(this->GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
     if (!dataset) {
         throw std::runtime_error("Invalid GDALDataset pointer provided.");
     }
@@ -93,12 +92,14 @@ std::vector<std::vector<std::pair<float, float>>>  VectorData::GetLineStrings(){
         // Libérer la mémoire de l'entité
         OGRFeature::DestroyFeature(feature);
     }
+    GDALClose(dataset);
     return linestrings;
 }
 
 std::vector<std::vector<std::vector<std::pair<float, float>>>> VectorData::GetPolygons(){
     std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons;
-    GDALDataset* dataset = GetDATA();
+    GDALAllRegister();
+    GDALDataset* dataset = (GDALDataset *) GDALOpenEx(this->GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
     if (!dataset) {
         throw std::runtime_error("Invalid GDALDataset pointer provided.");
     }
@@ -145,5 +146,6 @@ std::vector<std::vector<std::vector<std::pair<float, float>>>> VectorData::GetPo
         // Libérer la mémoire de l'entité
         OGRFeature::DestroyFeature(feature);
     }
+    GDALClose(dataset);
     return polygons;
 }

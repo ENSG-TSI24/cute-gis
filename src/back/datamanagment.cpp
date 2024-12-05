@@ -1,26 +1,29 @@
 #include "datamanagment.h"
-
+#include <iostream>
 #include <gdal.h>
 #include <gdal_priv.h>
+#include <ogrsf_frmts.h>
 
 DataManagment::DataManagment() {
-    data = nullptr;
+    // data = nullptr;
     filePath = nullptr;
 }
 
 DataManagment::DataManagment(const char* Path) {
-    data = (GDALDataset *) GDALOpenEx(Path, GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    GDALAllRegister();
+    // data = (GDALDataset *) GDALOpenEx(Path, GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    //  std::cout << "from cosntructor : " << data << std::endl;
     filePath = Path;
 }
 
 DataManagment::~DataManagment() {
-    GDALClose(data);
+    // GDALClose(data);
 }
 
 const char* DataManagment::GetPath() {
     return filePath;
 }
-
+/*
 GDALDriver* DataManagment::GetDriver() {
     return data->GetDriver();
 }
@@ -28,3 +31,4 @@ GDALDriver* DataManagment::GetDriver() {
 GDALDataset* DataManagment::GetDATA() {
     return data;
 }
+*/
