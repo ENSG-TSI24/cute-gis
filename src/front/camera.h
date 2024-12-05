@@ -93,9 +93,15 @@ public:
     QMatrix4x4 getModelViewMatrix(const QMatrix4x4& modelMatrix);
 
     void centerOnBoundingBox(const BoundingBox& bbox);
+    int getRWidth();
+    int getRHeight();
+    void setRWidth(int width);
+    void setRHeight(int height);
 
 private:
     glm::vec3 position;
+    int renderer_width;
+    int renderer_height;
 };
 
 #endif // CAMERA_H

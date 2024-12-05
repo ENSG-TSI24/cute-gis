@@ -144,3 +144,19 @@ QMatrix4x4 Camera::getModelViewMatrix(const QMatrix4x4& modelMatrix) {
     QMatrix4x4 viewMatrix = getViewMatrix();
     return viewMatrix * modelMatrix;
 }
+
+int Camera::getRHeight(){
+    return this->renderer_height;
+}
+
+int Camera::getRWidth(){
+    return this->renderer_width;
+}
+
+void Camera::setRHeight(int height){
+    this->renderer_height=height;
+}
+
+void Camera::setRWidth(int width){
+    this->renderer_width=width;
+}

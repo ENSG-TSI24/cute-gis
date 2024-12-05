@@ -45,6 +45,8 @@ void Renderer::initializeGL() {
 void Renderer::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
 
+    controller->getCamera().setRHeight(h);
+    controller->getCamera().setRWidth(w);
     controller->getCamera().update();
 
     QMatrix4x4 projectionMatrix;
