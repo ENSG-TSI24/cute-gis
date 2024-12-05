@@ -14,16 +14,20 @@ TEST(AbstractDatatest, DefaultConstructor) {
 
 
 TEST(AbstractDatatest, ConstructorWithParameters) {
-    GDALAllRegister();
     const char* inputFile = "../test_data/BASSIN_VERSANT.geojson";
     AbstractData data(inputFile);
     GDALDataset *dataset = (GDALDataset *) GDALOpenEx(inputFile, GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
-    EXPECT_TRUE(true);
+
     EXPECT_TRUE(data.GetDATA()->GetLayerCount  ()  == dataset->GetLayerCount  () );
 //    EXPECT_TRUE(data.GetDATA()->GetGCPCount ()  == dataset->GetGCPCount () );
-    EXPECT_TRUE(data.GetPath() == inputFile);
+    EXPECT_TRUE(data.GetPath() ==  inputFile);
     EXPECT_TRUE(data.GetDriver() == dataset->GetDriver());
     GDALClose(dataset);
 //    GDALClose(data.GetDATA());
 }
 
+TEST(AbstractDatatest, VectorDatagetpoints) {
+    const char* inputFile = "../test_data/BASSIN_VERSANT.geojson";
+    auto vectordata(inputFile);
+    auto points = vectordata.GetPoints();
+}
