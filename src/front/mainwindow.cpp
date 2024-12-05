@@ -39,11 +39,9 @@ void MainWindow::onOpenFile()
     // Charger le fichier sélectionné
     const std::string filedata = filePath.toStdString();
 
-    renderer->reset();
-
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
-
+            renderer->reset3D();
             //add layer2d
             Geojsonloader geo(filedata);
             renderer->lst_layers2d.push_back(geo);
@@ -53,10 +51,11 @@ void MainWindow::onOpenFile()
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
-
             renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
             renderer->setIs3D(false);
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
+            renderer->reset2D();
+            nb_layers=0;
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->setObjectLoader(objectLoader);
             renderer->setIs3D(true);

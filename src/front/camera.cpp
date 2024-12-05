@@ -5,6 +5,16 @@ Camera::Camera():x(0.0f),y(0.0f),zoom(1.0f){
 
 }
 
+
+void Camera::resetCamera(){
+    this->x=0.0;
+    this->y=0.0;
+    this->zoom=1.0;
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
+
 float Camera::getX(){
     return x;
 }

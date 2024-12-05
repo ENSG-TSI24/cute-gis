@@ -87,6 +87,9 @@ public:
     float getZoom();
     void setZoom(float zoom);
 
+    void resetCamera();
+
+
     void centerOnBoundingBox(const BoundingBox& bbox);
     glm::vec3 getPosition();
     QMatrix4x4 getViewMatrix(); // Matrice de vue pour le mode 3D

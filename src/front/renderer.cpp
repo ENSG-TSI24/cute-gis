@@ -11,6 +11,7 @@ Renderer::Renderer(QWidget* parent)
     controller = new Controller(this);
     setFocusPolicy(Qt::StrongFocus);
     is3D = false;
+
 }
 
 Renderer::~Renderer() {
@@ -27,9 +28,6 @@ void Renderer::keyPressEvent(QKeyEvent *event){
 void Renderer::wheelEvent(QWheelEvent* event) {
     this->controller->ControllerwheelEvent(event);
 }
-//void  Renderer::mousePressEvent(QMouseEvent *event){
-  //  this->controller->ControllerQMouseEvent(event);
-//}
 
 void Renderer::mousePressEvent(QMouseEvent* event) {
     controller->ControllerMousePressEvent(event);
@@ -55,8 +53,9 @@ void Renderer::resizeGL(int w, int h) {
 }
 
 void Renderer::paintGl2D(){
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
     controller->getCamera().update();
-    controller->set3DMode(false);
     renderLayers2d();
 }
 
@@ -115,19 +114,24 @@ void Renderer::setObjectLoader(ObjectLoader* loader) {
 
 void Renderer::setIs3D(bool enabled) {
     is3D = enabled;
+    controller->set3DMode(enabled);
 }
 
-
-void Renderer::reset() {
-
+void Renderer::reset3D(){
     if (objectLoader) {
         delete objectLoader;
         objectLoader = nullptr;
+        this->controller->getCamera().resetCamera();
+        update();
     }
+}
 
-    is3D = false;
-
-    update();
+void Renderer::reset2D(){
+    if(lst_layers2d.size()!=0 ){
+        lst_layers2d.clear();
+        this->controller->getCamera().resetCamera();
+        update();
+    }
 }
 
 void Renderer::mouseReleaseEvent(QMouseEvent* event) {
