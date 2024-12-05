@@ -43,7 +43,7 @@ set(PROJECT_SOURCES
 )
 
 set(TEST_SOURCES
-    tests/testAbstractData.cpp
+    tests/testDataManagment.cpp
     tests/wfsdataTest.cpp
     src/back/datamanagment.h src/back/datamanagment.cpp
     src/back/vectordata.h src/back/vectordata.cpp
@@ -51,7 +51,7 @@ set(TEST_SOURCES
 )
 
 # Backend tests
-add_executable(testAbstractData ${TEST_SOURCES})
+add_executable(testDataManagment ${TEST_SOURCES})
 add_executable(wfsdataTest ${TEST_SOURCES})
 
 # Main application
@@ -62,7 +62,7 @@ qt_add_executable(cute-gis
 
 # Link libraries
 target_link_libraries(cute-gis PRIVATE Qt6::Widgets Qt6::OpenGLWidgets glfw GLEW libGLEW.so libGLU.so libGL.so ${GDAL_LIBRARIES})
-target_link_libraries(testAbstractData PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
+target_link_libraries(testDataManagment PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
 target_link_libraries(wfsdataTest PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
 
 # Finalize application
@@ -70,5 +70,5 @@ qt_finalize_executable(cute-gis)
 
 # Enable testing
 enable_testing()
-add_test(NAME testAbstractData COMMAND testAbstractData)
+add_test(NAME testDataManagment COMMAND testAbstractData)
 add_test(NAME wfsdataTest COMMAND wfsdataTest)

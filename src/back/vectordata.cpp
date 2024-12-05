@@ -1,4 +1,5 @@
 #include "vectordata.h"
+#include <ogrsf_frmts.h>
 
 VectorData::VectorData() : filePath(nullptr) {}
 

@@ -8,8 +8,8 @@ class IntersectVisitor : AbstractDataVisitor {
     public:
     IntersectVisitor();
     ~IntersectVisitor();
-    GDALDataset* visitSHP(GDALDataset* shpDataset, GDALDataset* shp_intersectedDataset);
-    GDALDataset* visitGeojson(GDALDataset* geoJsonDataset, GDALDataset* geoJson_intersectedDataset);
+    //GDALDataset* visitSHP(GDALDataset* shpDataset, GDALDataset* shp_intersectedDataset);
+    //GDALDataset* visitGeojson(GDALDataset* geoJsonDataset, GDALDataset* geoJson_intersectedDataset);
 };
 
 

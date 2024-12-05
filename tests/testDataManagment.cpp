@@ -5,16 +5,26 @@
 #include <gdal.h>
 #include <ogrsf_frmts.h>
 
+#include <fstream>
+#include <iostream>
 
-TEST(DataManagment, DefaultConstructor) {
-    DataManagment data;
+
+class DataMangmentTest : public ::testing::Test {
+    protected:
+        DataManagment data;
+        VectorData vectordata;
+};
+
+
+TEST_F(DataMangmentTest, DefaultConstructor) {
+    data = DataManagment();
     EXPECT_TRUE(data.GetDATA() == nullptr);
     EXPECT_TRUE(data.GetPath() == nullptr);
     GDALClose(data.GetDATA());
 }
 
 
-TEST(DataManagment, ConstructorWithParameters) {
+TEST(DataManagmentTest, ConstructorWithParameters) {
     const char* inputFile = "../test_data/BASSIN_VERSANT.geojson";
     DataManagment data(inputFile);
     GDALDataset *dataset = (GDALDataset *) GDALOpenEx(inputFile, GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
@@ -27,8 +37,23 @@ TEST(DataManagment, ConstructorWithParameters) {
 //    GDALClose(data.GetDATA());
 }
 
-TEST(AbstractDatatest, VectorDatagetpoints) {
+TEST_F(DataMangmentTest, VectorDatagetpoints) {
     const char* inputFile = "../test_data/BASSIN_VERSANT.geojson";
-    auto vectordata(inputFile);
+    vectordata = VectorData(inputFile);
     auto points = vectordata.GetPoints();
+    EXPECT_TRUE(points.size() !=0);
+    for (int i = 0; i<points.size(); )
+}
+
+TEST_F(DataMangmentTest, VectorGetLineStrings) {
+
+    const char* inputFile = "../test_data/BASSIN_VERSANT.geojson";
+    vectordata = VectorData(inputFile);
+    auto linestring = vectordata.GetLineStrings();
+    EXPECT_TRUE(linestring.size() !=0);
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
