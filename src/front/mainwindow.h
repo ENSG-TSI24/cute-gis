@@ -29,7 +29,8 @@ public:
     void clearLayout(QLayout *layout);
     void onCheckboxToggled(bool checked, std::string name);
 
-
+private slots:
+    void on_actionFlux_Data_triggered();
 
 private:
     Ui::MainWindow *ui;
