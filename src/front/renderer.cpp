@@ -64,7 +64,6 @@ void Renderer::paintGl2D(){
 
 void Renderer::paintGl3D(){
     if (objectLoader) {
-            controller->set3DMode(true);
 
             QMatrix4x4 modelMatrix;
             modelMatrix.translate(0.0f, 0.0f, -3.0f);

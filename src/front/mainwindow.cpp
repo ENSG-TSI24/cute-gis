@@ -34,7 +34,8 @@ void MainWindow::onToggle3DMode()
 
     if (!isCurrently3D) {
         renderer->reset2D();
-        nb_layers = 0;
+        name_layers.clear();
+        setupCheckboxes();
         QMessageBox::information(this, "mode Changed", "3D mode activated");
     } else {
         renderer->reset3D();
