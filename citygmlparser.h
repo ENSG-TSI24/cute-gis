@@ -16,7 +16,9 @@ struct Feature {
     std::string objectName;
     std::map<std::string, std::string> attributes;
     std::vector<std::vector<std::vector<glm::vec3>>> vertices;  // Scaled vertices (between -0.85f and 0.85f)
-    std::vector<std::vector<std::vector<glm::vec3>>> VerticesGeoreferenced;  // Original Lambert-93 vertices (x, y, z)
+    std::vector<std::vector<std::vector<glm::vec3>>> VerticesGeoreferenced;
+    std::vector<std::vector<std::vector<glm::vec3>>> VerticesTexture;
+    std::vector<std::vector<glm::vec3>> verticeNormal;// Original Lambert-93 vertices (x, y, z)
     std::vector<unsigned int> faces;
     std::tuple<double, double, double> lowerCorner; // Lower corner of bounding box (xmin, ymin)
     std::tuple<double, double, double> upperCorner; // Upper corner of bounding box (xmax, ymax)
@@ -37,15 +39,13 @@ private:
 
 public:
 
-
-
-
         // Function declarations
     OGRCoordinateTransformation* createLambertTransformation();
+    bool executeOgr2Ogr(const std::string& inputFile, const std::string& outputFile);
 
     CityGMLParser();
     ~CityGMLParser();
-    std::vector<std::vector<std::vector<glm::vec3>>> processCoordinates(json& data);
+    void processCoordinates(Feature feature, json& data);
     bool openFile(const std::string& filePath);
     void parseFeatures();
     void exportToObj(float s, const std::string& filePath);

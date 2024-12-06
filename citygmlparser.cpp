@@ -83,19 +83,23 @@ void CityGMLParser::parseFeatures() {
     //Nombre de feature dans le CityGML
     int nbfeatures = layer -> GetFeatureCount();
 
+
     //Boucle sur les features
     for (int i=0; i<nbfeatures; i++){
         Feature feature;
-        OGRFeature* ogrfeature = layer->GetFeature(i);
+        OGRFeature* ogrfeature = layer->GetNextFeature();
 
 
         OGRGeometry* geometry = ogrfeature->GetGeometryRef();
+        if (!geometry){
+            std::cout << "geometry is null" << std::endl;
 
-        std::cout << geometry -> getCoordinateDimension() << std::endl;
+        }
+        else {
 
 
-        feature.id = ogrfeature->GetFID();
-        feature.objectName = "Feature_" + std::to_string(ogrfeature->GetFID());
+       feature.id = ogrfeature->GetFID();
+       feature.objectName = "Feature_" + std::to_string(ogrfeature->GetFID());
 
     // Parse attributes
         for (int i = 0; i < ogrfeature->GetFieldCount(); i++) {
@@ -106,47 +110,37 @@ void CityGMLParser::parseFeatures() {
 
         // Récupération de la géométrie
 
-        std::string tab = geometry -> exportToJson();
+        /*char* wkt = nullptr;
+        geometry->exportToWkt(&wkt);
+
+        std::cout << wkt << std::endl;
+        CPLFree(wkt);*/
+
+        std::string tab;
+
+        if (geometry && std::string(geometry->getGeometryName()) != "MULTIPOLYGON") {
+            OGRGeometry* simplifiedGeometry = geometry->clone(); // Clone the geometry
+            OGRGeometry* converted = OGRGeometryFactory::forceToMultiPolygon(simplifiedGeometry);
+            tab = converted -> exportToJson();
+        }
+        else {
+        tab = geometry -> exportToJson();
+        }
+
+
 
         // Réparation de la géométrie si elle est cassée
         json jsondata = json::parse(tab);
 
-        std::vector<std::vector<std::vector<glm::vec3>>> RepairedTab = processCoordinates(jsondata);
+        // Passage des vertices à la feature
+
+        processCoordinates(feature, jsondata);
 
         // Passage des vertices à la feature
 
-        feature.VerticesGeoreferenced = RepairedTab;
-        feature.vertices = RepairedTab;
 
-        //Mise à jour des mins et maxs pour x, y et z
 
-        for (int j = 0; j< RepairedTab.size();j++){
-            for (int k =0; k< RepairedTab.at(j).size(); k++){
-                for (int l =0; l< RepairedTab.at(j).at(k).size(); l++){
-                    if (RepairedTab.at(j).at(k).at(l).x < xMin) {  // Get X from lowerCorner
-                        xMin = RepairedTab.at(j).at(k).at(l).x;  // Set X as minimum
-                    }
-                    if (RepairedTab.at(j).at(k).at(l).y < yMin) {  // Get Y from lowerCorner
-                        yMin = RepairedTab.at(j).at(k).at(l).y;  // Set Y as minimum
-                    }
-                    if (RepairedTab.at(j).at(k).at(l).z < zMin) {  // Get Z from upperCorner
-                        zMin = RepairedTab.at(j).at(k).at(l).z;  // Set Z as minimum
-                    }
 
-                    // Update the maximum x and y and z values
-                    if (RepairedTab.at(j).at(k).at(l).x > xMax) {  // Get X from upperCorner
-                        xMax = RepairedTab.at(j).at(k).at(l).x;  // Set X as maximum
-                    }
-                    if (RepairedTab.at(j).at(k).at(l).y > yMax) {  // Get Y from upperCorner
-                        yMax = RepairedTab.at(j).at(k).at(l).y;  // Set Y as maximum
-                    }
-                    if (RepairedTab.at(j).at(k).at(l).z > zMax) {  // Get Z from upperCorner
-                        zMax = RepairedTab.at(j).at(k).at(l).z;  // Set Z as maximum
-                    }
-
-                }
-            }
-        }
 
         //Passage de l'enveloppe à la feature
         feature.lowerCorner = std::make_tuple(xMin,yMin,zMin);
@@ -154,19 +148,24 @@ void CityGMLParser::parseFeatures() {
 
         //Ajout de la feature à la liste des features
         features.push_back(feature);
+        OGRFeature::DestroyFeature(ogrfeature);
 
 
     }
 
-
+}
 }
 
-std::vector<std::vector<std::vector<glm::vec3>>> CityGMLParser::processCoordinates(json& data) {
+
+void CityGMLParser::processCoordinates(Feature feature, json& data) {
     std::vector<std::vector<std::vector<glm::vec3>>> multipolygonList;
+    std::vector<std::vector<glm::vec3>> normalsList;
+    std::vector<std::vector<std::vector<glm::vec3>>> multipolygontexture;
     if (data.contains("coordinates")) {
 
         for (auto& multiPolygon : data["coordinates"]) {
             std::vector<std::vector<glm::vec3>> polygonList;
+
             for (auto& polygon : multiPolygon) {
                 // Flatten the list of 2D points into a single list of floats
                 std::vector<float> flatList;
@@ -185,19 +184,103 @@ std::vector<std::vector<std::vector<glm::vec3>>> CityGMLParser::processCoordinat
                     points3D.push_back({x, y, z});
                 }
 
+
+
+
+
+
                 // Replace the original polygon with the new list of 3D points
                 polygonList.push_back(points3D);
+
             }
+            std::vector<glm::vec3> normals3D;
+            for (const auto& polygon : polygonList) {
+                for (size_t i = 0; i < polygon.size(); ++i) {
+                    glm::vec3 v1 = polygon[i];
+                    glm::vec3 v2 = polygon[(i + 1) % polygon.size()];
+                    glm::vec3 v3 = polygon[(i + 2) % polygon.size()];
+
+                    glm::vec3 u = v2 - v1;
+                    glm::vec3 v = v3 - v1;
+                    glm::vec3 normal = glm::normalize(glm::cross(u, v));
+
+                    normals3D[i] += normal; // Accumuler les normales
+                }
+            }
+
+            for (auto& normal : normals3D) {
+                normal = glm::normalize(normal); // Moyenniser et normaliser
+            }
+
             multipolygonList.push_back(polygonList);
+            normalsList.push_back(normals3D);
         }
-        return multipolygonList;
-    }
-    else{
-    return multipolygonList;
+
+        for (int j = 0; j< multipolygonList.size();j++){
+            for (int k =0; k< multipolygonList.at(j).size(); k++){
+                for (int l =0; l< multipolygonList.at(j).at(k).size(); l++){
+                    if (multipolygonList.at(j).at(k).at(l).x < xMin) {  // Get X from lowerCorner
+                        xMin = multipolygonList.at(j).at(k).at(l).x;  // Set X as minimum
+                    }
+                    if (multipolygonList.at(j).at(k).at(l).y < yMin) {  // Get Y from lowerCorner
+                        yMin = multipolygonList.at(j).at(k).at(l).y;  // Set Y as minimum
+                    }
+                    if (multipolygonList.at(j).at(k).at(l).z < zMin) {  // Get Z from upperCorner
+                        zMin = multipolygonList.at(j).at(k).at(l).z;  // Set Z as minimum
+                    }
+
+                    // Update the maximum x and y and z values
+                    if (multipolygonList.at(j).at(k).at(l).x > xMax) {  // Get X from upperCorner
+                        xMax = multipolygonList.at(j).at(k).at(l).x;  // Set X as maximum
+                    }
+                    if (multipolygonList.at(j).at(k).at(l).y > yMax) {  // Get Y from upperCorner
+                        yMax = multipolygonList.at(j).at(k).at(l).y;  // Set Y as maximum
+                    }
+                    if (multipolygonList.at(j).at(k).at(l).z > zMax) {  // Get Z from upperCorner
+                        zMax = multipolygonList.at(j).at(k).at(l).z;  // Set Z as maximum
+                    }
+
+                }
+            }
+        }
+
+        for (int j = 0; j< multipolygonList.size();j++){
+            std::vector<std::vector<glm::vec3>> polygontexture;
+            for (int k =0; k< multipolygonList.at(j).size(); k++){
+                std::vector<glm::vec3> textureCoords;
+                for (int l =0; l< multipolygonList.at(j).at(k).size(); l++){
+                    float u = (multipolygonList.at(j).at(k).at(l).x - xMin) / (xMax - xMin);
+                    float v = (multipolygonList.at(j).at(k).at(l).y - yMin) / (yMax - yMin);
+                    float w = (multipolygonList.at(j).at(k).at(l).z - zMin) / (zMax - zMin);
+                    textureCoords.emplace_back(u, v, w);
+                }
+             }
+        }
+        feature.VerticesGeoreferenced = multipolygonList;
+        feature.vertices = multipolygonList;
+        feature.VerticesTexture = multipolygontexture;
+        feature.verticeNormal = normalsList;
     }
 }
 
+bool CityGMLParser::executeOgr2Ogr(const std::string& inputFile, const std::string& outputFile) {
+    // Construct the ogr2ogr command
+    std::string command = "ogr2ogr -f GML " + outputFile + " " + inputFile;
 
+    // Print the command for debugging
+    std::cout << "Executing command: " << command << std::endl;
+
+    // Execute the command
+    int returnCode = std::system(command.c_str());
+
+    // Check the result
+    if (returnCode != 0) {
+        std::cerr << "Error: ogr2ogr command failed with return code " << returnCode << std::endl;
+        return false;
+    }
+
+    return true;
+}
 
 void CityGMLParser::setInScale(float s) {
 
@@ -222,9 +305,9 @@ void CityGMLParser::setInScale(float s) {
             float scaledY = ((originalY - yMin) / (yMax - yMin)) * 2.0f * s - s;
             float scaledZ = ((originalZ - zMin) / (zMax - zMin)) * 2.0f * s - s;
 
-            std::cout << "Vertice scaled: (" << scaledX << ", " << scaledY << ", " << scaledZ << ")" << std::endl;
+         /*   std::cout << "Vertice scaled: (" << scaledX << ", " << scaledY << ", " << scaledZ << ")" << std::endl;
             std::cout << "Original Vertice : (" << originalX << ", " << originalY << ", " << originalZ << ")" << std::endl;
-
+*/
 
             // Store the scaled values in 'vertices'
             feature.vertices.at(i).at(k).at(l).x = scaledX;
@@ -261,21 +344,34 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
 
         for (int i = 0; i < feature.vertices.size(); i += 3) {
             for (int k =0; k< feature.vertices.at(i).size(); k++){
+                int n = 1;
                 for (int l =0; l<  feature.vertices.at(i).at(k).size(); l++){
+
                     objFile << "v " << feature.vertices.at(i).at(k).at(l).x << " "
                             << feature.vertices.at(i).at(k).at(l).y << " "
                             << feature.vertices.at(i).at(k).at(l).z << "\n";
+                    objFile << "vt " << feature.VerticesTexture.at(i).at(k).at(l).x << " "
+                            << feature.VerticesTexture.at(i).at(k).at(l).y << " "
+                            << feature.VerticesTexture.at(i).at(k).at(l).z << "\n";
+
 
                 }
+                objFile << "vn " << feature.verticeNormal.at(i).at(k).x << " "
+                        << feature.verticeNormal.at(i).at(k).y << " "
+                        << feature.verticeNormal.at(i).at(k).z << "\n";
+                objFile << "f ";
+                while (n < feature.vertices.at(i).size() ){
+                    objFile << -n << "/" << -n << "/" << -1 << " ";
+                    n+=1;
+                }
+                objFile << "\n";
+                }
+
+
             }
-        }
 
 
-        for (size_t i = 0; i < feature.faces.size(); i += 3) {
-            objFile << "f " << (feature.faces[i] + vertexOffset) << " "
-                    << (feature.faces[i + 1] + vertexOffset) << " "
-                    << (feature.faces[i + 2] + vertexOffset) << "\n";
-        }
+
 
         vertexOffset += feature.vertices.size() / 3;
         objFile << "\n";
@@ -397,7 +493,7 @@ void CityGMLParser::printFeature(const Feature& feature) const {
 
     std::cout << std::endl;
 
-    // Print attributes
+   // Print attributes
     std::cout << "Attributes: " << std::endl;
     for (const auto& [key, value] : feature.attributes) {
         std::cout << "  " << key << ": " << value << std::endl;
@@ -417,5 +513,4 @@ void CityGMLParser::printFeature(const Feature& feature) const {
 
     std::cout << "-----------------------------" << std::endl;
 }
-
 
