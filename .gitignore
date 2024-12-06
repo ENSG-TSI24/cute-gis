@@ -1,0 +1,5 @@
+graph/uml.drawio
+CMakeLists.txt.user*
+build/
+.vscode
+.cache
