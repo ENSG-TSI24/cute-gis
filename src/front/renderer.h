@@ -10,6 +10,7 @@
 #include "objectloader.h"
 #include <QGraphicsSceneMouseEvent>
 #include "layer2d.h"
+#include "layertiff.h"
 
 #include <QMouseEvent>
 
@@ -31,6 +32,7 @@ public:
     BoundingBox boundingBox;
     Controller* controller;
     std::vector<Layer2d> lst_layers2d;
+    std::vector<LayerTiff> lst_layerstiff;
 
 
 
@@ -45,6 +47,7 @@ protected:
 private:
 
     void renderLayers2d();
+    void renderTiff();
     void paintGl3D();
     void paintGl2D();
 

@@ -8,7 +8,9 @@
 class GeoTiffLoader
 {
 public:
-    static QImage loadGeoTIFF(const QString& filePath);
+    GeoTiffLoader();
+    void loadGeoTIFF(const QString& filePath);
+    QImage* image;
 };
 
 #endif // GEOTIFFLOADER_H

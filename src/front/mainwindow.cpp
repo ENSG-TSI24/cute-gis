@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 #include "objectloader.h"
 #include "geotiffloader.h"
+#include "layertiff.h"
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -55,6 +56,7 @@ void MainWindow::onOpenFile()
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
+
             renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
             renderer->setIs3D(false);
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
@@ -64,26 +66,19 @@ void MainWindow::onOpenFile()
             renderer->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
-            QImage image = GeoTiffLoader::loadGeoTIFF(filePath);
+            renderer->reset2D();
+            GeoTiffLoader loader;
+            loader.loadGeoTIFF(filePath);
+            QImage* image = loader.image;
 
-            QGraphicsScene* scene = new QGraphicsScene(this);
-            scene->addPixmap(QPixmap::fromImage(image));
+            renderer->lst_layerstiff.push_back(LayerTiff(image));
 
-            QGraphicsView* view = new QGraphicsView(scene);
-            view->setRenderHint(QPainter::Antialiasing, true);
-            view->setRenderHint(QPainter::SmoothPixmapTransform, true);
-
-            // Nettoyage préalable
-            if (ui->openGLWidget->layout()) {
-                clearLayout(ui->openGLWidget->layout());
-            } else {
-                auto* layout = new QVBoxLayout(ui->openGLWidget);
-                layout->setContentsMargins(0, 0, 0, 0);
-                ui->openGLWidget->setLayout(layout);
-            }
-
-            ui->openGLWidget->layout()->addWidget(view);
-
+            // add name layers
+            std::string name = "Couche " + std::to_string(nb_layers);
+            name_layers.push_back(name);
+            setupCheckboxes();
+            ++nb_layers;
+            renderer->setIs3D(false);
         }
         else {
             throw std::runtime_error("Unsupported file format!");

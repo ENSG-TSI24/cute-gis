@@ -37,6 +37,7 @@ set(PROJECT_SOURCES
         src/lib/tiny_obj_loader.h 
         src/lib/tiny_obj_loader.cc
         src/front/geotiffloader.h src/front/geotiffloader.cpp
+        src/front/layertiff.h src/front/layertiff.cpp
 )
 
 qt_add_executable(cute-gis

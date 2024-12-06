@@ -56,6 +56,7 @@ void Renderer::paintGl2D(){
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     controller->getCamera().update();
+    renderTiff();
     renderLayers2d();
 }
 
@@ -93,10 +94,20 @@ void Renderer::paintGL() {
 }
 
 
+void Renderer::renderTiff() {
+    int i = 0;
+    std::cout<<lst_layerstiff.size()<<std::endl;
+    for (auto& tiff: lst_layerstiff){
+        std::cout<<"------------ Layer : "<<i<< " ------------"<<std::endl;
+        tiff.renderTiff();
+        ++i;
+    }
+}
+
 void Renderer::renderLayers2d(){
     int i = 0;
     for (auto& layer: lst_layers2d){
-        std::cout<<"------------ Layer : "<<i<< " ------------\n";
+        // std::cout<<"------------ Layer : "<<i<< " ------------\n";
         layer.renderPoints();
         layer.renderLinestrings();
         layer.renderPolygons();
