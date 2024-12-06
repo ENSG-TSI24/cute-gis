@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDebug>
+#include "addFluxData.h"
 #include <QListWidget>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -87,6 +88,19 @@ void MainWindow::onOpenFile()
         refreshTimer->start(16); // Rafraîchissement à ~60 FPS
     }
 }
+
+
+void MainWindow::on_actionFlux_Data_triggered() {
+    addFluxData dialog(this);  // Create the dialog instance
+    if (dialog.exec() == QDialog::Accepted) {  // Wait for user interaction
+        QString layerName = dialog.getLayerName();  // Get the layer name
+        QString layerURL = dialog.getLayerURL();    // Get the layer URL
+
+        qDebug() << "Layer Name:" << layerName;
+        qDebug() << "URL:" << layerURL;
+    }
+}
+
 
 void MainWindow::clearLayout(QLayout *layout) {
     while (QLayoutItem* item = layout->takeAt(0)) {
