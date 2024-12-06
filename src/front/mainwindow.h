@@ -11,6 +11,7 @@
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QListWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,6 +28,7 @@ public:
     ~MainWindow();
     void clearLayout(QLayout *layout);
     void onCheckboxToggled(bool checked, std::string name);
+    void onDeleteLayer(QListWidget* listWidget);
 
 
 

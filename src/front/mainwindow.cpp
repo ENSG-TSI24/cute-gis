@@ -53,7 +53,7 @@ void MainWindow::onOpenFile()
 
 
             // add name layers
-            std::string name = "Couche " + std::to_string(nb_layers);
+            std::string name = "Layer " + std::to_string(nb_layers);
             renderer->lst_layers2d.back().name = name;
             name_layers.push_back(name);
             setupCheckboxes();
@@ -100,19 +100,6 @@ void MainWindow::clearLayout(QLayout *layout) {
     }
 }
 
-void MainWindow::onCheckboxToggled(bool checked, std::string name) {
-
-    std::cout<<"-------------- checkbox clicked --------------"<<std::endl;
-    std::cout<<checked<<std::endl;
-    std::cout<<name<<std::endl;
-
-    for (auto& layer : renderer->lst_layers2d) {
-        if (layer.name == name) {
-            layer.isVisible = checked;
-        }
-    }
-
-}
 
 void MainWindow::setupCheckboxes() {
 
@@ -139,6 +126,12 @@ void MainWindow::setupCheckboxes() {
         onCheckboxToggled(checked, name.toStdString());
     });
 
+    // Create a delete button (declare and initialize)
+    QPushButton* deleteButton = new QPushButton("Delete Layer", ui->layer_manager);
+    connect(deleteButton, &QPushButton::clicked, [this, listWidget]() {
+        onDeleteLayer(listWidget); // Ensure this function exists
+    });
+
     // Set checkbox style
     listWidget->setSpacing(10);
     listWidget->setMaximumWidth(300);
@@ -149,9 +142,52 @@ void MainWindow::setupCheckboxes() {
     layout->setSizeConstraint(QLayout::SetMaximumSize);
     layout->setContentsMargins(10, 10, 10, 10);
     layout->addWidget(listWidget);
+    layout->addWidget(deleteButton);
     layout->addStretch();
 
     ui->layer_manager->setLayout(layout);
 
+}
+void MainWindow::onCheckboxToggled(bool checked, std::string name) {
+
+    std::cout<<"-------------- checkbox clicked --------------"<<std::endl;
+    std::cout<<checked<<std::endl;
+    std::cout<<name<<std::endl;
+
+    for (auto& layer : renderer->lst_layers2d) {
+        if (layer.name == name) {
+            layer.isVisible = checked;
+        }
+    }
+}
+
+void MainWindow::onDeleteLayer(QListWidget* listWidget) {
+    QList<QListWidgetItem*> selectedItems = listWidget->selectedItems();
+    if (selectedItems.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "Please select a layer to delete.");
+        return;
+    }
+
+    for (QListWidgetItem* item : selectedItems) {
+        QString name = item->text();
+        std::string layerName = name.toStdString();
+
+        // Remove from renderer's layer list
+        auto it = std::remove_if(renderer->lst_layers2d.begin(), renderer->lst_layers2d.end(),
+                                 [&layerName](const auto& layer) { return layer.name == layerName; });
+
+        if (it != renderer->lst_layers2d.end()) {
+            renderer->lst_layers2d.erase(it, renderer->lst_layers2d.end());
+        }
+
+        // Remove from layer names list
+        name_layers.erase(std::remove(name_layers.begin(), name_layers.end(), layerName), name_layers.end());
+
+        // Remove from listWidget
+        delete listWidget->takeItem(listWidget->row(item));
+    }
+
+    // Refresh renderer
+    renderer->update();
 }
 
