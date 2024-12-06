@@ -27,7 +27,7 @@ MainWindow::~MainWindow()
 void MainWindow::onOpenFile()
 {
     // Ouvrir un fichier avec QFileDialog
-        QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", "GeoJSON Files All Files (*.*);; (*.geojson);;OBJ Files (*.obj)");
+    QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", "GeoJSON Files All Files (*.*);; (*.geojson);;OBJ Files (*.obj)");
 
     if (filePath.isEmpty()) {
         qWarning() << "No file selected!";
@@ -35,11 +35,8 @@ void MainWindow::onOpenFile()
     }
 
     qDebug() << "Selected File:" << filePath;
-
-    // Charger le fichier sélectionné
-    // désolé mais maitenant j'ai besoin de const char*
-    const char* filedata = filePath.toStdString().c_str();;
-
+    std::string filestr =  filePath.toStdString();
+    const char* filedata = filestr.c_str();
     renderer->reset();
 
     try {
