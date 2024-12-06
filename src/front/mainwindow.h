@@ -27,8 +27,7 @@ public:
     ~MainWindow();
     void clearLayout(QLayout *layout);
     void onCheckboxToggled(bool checked, std::string name);
-
-
+    void onToggle3DMode();
 
 private:
     Ui::MainWindow *ui;

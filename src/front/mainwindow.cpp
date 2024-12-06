@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
+    connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
 
 }
 
@@ -26,10 +27,29 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::onToggle3DMode()
+{
+    bool isCurrently3D = renderer->getIs3D();
+    renderer->setIs3D(!isCurrently3D);
+
+    if (!isCurrently3D) {
+        renderer->reset2D();
+        nb_layers = 0;
+        QMessageBox::information(this, "mode Changed", "3D mode activated");
+    } else {
+        renderer->reset3D();
+        QMessageBox::information(this, "Mode Changed", "2D mode activated");
+    }
+
+    ui->button_3d->setText(!isCurrently3D ? "Switch to 2D Mode" : "Switch to 3D Mode");
+}
+
 void MainWindow::onOpenFile()
 {
-    // Ouvrir un fichier avec QFileDialog
-    QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", "GeoJSON Files All Files (*.*);; (*.geojson);;OBJ Files (*.obj)");
+    bool is3DMode = renderer->getIs3D();
+
+    QString filter = is3DMode ? "OBJ Files (*.obj);;All Files (*.*)" : "GeoJSON Files (*.geojson);;All Files (*.*)";
+    QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", filter);
 
     if (filePath.isEmpty()) {
         qWarning() << "No file selected!";
@@ -37,38 +57,42 @@ void MainWindow::onOpenFile()
     }
 
     qDebug() << "Selected File:" << filePath;
-    std::string filestr =  filePath.toStdString();
+    std::string filestr = filePath.toStdString();
     const char* filedata = filestr.c_str();
-    renderer->reset3D();
 
     try {
-        if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
-            renderer->reset3D();
-            //add layer2d
-            std::cout<<"############### ADD LAYER ################"<<std::endl;
+        if (!is3DMode) {
+            if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
+                renderer->reset3D();
 
-            
-            VectorData geo(filedata);
-            renderer->lst_layers2d.push_back(geo);
+                // Add layer 2D
+                std::cout << "############### ADD LAYER ################" << std::endl;
 
+                VectorData geo(filedata);
+                renderer->lst_layers2d.push_back(geo);
 
-            // add name layers
-            std::string name = "Couche " + std::to_string(nb_layers);
-            renderer->lst_layers2d.back().name = name;
-            name_layers.push_back(name);
-            setupCheckboxes();
-            ++nb_layers;
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
-            renderer->setIs3D(false);
+                // Add layer name
+                std::string name = "Couche " + std::to_string(nb_layers);
+                renderer->lst_layers2d.back().name = name;
+                name_layers.push_back(name);
 
-        } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
-            renderer->reset2D();
-            nb_layers=0;
-            ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
-            renderer->setObjectLoader(objectLoader);
-            renderer->setIs3D(true);
+                setupCheckboxes();
+                ++nb_layers;
+
+                renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
+            } else {
+                throw std::runtime_error("Unsupported file format for 2D mode!");
+            }
         } else {
-            throw std::runtime_error("Unsupported file format!");
+            if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
+                renderer->reset2D();
+                nb_layers = 0;
+
+                ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
+                renderer->setObjectLoader(objectLoader);
+            } else {
+                throw std::runtime_error("Unsupported file format for 3D mode!");
+            }
         }
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString::fromStdString(ex.what()));
@@ -79,17 +103,16 @@ void MainWindow::onOpenFile()
         auto* layout = new QVBoxLayout(ui->openGLWidget);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(renderer);
-    } else {
-        if (ui->openGLWidget->layout()->indexOf(renderer) == -1) {
-            ui->openGLWidget->layout()->addWidget(renderer);
-        }
+    } else if (ui->openGLWidget->layout()->indexOf(renderer) == -1) {
+        ui->openGLWidget->layout()->addWidget(renderer);
     }
 
     connect(refreshTimer, &QTimer::timeout, renderer, QOverload<>::of(&QWidget::update));
     if (!refreshTimer->isActive()) {
-        refreshTimer->start(16); // Rafraîchissement à ~60 FPS
+        refreshTimer->start(16); // Refresh at ~60 FPS
     }
 }
+
 
 void MainWindow::clearLayout(QLayout *layout) {
     while (QLayoutItem* item = layout->takeAt(0)) {

@@ -92,7 +92,9 @@ void Renderer::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (!is3D) {
         paintGl2D();
-    } else paintGl3D();
+    } else {
+        if (objectLoader) paintGl3D();
+    };
 }
 
 void Renderer::renderLayers2d(){
@@ -115,6 +117,10 @@ void Renderer::setObjectLoader(ObjectLoader* loader) {
 void Renderer::setIs3D(bool enabled) {
     is3D = enabled;
     controller->set3DMode(enabled);
+}
+
+bool Renderer::getIs3D() {
+    return controller->get3DMode();
 }
 
 void Renderer::reset3D(){

@@ -27,6 +27,7 @@ public:
     void reset2D();
     void reset3D();
 
+    bool getIs3D();
     void calculateBoundingBox();
     BoundingBox boundingBox;
     Controller* controller;
