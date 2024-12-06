@@ -9,6 +9,7 @@
 #include "controller.h"
 #include "objectloader.h"
 #include <QGraphicsSceneMouseEvent>
+#include "layer2d.h"
 
 #include <QMouseEvent>
 
@@ -19,17 +20,19 @@ public:
     explicit Renderer(QWidget* parent = nullptr);
     virtual ~Renderer();
 
-    void setPoints(std::vector<std::pair<float, float>> points);
-    void setLinestrings(std::vector<std::vector<std::pair<float, float>>> linestrings);
-    void setPolygons(std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons);
-
     void setIs3D(bool enabled);
 
     void setObjectLoader(ObjectLoader* loader);
-    void reset();
+    //void reset();
+    void reset2D();
+    void reset3D();
+
     void calculateBoundingBox();
     BoundingBox boundingBox;
     Controller* controller;
+    std::vector<Layer2d> lst_layers2d;
+
+
 
 protected:
     void initializeGL() override;
@@ -40,13 +43,11 @@ protected:
     void wheelEvent(QWheelEvent* event) override;
 
 private:
-    void renderPoints();
-    void renderLinestrings();
-    void renderPolygons();
 
-    std::vector<std::pair<float, float>> points;
-    std::vector<std::vector<std::pair<float, float>>> linestrings;
-    std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons;
+    void renderLayers2d();
+    void paintGl3D();
+    void paintGl2D();
+
     ObjectLoader* objectLoader;
     bool is3D;
 
