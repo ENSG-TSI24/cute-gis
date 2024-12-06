@@ -44,8 +44,8 @@ TEST(API_WFSTest, DownloadTileToGeoTiff_FileGenerated) {
     API_WFS flux_valide = API_WFS(url);
 
     // Act
-    flux_valide.ExportToGeoJSON(123,"../cute-gis/test.geojson");
-    const char* outputFile = "/home/formation/minisig/cute-gis/test.geojson"; // ** changer le lien
+    flux_valide.ExportToGeoJSON(123,"../test_data/test.geojson");
+    const char* outputFile = "../test_data/test.geojson"; // ** changer le lien
     // Assert
     std::ifstream file(outputFile);
     EXPECT_TRUE(file.is_open()); // Verifies exported file exists

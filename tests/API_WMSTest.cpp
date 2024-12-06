@@ -39,7 +39,7 @@ TEST(API_WMSTest, DownloadTileToGeoTiff_FileGenerated) {
     API_WMS flux_valide = API_WMS(url1);
 
     const char* layerName = "OI.OrthoimageCoverage";
-    const char* outputFile = "/home/formation/minisig/cute-gis/src/tile_orthoimage.tiff"; // ** changer le lien
+    const char* outputFile = "../test_data/tile_orthoimage.tiff";
     int zoom = 1;
     int row = 1;
     int col = 0;
@@ -54,4 +54,9 @@ TEST(API_WMSTest, DownloadTileToGeoTiff_FileGenerated) {
 
     // Nettoyage après test
     std::remove(outputFile);
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

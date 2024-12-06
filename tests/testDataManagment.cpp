@@ -13,14 +13,14 @@ class DataManagmentTest : public ::testing::Test {
     protected:
         DataManagment data;
         VectorData vectordata;
-        const char* inputFile =  "/home/jbolivier/Documents/ProjetGeo/cute-gis/test_data/BASSIN_VERSANT.geojson";
+        const char* inputFile =  "../test_data/BASSIN_VERSANT.geojson";
 };
 
 /*
 TEST_F(DataManagmentTest, DefaultConstructor) {
     data = DataManagment();
     EXPECT_TRUE(data.GetDATA() == nullptr);
-    EXPECT_TRUE(data.GetPath() == nullptr);
+    // EXPECT_TRUE(data.GetPath() == nullptr);
     GDALClose(data.GetDATA());
 }
 */

@@ -52,10 +52,6 @@ set(TEST_SOURCES_1
     src/back/vectordata.h src/back/vectordata.cpp
 )
 
-set(TEST_SOURCES_2
-    tests/wfsdatatest.cpp
-    src/back/wfsdata.h src/back/wfsdata.cpp
-)
 
 set(TEST_SOURCES_WMS
     tests/API_WMSTest.cpp
@@ -83,7 +79,6 @@ set(TEST_SOURCES_WFS
 
 # Backend tests
 add_executable(testDataManagment ${TEST_SOURCES_1})
-add_executable(wfsDataTest ${TEST_SOURCES_2})
 add_executable(API_WMSTest ${TEST_SOURCES_WMS})
 add_executable(API_WFSTest ${TEST_SOURCES_WFS})
 add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
@@ -99,7 +94,6 @@ qt_add_executable(cute-gis
 # Link libraries
 target_link_libraries(cute-gis PRIVATE Qt6::Widgets Qt6::OpenGLWidgets glfw GLEW libGLEW.so libGLU.so libGL.so CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(testDataManagment PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
-target_link_libraries(wfsDataTest PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
 target_link_libraries(API_WMSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WFSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WMTSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
@@ -113,7 +107,6 @@ enable_testing()
 
 
 add_test(NAME testDataManagment COMMAND testDataManagment)
-add_test(NAME wfsDataTest COMMAND wfsDataTest)
 add_test(NAME API_WMSTest COMMAND API_WMSTest)
 add_test(NAME API_WFSTest COMMAND API_WFSTest)
 add_test(NAME API_WMTSTest COMMAND API_WMTSTest)
