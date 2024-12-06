@@ -28,6 +28,9 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="1" rowspan="2" colspan="2">
+     <widget class="QOpenGLWidget" name="openGLWidget"/>
+    </item>
     <item row="0" column="0" rowspan="2">
      <widget class="QGroupBox" name="layer_manager">
       <property name="enabled">
@@ -50,10 +53,38 @@
       <property name="flat">
        <bool>false</bool>
       </property>
+      <widget class="QListWidget" name="listLayers">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>321</width>
+         <height>411</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="delete_button">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>89</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Ubuntu Condensed</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>delete</string>
+       </property>
+      </widget>
      </widget>
-    </item>
-    <item row="0" column="1" rowspan="2" colspan="2">
-     <widget class="QOpenGLWidget" name="openGLWidget"/>
     </item>
    </layout>
   </widget>

@@ -51,7 +51,6 @@ void MainWindow::onOpenFile()
             VectorData geo(filedata);
             renderer->lst_layers2d.push_back(geo);
 
-
             // add name layers
             std::string name = "Couche " + std::to_string(nb_layers);
             renderer->lst_layers2d.back().name = name;
@@ -116,14 +115,11 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
 
 void MainWindow::setupCheckboxes() {
 
-    // Clear the layout_manager
-    if (ui->layer_manager->layout()) {
-        clearLayout(ui->layer_manager->layout());
-        delete ui->layer_manager->layout();
-    }
+    // Clear list layers
+    ui->listLayers->clear();
 
     // Create list of checkbox
-    QListWidget* listWidget = new QListWidget(ui->layer_manager);
+    QListWidget* listWidget = ui->listLayers;
     listWidget->setDragDropMode(QAbstractItemView::InternalMove);
 
     for (const auto& name : name_layers) {
@@ -143,15 +139,6 @@ void MainWindow::setupCheckboxes() {
     listWidget->setSpacing(10);
     listWidget->setMaximumWidth(300);
     listWidget->setStyleSheet("QListWidget::item { padding: 5px; font-family: Sans Serif; font-size: 12pt; }");
-
-    // Set layer_manager main layout
-    auto* layout = new QVBoxLayout(ui->layer_manager);
-    layout->setSizeConstraint(QLayout::SetMaximumSize);
-    layout->setContentsMargins(10, 10, 10, 10);
-    layout->addWidget(listWidget);
-    layout->addStretch();
-
-    ui->layer_manager->setLayout(layout);
 
 }
 
