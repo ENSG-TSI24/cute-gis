@@ -39,7 +39,7 @@ void MainWindow::onOpenFile()
     qDebug() << "Selected File:" << filePath;
     std::string filestr =  filePath.toStdString();
     const char* filedata = filestr.c_str();
-    renderer->reset();
+    renderer->reset3D();
 
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
