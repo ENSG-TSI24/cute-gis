@@ -41,6 +41,7 @@ void Layer2d::renderLinestrings() {
 void Layer2d::renderPolygons() {
     glColor3f(1.0f, 0.0f, 0.0f);
     glLineWidth(1.0f);
+    if (!polygons.empty()){
     for (const auto& polygon : polygons) {
         for (const auto& ring : polygon) {
                         // Dessiner l'intérieur du polygone
@@ -49,7 +50,7 @@ void Layer2d::renderPolygons() {
             glColor3f(1.0f, 0.0f, 0.0f); // Rouge pour le remplissage
             glBegin(GL_POLYGON);
             for (const auto& coord : ring) {
-                glVertex3f(std::get<0>(coord), std::get<1>(coord) 0.0f);
+                glVertex3f(std::get<0>(coord), std::get<1>(coord) ,0.0f);
             }
             glEnd();
             glDisable(GL_POLYGON_OFFSET_FILL);
@@ -98,6 +99,7 @@ void Layer2d::renderPolygons() {
             glEnd();
         }
     }
+}
 }
 
 
