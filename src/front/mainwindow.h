@@ -6,6 +6,7 @@
 
 #include "./ui_mainwindow.h"
 #include "renderer.h"
+#include "objectloader.h"
 
 #include <QVBoxLayout>
 #include <QCheckBox>
