@@ -11,6 +11,7 @@ class Controller : public QWidget {
 
 public:
     explicit Controller(QWidget* parent = nullptr);
+    ~Controller();
 
     Camera& getCamera(); // Fournit un accès à la caméra
     void set3DMode(bool is3D);
@@ -18,12 +19,11 @@ public:
     void ControllerkeyPressEvent(QKeyEvent* event) ; // Gère les événements clavier
     void ControllerQMouseEvent(QMouseEvent *event);
 
-
-
     void ControllerMousePressEvent(QMouseEvent* event); // Début du drag
     void ControllerMouseReleaseEvent(QMouseEvent* event); // Fin du drag
     void ControllerMouseMoveEvent(QMouseEvent* event); // Déplacement pendant le drag
 
+    bool get3DMode();
 
 private:
     Camera camera; // Caméra contrôlée par Controller

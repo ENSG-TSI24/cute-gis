@@ -41,19 +41,57 @@ void Layer2d::renderLinestrings() {
 void Layer2d::renderPolygons() {
     glColor3f(1.0f, 0.0f, 0.0f);
     glLineWidth(1.0f);
-    if (!polygons.empty()) {
-        for (const auto& polygon : polygons) {
+    if (!polygons.empty()){
+    for (const auto& polygon : polygons) {
         for (const auto& ring : polygon) {
+                        // Dessiner l'intérieur du polygone
+            glEnable(GL_POLYGON_OFFSET_FILL);
+            glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
+            glColor3f(1.0f, 0.0f, 0.0f); // Rouge pour le remplissage
+            glBegin(GL_POLYGON);
+            for (const auto& coord : ring) {
+                glVertex3f(std::get<0>(coord), std::get<1>(coord) ,0.0f);
+            }
+            glEnd();
+            glDisable(GL_POLYGON_OFFSET_FILL);
+
+            // Dessiner le contour du polygone
+            glColor3f(0.0f, 0.0f, 0.0f); // Noir pour les contours
+            glLineWidth(1.0f);
+            glEnable(GL_LINE_SMOOTH); // Anti-aliasing pour des lignes lisses
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
             glBegin(GL_LINE_LOOP);
             for (const auto& coord : ring) {
                 glVertex3f(std::get<0>(coord), std::get<1>(coord), 0.0f);
             }
             glEnd();
+            glDisable(GL_LINE_SMOOTH);
+            glDisable(GL_BLEND);
         }
         }
     }else{
         for (const auto& polygon2d : polygons2d) {
         for (const auto& ring : polygon2d) {
+            // Dessiner l'intérieur du polygone
+            glEnable(GL_POLYGON_OFFSET_FILL);
+            glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
+            glColor3f(1.0f, 0.0f, 0.0f); // Rouge pour le remplissage
+            glBegin(GL_POLYGON);
+            for (const auto& coord : ring) {
+                glVertex3f(coord.first, coord.second, 0.0f);
+            }
+            glEnd();
+            glDisable(GL_POLYGON_OFFSET_FILL);
+
+            // Dessiner le contour du polygone
+            glColor3f(0.0f, 0.0f, 0.0f); // Noir pour les contours
+            glLineWidth(1.0f);
+            glEnable(GL_LINE_SMOOTH); // Anti-aliasing pour des lignes lisses
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
             glBegin(GL_LINE_LOOP);
             for (const auto& coord : ring) {
                 glVertex3f(coord.first, coord.second, 0.0f);
@@ -63,6 +101,8 @@ void Layer2d::renderPolygons() {
     }
 }
 }
+
+
 
 void Layer2d::calculateBoundingBox() {
     float minX = std::numeric_limits<float>::max();
