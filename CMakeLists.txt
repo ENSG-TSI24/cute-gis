@@ -23,6 +23,7 @@ include_directories(${GDAL_INCLUDE_DIR})
 link_directories(${GDAL_LIBRARY_DIRS})
 
 set(PROJECT_SOURCES
+<<<<<<< HEAD
     main.cpp
     # Backend files
     src/back/wfsdata.h src/back/wfsdata.cpp
@@ -44,6 +45,26 @@ set(PROJECT_SOURCES
     src/front/objectloader.h src/front/objectloader.cpp
     src/lib/tiny_obj_loader.h src/lib/tiny_obj_loader.cc
     src/front/layer2d.h src/front/layer2d.cpp
+=======
+        main.cpp
+        src/front/mainwindow.cpp
+        src/front/mainwindow.h
+        src/front/mainwindow.ui
+        src/front/camera.h 
+        src/front/camera.cpp
+        src/front/controller.h 
+        src/front/controller.cpp
+        src/front/geojsonloader.h 
+        src/front/geojsonloader.cpp
+        src/front/layer2d.h 
+        src/front/layer2d.cpp
+        src/front/renderer.h 
+        src/front/renderer.cpp
+        src/front/objectloader.h 
+        src/front/objectloader.cpp
+        src/lib/tiny_obj_loader.h 
+        src/lib/tiny_obj_loader.cc
+>>>>>>> devfront
 )
 
 set(TEST_SOURCES_1
