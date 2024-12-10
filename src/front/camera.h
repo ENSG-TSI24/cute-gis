@@ -81,15 +81,20 @@ public:
     * the fov
     *
     */
+    void moveFront3D(float step);
+    void moveBack3D(float step);
+    void moveLeft3D(float step);
+    void moveRight3D(float step);
+    void moveDown3D(float step);
+    void moveUp3D(float step);
 
-    void update();
+    void update2D();
     float speedFactor;
     float getZ();
     void setZ(float z);
     glm::vec3 getPosition();
     QMatrix4x4 getViewMatrix(); // Matrice de vue pour le mode 3D
     QMatrix4x4 getProjectionMatrix(int screenWidth, int screenHeight); // Projection 2D/3D
-    QMatrix4x4 getModelViewMatrix(const QMatrix4x4& modelMatrix);
 
     void resetCamera();
     void centerOnBoundingBox(const BoundingBox& bbox);
@@ -102,6 +107,9 @@ private:
     glm::vec3 position;
     int renderer_width;
     int renderer_height;
+    glm::vec3 forward;
+    glm::vec3 right;
+    glm::vec3 up;
 };
 
 #endif // CAMERA_H

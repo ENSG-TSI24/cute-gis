@@ -45,7 +45,7 @@ void Layer2d::renderPolygons() {
         for (const auto& ring : polygon) {
             glBegin(GL_LINE_LOOP);
             for (const auto& coord : ring) {
-                glVertex3f(coord.first, coord.second, 0.0f);
+                glVertex3f(coord.first, coord.second,0.0f);
             }
             glEnd();
         }

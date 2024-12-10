@@ -48,7 +48,7 @@ void Renderer::resizeGL(int w, int h) {
 
     controller->getCamera().setRHeight(h);
     controller->getCamera().setRWidth(w);
-    controller->getCamera().update();
+    controller->getCamera().update2D();
 
     QMatrix4x4 projectionMatrix;
     projectionMatrix.perspective(45.0f, float(w) / float(h), 0.1f, 100.0f);
@@ -58,32 +58,46 @@ void Renderer::resizeGL(int w, int h) {
 }
 
 void Renderer::paintGl2D(){
-    controller->getCamera().update();
+    controller->getCamera().update2D();
     renderLayers2d();
 }
 
-void Renderer::paintGl3D(){
+void Renderer::paintGl3D() {
     if (objectLoader) {
-            controller->set3DMode(true);
+        controller->set3DMode(true);
 
-            QMatrix4x4 modelMatrix;
-            modelMatrix.scale(0.005f);
+        // Récupérer la matrice de vue de la caméra
+        QMatrix4x4 viewMatrix = this->controller->getCamera().getViewMatrix();
 
-            QMatrix4x4 modelViewMatrix = controller->getCamera().getModelViewMatrix(modelMatrix);
-            glMatrixMode(GL_MODELVIEW);
-            glLoadMatrixf(modelViewMatrix.constData());
+        // Configurer la matrice de projection
+        QMatrix4x4 projectionMatrix;
+        float aspectRatio = this->width()/this->height();
+        projectionMatrix.perspective(45.0f, aspectRatio, 0.1f, 1000.0f);
 
-            glColor3f(1.0f, 1.0f, 0.0f);
-            glBegin(GL_TRIANGLES);
+        // Appliquer la matrice de projection
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrixf(projectionMatrix.constData());
 
-            const auto& vertices = objectLoader->getVertices();
-            for (const auto& vertex : vertices) {
-                glVertex3f(vertex.x, vertex.z, vertex.y);
-            }
-            glEnd();
-        } else {
-            qWarning() << "No ObjectLoader assigned for 3D rendering.";
+        // Appliquer la matrice de vue
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrixf(viewMatrix.constData());
+
+        // Dessiner les objets
+        glColor3f(1.0f, 1.0f, 0.0f);
+        glBegin(GL_TRIANGLES);
+
+        std::cout << controller->getCamera().getX() << " "
+                  << controller->getCamera().getY() << " "
+                  << controller->getCamera().getZ() << std::endl;
+
+        const auto& vertices = objectLoader->getVertices();
+        for (const auto& vertex : vertices) {
+            glVertex3f(vertex.x, vertex.z, vertex.y);
         }
+        glEnd();
+    } else {
+        qWarning() << "No ObjectLoader assigned for 3D rendering.";
+    }
 }
 
 void Renderer::paintGL() {
