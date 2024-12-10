@@ -156,11 +156,11 @@ OGRLayer* API_WFS::GetLayer(const char* name)
 void API_WFS::ExportToGeoJSON(const std::string& layerName)
 {
     // Définir le chemin relatif pour le dossier GeoJSON
-    std::string relativePath = "../cute-gis/data/geojson/";
+    std::string relativePath = "../data/geojson/";
     std::string outputFileName = layerName + ".geojson";
     const std::string& outputPath = relativePath + outputFileName;
 
-    std::cout<<"je suis dans le fonctiion :" << outputPath<<std::endl;
+
 
     // Créer le dossier si nécessaire
     std::filesystem::create_directories(relativePath);
@@ -216,7 +216,6 @@ void API_WFS::ExportToGeoJSON(const std::string& layerName)
     output_path = outputPathStatic.c_str();
 
 
-    std::cout<<"je suis dans le fonctiion :" << output_path<<std::endl;
     // Afficher le chemin
     std::cout << "GeoJSON successfully created at: " << output_path << std::endl;
 }
