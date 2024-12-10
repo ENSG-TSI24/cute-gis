@@ -19,7 +19,7 @@ struct Feature {
     std::vector<std::vector<std::vector<glm::vec3>>> VerticesGeoreferenced;
     std::vector<std::vector<std::vector<glm::vec3>>> VerticesTexture;
     std::vector<std::vector<glm::vec3>> verticeNormal;// Original Lambert-93 vertices (x, y, z)
-    std::vector<unsigned int> faces;
+
     std::tuple<double, double, double> lowerCorner; // Lower corner of bounding box (xmin, ymin)
     std::tuple<double, double, double> upperCorner; // Upper corner of bounding box (xmax, ymax)
 
@@ -45,7 +45,7 @@ public:
 
     CityGMLParser();
     ~CityGMLParser();
-    void processCoordinates(Feature feature, json& data);
+    std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> processCoordinates(json& data);
     bool openFile(const std::string& filePath);
     void parseFeatures();
     void exportToObj(float s, const std::string& filePath);

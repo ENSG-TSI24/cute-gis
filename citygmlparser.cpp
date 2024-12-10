@@ -91,7 +91,7 @@ void CityGMLParser::parseFeatures() {
 
 
         OGRGeometry* geometry = ogrfeature->GetGeometryRef();
-        if (!geometry){
+        if (geometry-> IsEmpty()){
             std::cout << "geometry is null" << std::endl;
 
         }
@@ -109,19 +109,20 @@ void CityGMLParser::parseFeatures() {
         }
 
         // Récupération de la géométrie
-
-        /*char* wkt = nullptr;
+/*
+        char* wkt = nullptr;
         geometry->exportToWkt(&wkt);
 
         std::cout << wkt << std::endl;
-        CPLFree(wkt);*/
-
+        CPLFree(wkt);
+*/
         std::string tab;
 
         if (geometry && std::string(geometry->getGeometryName()) != "MULTIPOLYGON") {
             OGRGeometry* simplifiedGeometry = geometry->clone(); // Clone the geometry
             OGRGeometry* converted = OGRGeometryFactory::forceToMultiPolygon(simplifiedGeometry);
             tab = converted -> exportToJson();
+
         }
         else {
         tab = geometry -> exportToJson();
@@ -129,14 +130,26 @@ void CityGMLParser::parseFeatures() {
 
 
 
+
+
+
         // Réparation de la géométrie si elle est cassée
         json jsondata = json::parse(tab);
 
+
+
+
         // Passage des vertices à la feature
 
-        processCoordinates(feature, jsondata);
+        std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> data = processCoordinates(jsondata);
+        feature.vertices = data.at(0);
+        feature.VerticesGeoreferenced = data.at(0);
+        feature.verticeNormal = data.at(1).at(0);
+        feature.VerticesTexture = data.at(2);
+
 
         // Passage des vertices à la feature
+        std::cout<< "feature" <<to_string(feature.vertices.at(0).at(0).at(0)) << std::endl;
 
 
 
@@ -157,8 +170,9 @@ void CityGMLParser::parseFeatures() {
 }
 
 
-void CityGMLParser::processCoordinates(Feature feature, json& data) {
+std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> CityGMLParser::processCoordinates(json& data) {
     std::vector<std::vector<std::vector<glm::vec3>>> multipolygonList;
+    std::vector<std::vector<std::vector<glm::vec3>>> normalsListUniform;
     std::vector<std::vector<glm::vec3>> normalsList;
     std::vector<std::vector<std::vector<glm::vec3>>> multipolygontexture;
     if (data.contains("coordinates")) {
@@ -202,15 +216,16 @@ void CityGMLParser::processCoordinates(Feature feature, json& data) {
 
                     glm::vec3 u = v2 - v1;
                     glm::vec3 v = v3 - v1;
+
+                    if (u!= glm::vec3(0,0,0) && v!= glm::vec3(0,0,0) && u!=v){
                     glm::vec3 normal = glm::normalize(glm::cross(u, v));
 
-                    normals3D[i] += normal; // Accumuler les normales
+                    normals3D.push_back(normal); // Accumuler les normales
+
+                    }
                 }
             }
 
-            for (auto& normal : normals3D) {
-                normal = glm::normalize(normal); // Moyenniser et normaliser
-            }
 
             multipolygonList.push_back(polygonList);
             normalsList.push_back(normals3D);
@@ -254,12 +269,20 @@ void CityGMLParser::processCoordinates(Feature feature, json& data) {
                     float w = (multipolygonList.at(j).at(k).at(l).z - zMin) / (zMax - zMin);
                     textureCoords.emplace_back(u, v, w);
                 }
+                polygontexture.push_back(textureCoords);
              }
+            multipolygontexture.push_back(polygontexture);
         }
-        feature.VerticesGeoreferenced = multipolygonList;
-        feature.vertices = multipolygonList;
-        feature.VerticesTexture = multipolygontexture;
-        feature.verticeNormal = normalsList;
+
+        std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> returnTuple;
+        returnTuple.push_back(multipolygonList);
+
+        normalsListUniform.push_back(normalsList);
+        returnTuple.push_back(normalsListUniform);
+
+        returnTuple.push_back(multipolygontexture);
+
+        return returnTuple;
     }
 }
 
@@ -274,7 +297,7 @@ bool CityGMLParser::executeOgr2Ogr(const std::string& inputFile, const std::stri
     int returnCode = std::system(command.c_str());
 
     // Check the result
-    if (returnCode != 0) {
+    if (returnCode != 0 || returnCode != 35584) {
         std::cerr << "Error: ogr2ogr command failed with return code " << returnCode << std::endl;
         return false;
     }
@@ -334,11 +357,11 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
 
     unsigned int vertexOffset = 1;
     for (const auto& feature : features) {
-        if (feature.vertices.empty() && feature.faces.empty()) {
+        if (feature.vertices.empty()) {
             std::cerr << "Warning: Feature " << feature.id << " has no geometry and will be skipped." << std::endl;
             continue;
         }
-
+        std::cout<< "je fais un objet" << std::endl;
         objFile << "o " << feature.objectName << "\n";
         objFile << "usemtl Material_" << feature.id << "\n"; // Assign material
 
@@ -347,19 +370,26 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
                 int n = 1;
                 for (int l =0; l<  feature.vertices.at(i).at(k).size(); l++){
 
+                    std::cout<<"v :" <<to_string(feature.vertices.at(i).at(k).at(l))<<std::endl;
                     objFile << "v " << feature.vertices.at(i).at(k).at(l).x << " "
                             << feature.vertices.at(i).at(k).at(l).y << " "
                             << feature.vertices.at(i).at(k).at(l).z << "\n";
+                    std::cout<<"vt : "<<to_string(feature.VerticesTexture.at(i).at(k).at(l))<<std::endl;
                     objFile << "vt " << feature.VerticesTexture.at(i).at(k).at(l).x << " "
                             << feature.VerticesTexture.at(i).at(k).at(l).y << " "
                             << feature.VerticesTexture.at(i).at(k).at(l).z << "\n";
 
 
                 }
+                if (feature.verticeNormal.at(i).size() >= k-1){
+                std::cout<< "vn :" <<to_string(feature.verticeNormal.at(i).at(k)) << std::endl;
                 objFile << "vn " << feature.verticeNormal.at(i).at(k).x << " "
                         << feature.verticeNormal.at(i).at(k).y << " "
                         << feature.verticeNormal.at(i).at(k).z << "\n";
+                }
                 objFile << "f ";
+
+
                 while (n < feature.vertices.at(i).size() ){
                     objFile << -n << "/" << -n << "/" << -1 << " ";
                     n+=1;
@@ -454,8 +484,8 @@ void CityGMLParser::exportToMtl(const std::string& filePath) const {
 void CityGMLParser::printFeature(const Feature& feature) const {
     // Print basic feature information
     std::cout << "Feature ID: " << feature.id << std::endl;
-    std::cout << "Number of vertices: " << feature.vertices.size() / 3 << std::endl;
-    std::cout << "Number of faces: " << feature.faces.size() / 3 << std::endl;
+    std::cout << "Number of vertices: " << feature.vertices.size()  << std::endl;
+
 
     // Print the first two and last two vertices
     std::cout << "First 3 vertices: ";
@@ -492,13 +522,13 @@ void CityGMLParser::printFeature(const Feature& feature) const {
               << glm::to_string(feature.VerticesGeoreferenced.at(i-1).at(j-1).at(k-1)) << ") ";
 
     std::cout << std::endl;
-
+/*
    // Print attributes
     std::cout << "Attributes: " << std::endl;
     for (const auto& [key, value] : feature.attributes) {
         std::cout << "  " << key << ": " << value << std::endl;
     }
-
+*/
     // Print the bounding box (lower and upper corners)
     std::cout << "Lower Corner: ("
               << std::get<0>(feature.lowerCorner) << ", " // Accessing first value of the pair (x)
