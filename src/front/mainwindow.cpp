@@ -211,6 +211,20 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 }
 
 
+void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow) {
+    auto layer = renderer->renderer2d->lst_layers2d[start];
+    renderer->renderer2d->lst_layers2d.erase(renderer->renderer2d->lst_layers2d.begin() + start);
+
+    int adjustedDestination = (destinationRow > start) ? destinationRow - 1 : destinationRow;
+    renderer->renderer2d->lst_layers2d.insert(renderer->renderer2d->lst_layers2d.begin() + adjustedDestination, layer);
+    auto name = name_layers[start];
+    name_layers.erase(name_layers.begin() + start);
+    name_layers.insert(name_layers.begin() + adjustedDestination, name);
+
+    renderer->update();
+}
+
+
 
 void MainWindow::setupCheckboxes() {
 
@@ -225,6 +239,7 @@ void MainWindow::setupCheckboxes() {
     listWidget->setDragDropMode(QAbstractItemView::InternalMove);
     listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
+    connect(listWidget->model(), &QAbstractItemModel::rowsMoved, this, &MainWindow::onLayersSuperposed);
 
 
     for (const auto& name : name_layers) {

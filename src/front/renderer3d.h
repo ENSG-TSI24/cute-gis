@@ -12,6 +12,8 @@ public:
     void reset3D();
     void setObjectLoader(ObjectLoader* loader);
     Renderer& parent;
+    ObjectLoader* getObjectLoader() const;
+private:
     ObjectLoader* objectLoader;
 
 };
