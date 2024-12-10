@@ -81,12 +81,21 @@ set(TEST_SOURCES_WFS
     src/back/DataProvider.h
 )
 
+set(TEST_SOURCES_rasterdata
+    tests/rasterdataTest.cpp
+    src/back/rasterdata.cpp
+    src/back/rasterdata.h
+    src/back/datamanagment.cpp
+    src/back/datamanagment.h
+)
+
 # Backend tests
 add_executable(testDataManagment ${TEST_SOURCES_1})
 add_executable(wfsDataTest ${TEST_SOURCES_2})
 add_executable(API_WMSTest ${TEST_SOURCES_WMS})
 add_executable(API_WFSTest ${TEST_SOURCES_WFS})
 add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
+add_executable(RasterData ${TEST_SOURCES_rasterdata})
 
 
 
@@ -103,6 +112,7 @@ target_link_libraries(wfsDataTest PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRAR
 target_link_libraries(API_WMSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WFSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WMTSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
+target_link_libraries(RasterData PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 
 
 # Finalize application
@@ -117,4 +127,5 @@ add_test(NAME wfsDataTest COMMAND wfsDataTest)
 add_test(NAME API_WMSTest COMMAND API_WMSTest)
 add_test(NAME API_WFSTest COMMAND API_WFSTest)
 add_test(NAME API_WMTSTest COMMAND API_WMTSTest)
+add_test(NAME RasterData COMMAND RasterData)
 

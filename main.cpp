@@ -5,8 +5,9 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include <QLabel>
 #include "src/back/rasterdata.h"
+#include <QPixmap>
+#include <QLabel>
 
 using json = nlohmann::json;
 
