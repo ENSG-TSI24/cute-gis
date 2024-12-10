@@ -3,6 +3,8 @@
 Controller::Controller(QWidget* parent)
     : QWidget(parent), camera(), isDragging(false),is3DMode(false) {}
 
+Controller::~Controller() {}
+
 //Controller::Controller(QWidget* parent)
 //    : QWidget(parent), camera() {
 //}

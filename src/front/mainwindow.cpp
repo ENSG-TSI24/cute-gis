@@ -7,7 +7,10 @@
 #include <QDebug>
 #include "../back/vectordata.h"
 #include "addFluxData.h"
+#include "geotiffloader.h"
 #include <QListWidget>
+#include "renderer2d.h"
+#include "renderer3d.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -40,36 +43,50 @@ void MainWindow::onOpenFile()
     qDebug() << "Selected File:" << filePath;
     std::string filestr =  filePath.toStdString();
     const char* filedata = filestr.c_str();
-    renderer->reset3D();
+    renderer->renderer3d->reset3D();
 
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
-            renderer->reset3D();
+            renderer->renderer3d->reset3D();
             //add layer2d
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 
             
             VectorData geo(filedata);
-            renderer->lst_layers2d.push_back(geo);
+            renderer->renderer2d->lst_layers2d.push_back(geo);
 
 
             // add name layers
             std::string name = "Couche " + std::to_string(nb_layers);
-            renderer->lst_layers2d.back().name = name;
+            renderer->renderer2d->lst_layers2d.back().name = name;
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->renderer2d->lst_layers2d.back().boundingBox);
             renderer->setIs3D(false);
 
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
-            renderer->reset2D();
+            renderer->renderer2d->reset2D();
             nb_layers=0;
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
-            renderer->setObjectLoader(objectLoader);
+            renderer->renderer3d->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
+        } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
+            renderer->renderer2d->reset2D();
+            GeoTiffLoader loader;
+            loader.loadGeoTIFF(filePath);
+            QImage* image = loader.image;
+
+            renderer->renderer2d->lst_layersraster.push_back(LayerRaster(image));
+
+            // add name layers
+            std::string name = "Couche " + std::to_string(nb_layers);
+            name_layers.push_back(name);
+            setupCheckboxes();
+            ++nb_layers;
+            renderer->setIs3D(false);
         } else {
-            throw std::runtime_error("Unsupported file format!");
+                throw std::runtime_error("Unsupported file format!");
         }
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString::fromStdString(ex.what()));
@@ -120,7 +137,7 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
     std::cout<<checked<<std::endl;
     std::cout<<name<<std::endl;
 
-    for (auto& layer : renderer->lst_layers2d) {
+    for (auto& layer : renderer->renderer2d->lst_layers2d) {
         if (layer.name == name) {
             layer.isVisible = checked;
         }
