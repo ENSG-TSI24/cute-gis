@@ -6,6 +6,7 @@
 
 #include "./ui_mainwindow.h"
 #include "renderer.h"
+#include "objectloader.h"
 
 #include <QVBoxLayout>
 #include <QCheckBox>
@@ -31,6 +32,9 @@ public:
     void clearLayout(QLayout *layout);
     void onCheckboxToggled(bool checked, std::string name);
     void onToggle3DMode();
+
+private slots:
+    void on_actionFlux_Data_triggered();
 
 private:
     Ui::MainWindow *ui;

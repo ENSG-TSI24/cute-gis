@@ -11,6 +11,7 @@ class Controller : public QWidget {
 
 public:
     explicit Controller(QWidget* parent = nullptr);
+    ~Controller();
 
     Camera& getCamera(); // Fournit un accès à la caméra
     void set3DMode(bool is3D);
