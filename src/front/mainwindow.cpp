@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include "../back/vectordata.h"
+#include "geotiffloader.h"
 #include <QListWidget>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -67,8 +68,22 @@ void MainWindow::onOpenFile()
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
+        } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
+            renderer->reset2D();
+            GeoTiffLoader loader;
+            loader.loadGeoTIFF(filePath);
+            QImage* image = loader.image;
+
+            renderer->lst_layersraster.push_back(LayerRaster(image));
+
+            // add name layers
+            std::string name = "Couche " + std::to_string(nb_layers);
+            name_layers.push_back(name);
+            setupCheckboxes();
+            ++nb_layers;
+            renderer->setIs3D(false);
         } else {
-            throw std::runtime_error("Unsupported file format!");
+                throw std::runtime_error("Unsupported file format!");
         }
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString::fromStdString(ex.what()));
