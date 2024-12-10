@@ -10,12 +10,8 @@ public:
     DataManagment();
     DataManagment(const char* Path);
     ~DataManagment();
-    // TODO LATER DataManagment(std::string Path, std::string CRS);
     const char* GetPath();
-    // GDALDriver* GetDriver();
-    // GDALDataset* GetDATA();
 protected:
-    // GDALDataset* data;
     const char* filePath;
 };
 
