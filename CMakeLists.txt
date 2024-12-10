@@ -38,7 +38,7 @@ set(PROJECT_SOURCES
     src/back/API_WMTS.h src/back/API_WMTS.cpp
     src/back/API_WFS.h src/back/API_WFS.cpp
     src/back/DataProvider.h src/back/DataProvider.cpp
-    src/citygmlparser.h src/citygmlparser.cpp
+    src/back/citygmlparser.h src/back/citygmlparser.cpp
     # Frontend files
     src/front/mainwindow.cpp src/front/mainwindow.h src/front/mainwindow.ui
     src/front/camera.h src/front/camera.cpp
