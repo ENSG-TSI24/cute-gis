@@ -12,13 +12,14 @@ GDALDataset* DataProvider::getDataset() {
     return m_dataset;
 }
 
-void DataProvider::displayMetadata() {
+char** DataProvider::displayMetadata() {
+    // Check if the dataset is empty
     if (isEmpty()) {
         std::cout << "Dataset is empty or not loaded." << std::endl;
-        return;
+        return nullptr;
     }
 
-    // Cas général pour WMS et WMTS (métadonnées classiques)
+    // Metadata keys for WMS and WMTS
     const char* keys[] = {"SUBDATASETS", "LAYERS", nullptr};
     bool metadataFound = false;
 
@@ -33,26 +34,38 @@ void DataProvider::displayMetadata() {
         }
     }
 
-    // Si aucune métadonnée n'a été trouvée pour WMS/WMTS, essayons pour WFS
+    // If no WMS/WMTS metadata is found, check for WFS layers
     if (!metadataFound) {
         std::cout << "No WMS/WMTS metadata found. Checking for WFS layers..." << std::endl;
 
         int layerCount = m_dataset->GetLayerCount();
         if (layerCount == 0) {
             std::cout << "No layers found in the dataset." << std::endl;
-            return;
+            return nullptr;
         }
 
-        std::cout << "Number of layers (FeatureTypes): " << layerCount << std::endl;
+        // Allocate memory for the array of layer names
+        char** liste_layers = new char*[layerCount + 1]; // +1 for the null terminator
         for (int i = 0; i < layerCount; ++i) {
             OGRLayer* layer = m_dataset->GetLayer(i);
             if (layer != nullptr) {
-                std::cout << "  Layer " << i + 1 << ": " << layer->GetName() << std::endl;
+                const char* layerName = layer->GetName();
+                liste_layers[i] = new char[strlen(layerName) + 1];
+                strcpy(liste_layers[i], layerName);
+
             } else {
                 std::cout << "  Layer " << i + 1 << ": [Error accessing layer]" << std::endl;
+                liste_layers[i] = nullptr;
             }
         }
+
+        // Add null terminator to the array
+        liste_layers[layerCount] = nullptr;
+
+        return liste_layers;
     }
+
+    return nullptr;
 }
 
 bool DataProvider::isEmpty(){
