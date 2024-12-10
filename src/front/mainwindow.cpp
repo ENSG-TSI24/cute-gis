@@ -75,7 +75,8 @@ void MainWindow::onOpenFile()
                 renderer->lst_layers2d.push_back(geo);
 
                 // Add layer name
-                std::string name = "Couche " + std::to_string(nb_layers);
+                QFileInfo fileInfo(filePath);
+                std::string name = fileInfo.baseName().toStdString();
                 renderer->lst_layers2d.back().name = name;
                 name_layers.push_back(name);
 
@@ -218,7 +219,12 @@ void MainWindow::setupCheckboxes() {
     // Set checkbox style
     listWidget->setSpacing(10);
     listWidget->setMaximumWidth(300);
-    listWidget->setStyleSheet("QListWidget::item { padding: 5px; font-family: Sans Serif; font-size: 12pt; }");
+    listWidget->setStyleSheet("QListWidget::item { padding: 5px; font-family: Sans Serif; font-size: 10pt; }");
+
+    // setting police size
+    QFont font = listWidget->font();
+    font.setPointSize(15);
+    listWidget->setFont(font);
 
     // Set layer_manager main layout
     auto* layout = new QVBoxLayout(ui->layer_manager);
