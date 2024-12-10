@@ -60,6 +60,7 @@ void Renderer::resizeGL(int w, int h) {
 void Renderer::paintGl2D(){
     controller->getCamera().update();
     renderLayers2d();
+    renderRasters();
 }
 
 void Renderer::paintGl3D(){
@@ -102,6 +103,16 @@ void Renderer::renderLayers2d(){
             layer.renderLinestrings();
             layer.renderPolygons();
         }
+    }
+}
+
+void Renderer::renderRasters() {
+    int i = 0;
+    std::cout<<lst_layersraster.size()<<std::endl;
+    for (auto& raster: lst_layersraster){
+        std::cout<<"------------ Layer : "<<i<< " ------------"<<std::endl;
+        raster.renderRasters();
+        ++i;
     }
 }
 

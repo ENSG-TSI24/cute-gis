@@ -10,6 +10,7 @@
 #include "objectloader.h"
 #include <QGraphicsSceneMouseEvent>
 #include "layer2d.h"
+#include "layerraster.h"
 
 #include <QMouseEvent>
 
@@ -31,7 +32,7 @@ public:
     BoundingBox boundingBox;
     Controller* controller;
     std::vector<Layer2d> lst_layers2d;
-
+    std::vector<LayerRaster> lst_layersraster;
 
 
 protected:
@@ -45,6 +46,7 @@ protected:
 private:
 
     void renderLayers2d();
+    void renderRasters();
     void paintGl3D();
     void paintGl2D();
 
