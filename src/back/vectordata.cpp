@@ -1,7 +1,9 @@
 #include "vectordata.h"
+#include "src/back/datamanagment.h"
+#include <cstddef>
 #include <ogrsf_frmts.h>
 
-VectorData::VectorData() : filePath(nullptr) {}
+VectorData::VectorData() : DataManagment() {}
 
 VectorData::VectorData(const char* path) : DataManagment(path) {}
 
@@ -50,7 +52,7 @@ std::vector<std::pair<float, float>> VectorData::GetPoints(){
     return points;
 }
 
-std::vector<std::vector<std::pair<float, float>>>  VectorData::GetLineStrings(){
+std::vector<std::vector<std::pair<float, float>>> VectorData::GetLineStrings(){
     std::vector<std::vector<std::pair<float, float>>> linestrings;
     GDALAllRegister();
     GDALDataset* dataset = (GDALDataset *) GDALOpenEx(this->GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
@@ -82,6 +84,18 @@ std::vector<std::vector<std::pair<float, float>>>  VectorData::GetLineStrings(){
                 line.emplace_back(lineString->getX(i), lineString->getY(i));
             }
             linestrings.push_back(line);
+            break;
+        }
+        case wkbMultiLineString: {
+            OGRMultiLineString* multiLineString = geometry->toMultiLineString();
+            for (int i = 0; i < multiLineString->getNumGeometries(); ++i) {
+                OGRLineString* lineString = (OGRLineString*)multiLineString->getGeometryRef(i);
+                std::vector<std::pair<float, float>> line;
+                for (int j = 0; j < lineString->getNumPoints(); ++j) {
+                    line.emplace_back(lineString->getX(j), lineString->getY(j));
+                }
+                linestrings.push_back(line);
+            }
             break;
         }
         default:
@@ -136,6 +150,26 @@ std::vector<std::vector<std::vector<std::pair<float, float>>>> VectorData::GetPo
                 }
             }
             polygons.push_back(polyRings);
+            break;
+        }
+        case wkbMultiPolygon: {
+            OGRMultiPolygon* multiPolygon = geometry->toMultiPolygon();
+            for (int i = 0; i < multiPolygon->getNumGeometries(); ++i) {
+                OGRPolygon* polygon = (OGRPolygon*)multiPolygon->getGeometryRef(i);
+                std::vector<std::vector<std::pair<float, float>>> polyRings;
+
+                for (int j = 0; j < polygon->getNumInteriorRings() + 1; ++j) {
+                    const OGRLinearRing* ring = (j == 0) ? polygon->getExteriorRing() : polygon->getInteriorRing(j - 1);
+                    if (ring) {
+                        std::vector<std::pair<float, float>> ringPoints;
+                        for (int k = 0; k < ring->getNumPoints(); ++k) {
+                            ringPoints.emplace_back(ring->getX(k), ring->getY(k));
+                        }
+                        polyRings.push_back(ringPoints);
+                    }
+                }
+                polygons.push_back(polyRings);
+            }
             break;
         }
         default:
