@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
-find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets Network)
 
 find_package(GTest REQUIRED)
 find_package(GDAL REQUIRED)
@@ -44,6 +44,9 @@ set(PROJECT_SOURCES
     src/front/objectloader.h src/front/objectloader.cpp
     src/lib/tiny_obj_loader.h src/lib/tiny_obj_loader.cc
     src/front/layer2d.h src/front/layer2d.cpp
+    src/front/addFluxData.cpp
+    src/front/addFluxData.h
+    src/front/addFluxData.ui
 )
 
 set(TEST_SOURCES_1
@@ -89,10 +92,11 @@ add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
 qt_add_executable(cute-gis
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    ${UI_HEADERS}
 )
 
 # Link libraries
-target_link_libraries(cute-gis PRIVATE Qt6::Widgets Qt6::OpenGLWidgets glfw GLEW libGLEW.so libGLU.so libGL.so CURL::libcurl ${GDAL_LIBRARIES})
+target_link_libraries(cute-gis PRIVATE Qt6::Widgets Qt6::OpenGLWidgets Qt6::Network glfw GLEW libGLEW.so libGLU.so libGL.so CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(testDataManagment PRIVATE GTest::GTest GTest::Main ${GDAL_LIBRARIES})
 target_link_libraries(API_WMSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WFSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
