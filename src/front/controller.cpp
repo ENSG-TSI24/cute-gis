@@ -52,6 +52,9 @@ void Controller::ControllerkeyPressEvent(QKeyEvent *event){
     }
     else{
         switch (event->key()) {
+        case( Qt::Key_A):
+            isCtrlPressed = true;
+            break;
         case( Qt::Key_Up):
             this->camera.moveUp(step);
             break;
@@ -79,13 +82,19 @@ void Controller::ControllerkeyPressEvent(QKeyEvent *event){
         case(Qt::Key_Space):
             this->camera.moveUp3D(step);
             break;
-        case(Qt::Key_Shift):
+        case(Qt::Key_W):
             this->camera.moveDown3D(step);
             break;
 
         }
     }
     update();
+}
+
+void Controller::ControllerkeyReleaseEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_A) {
+        isCtrlPressed = false;
+    }
 }
 
 
@@ -104,12 +113,24 @@ void Controller::ControllerMouseReleaseEvent(QMouseEvent* event) {
 
 void Controller::ControllerMouseMoveEvent(QMouseEvent* event) {
     if (isDragging) {
-        float sensitivity = is3DMode ? 0.02f : 0.02f;
+        float sensitivity = is3DMode ? 0.1f : 0.02f;
         QPoint currentMousePosition = event->pos();
         QPoint delta = currentMousePosition - lastMousePosition;
-        camera.moveRight(-delta.x() * sensitivity);
-        camera.moveUp(delta.y() * sensitivity);
-
+        if (is3DMode){
+            if(isCtrlPressed){
+                std::cout<<"y'a control"<<std::endl;
+                camera.rotateYaw(delta.x() * sensitivity);
+                camera.rotatePitch(delta.y() * sensitivity);
+            }
+            else{
+                camera.moveRight3D(-delta.x() * sensitivity);
+                camera.moveFront3D(delta.y() * sensitivity);
+            }
+        }
+        else {
+            camera.moveRight(-delta.x() * sensitivity);
+            camera.moveUp(delta.y() * sensitivity);
+        }
         lastMousePosition = currentMousePosition;
     }
 }

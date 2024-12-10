@@ -85,10 +85,36 @@ float Camera::getZ(){
     return position[2];
 }
 
+float Camera::getPitch(){
+    return pitch;
+}
+
+float Camera::getYaw(){
+    return yaw;
+}
+
+void Camera::rotateYaw(float angle){
+    this->yaw+=angle;
+}
+
+void Camera::rotatePitch(float angle){
+    this->pitch+=angle;
+    if(pitch > 179.9){
+      pitch =  179.9;
+    }
+    if(pitch < 0.1){
+      pitch = 0.1;
+    }
+}
+
 
 QMatrix4x4 Camera::getViewMatrix() {
+    float yawRad = glm::radians(this->yaw);  // Convertir le yaw en radians
+    float pitchRad = glm::radians(this->pitch);  // Convertir le pitch en radians
+
     // Calculer le vecteur forward (direction de la vue)
-    this->forward = glm::vec3(0.0f, -1.0f, 0.0f);  // Direction fixe de la caméra
+    // La direction de la caméra est influencée par le yaw et le pitch
+    this->forward = glm::vec3(cos(pitchRad) * sin(yawRad), sin(pitchRad), cos(pitchRad) * cos(yawRad));
 
     // Calculer le vecteur right (perpendiculaire à forward et up global)
     glm::vec3 globalUp = glm::vec3(0.0f, 0.0f, -1.0f); // L'axe vertical global

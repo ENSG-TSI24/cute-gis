@@ -88,6 +88,9 @@ public:
     void moveDown3D(float step);
     void moveUp3D(float step);
 
+    void rotateYaw(float angle);
+    void rotatePitch(float angle);
+
     void update2D();
     float speedFactor;
     float getZ();
@@ -100,6 +103,8 @@ public:
     void centerOnBoundingBox(const BoundingBox& bbox);
     int getRWidth();
     int getRHeight();
+    float getPitch();
+    float getYaw();
     void setRWidth(int width);
     void setRHeight(int height);
 
@@ -110,6 +115,8 @@ private:
     glm::vec3 forward;
     glm::vec3 right;
     glm::vec3 up;
+    float yaw=0;
+    float pitch=90;
 };
 
 #endif // CAMERA_H

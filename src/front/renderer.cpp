@@ -88,7 +88,9 @@ void Renderer::paintGl3D() {
 
         std::cout << controller->getCamera().getX() << " "
                   << controller->getCamera().getY() << " "
-                  << controller->getCamera().getZ() << std::endl;
+                  << controller->getCamera().getZ() << " "
+                  << controller->getCamera().getPitch() << " "
+                  << controller->getCamera().getYaw() << std::endl;
 
         const auto& vertices = objectLoader->getVertices();
         for (const auto& vertex : vertices) {
