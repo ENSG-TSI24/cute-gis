@@ -18,6 +18,7 @@ class DataManagmentTest : public ::testing::Test {
         const char* inputPolygon = "../data/test_data/polygon.geojson";
         const char* inputMultiPolygons = "../data/test_data/multipolygon.geojson";
         const char* inputFileDepartements =  "../data/test_data/departements.geojson";
+        const char* inputFileLyon = "../data/geojson/polygon_nord.geojson";
 };
 
 /*
@@ -92,6 +93,7 @@ TEST_F(DataManagmentTest, VectorGetPolygons) {
     EXPECT_EQ(pointCount, 5);
 }
 
+
 TEST_F(DataManagmentTest, VectorGetMultiPolygons) {
     vectordata = VectorData(inputMultiPolygons);
     auto polygons = vectordata.GetPolygons();
@@ -99,6 +101,21 @@ TEST_F(DataManagmentTest, VectorGetMultiPolygons) {
     ASSERT_EQ(polygons.size(), 2);
 
 }
+
+TEST_F(DataManagmentTest, VectorGetPolygonNord) {
+    vectordata = VectorData(inputFileLyon);
+    auto polygons = vectordata.GetPolygons();
+    
+    ASSERT_EQ(polygons.size(), 968);
+
+    auto coordinates = polygons[0];
+    size_t pointCount = 0;
+    for (const auto& ring : coordinates) {
+        pointCount += ring.size();
+    }
+    EXPECT_GT(pointCount, 0);
+}
+
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
