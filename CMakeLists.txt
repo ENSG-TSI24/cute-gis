@@ -80,11 +80,20 @@ set(TEST_SOURCES_WFS
     src/back/DataProvider.h
 )
 
+set(TEST_SOURCES_CITYGMLPARSER
+    tests/api_citygmlparsertest.cpp
+    src/back/citygmlparser.cpp
+    src/back/citygmlparser.h
+
+)
+
 # Backend tests
 add_executable(testDataManagment ${TEST_SOURCES_1})
 add_executable(API_WMSTest ${TEST_SOURCES_WMS})
 add_executable(API_WFSTest ${TEST_SOURCES_WFS})
 add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
+add_executable(API_CITYGMLPARSER_TEST ${TEST_SOURCES_CITYGMLPARSER})
+
 
 
 
@@ -100,6 +109,8 @@ target_link_libraries(testDataManagment PRIVATE GTest::GTest GTest::Main ${GDAL_
 target_link_libraries(API_WMSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WFSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WMTSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
+target_link_libraries(API_CITYGMLPARSER_TEST PRIVATE GTest::GTest GTest::Main  ${GDAL_LIBRARIES})
+
 
 
 # Finalize application
@@ -113,6 +124,7 @@ add_test(NAME testDataManagment COMMAND testDataManagment)
 add_test(NAME API_WMSTest COMMAND API_WMSTest)
 add_test(NAME API_WFSTest COMMAND API_WFSTest)
 add_test(NAME API_WMTSTest COMMAND API_WMTSTest)
+add_test(NAME API_CITYGMLPARSER_TEST COMMAND API_CITYGMLPARSER_TEST)
 
 
 if(QT_VERSION_MAJOR EQUAL 6)
