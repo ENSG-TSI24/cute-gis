@@ -51,7 +51,7 @@ void MainWindow::onOpenFile()
 {
     bool is3DMode = renderer->getIs3D();
 
-    QString filter = is3DMode ? "OBJ Files (*.obj);;All Files (*.*)" : "GeoJSON Files (*.geojson);;All Files (*.*)";
+    QString filter = is3DMode ? "OBJ Files (*.obj);;All Files (*.*)" : "GeoJSON Files (*.geojson);;Shapefile Files (*.shp);;All Files (*.*)";
     QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", filter);
 
     if (filePath.isEmpty()) {
