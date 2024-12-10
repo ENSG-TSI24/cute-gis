@@ -19,7 +19,7 @@ link_directories(${GDAL_LIBRARY_DIRS})
 
 set(PROJECT_SOURCES
 
-citygmlparser.h citygmlparser.cpp main.cpp
+src/citygmlparser.h src/citygmlparser.cpp
 
 
 )
