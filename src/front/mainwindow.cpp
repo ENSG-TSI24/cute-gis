@@ -13,6 +13,16 @@
 #include "renderer2d.h"
 #include "renderer3d.h"
 
+#include <QTableWidget>
+#include <QTableWidgetItem>
+
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
+
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -70,17 +80,18 @@ void MainWindow::onOpenFile()
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
             renderer->renderer3d->reset3D();
-            //add layer2d
-            std::cout<<"############### ADD LAYER ################"<<std::endl;
 
-            
             VectorData geo(filedata);
             renderer->renderer2d->lst_layers2d.push_back(geo);
 
-            // add name layers
+            // Add name layers
             QFileInfo fileInfo(filePath);
             std::string name = fileInfo.baseName().toStdString();
             renderer->renderer2d->lst_layers2d.back().name = name;
+
+            // Parse GeoJSON for attributes
+            parseGeoJSON(filePath, renderer->renderer2d->lst_layers2d.back());
+
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
@@ -140,6 +151,52 @@ void MainWindow::on_actionFlux_Data_triggered() {
         qDebug() << "URL:" << layerURL;
     }
 }
+
+void MainWindow::parseGeoJSON(const QString& filePath, Layer2d& layer) {
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::critical(this, "Error", "Failed to open GeoJSON file.");
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    if (doc.isNull() || !doc.isObject()) {
+        QMessageBox::critical(this, "Error", "Invalid GeoJSON format.");
+        return;
+    }
+
+    QJsonObject root = doc.object();
+    if (!root.contains("features") || !root["features"].isArray()) {
+        QMessageBox::critical(this, "Error", "No features found in GeoJSON.");
+        return;
+    }
+
+    QJsonArray features = root["features"].toArray();
+
+    // Clear existing attributes and headers
+    layer.attributes.clear();
+    layer.attributeHeaders.clear();
+
+    for (const QJsonValue& featureValue : features) {
+        if (!featureValue.isObject()) continue;
+
+        QJsonObject feature = featureValue.toObject();
+        if (!feature.contains("properties") || !feature["properties"].isObject()) continue;
+
+        QJsonObject properties = feature["properties"].toObject();
+        std::vector<std::string> row;
+
+        for (const QString& key : properties.keys()) {
+            if (layer.attributeHeaders.empty()) {
+                layer.attributeHeaders.push_back(key.toStdString());
+            }
+            row.push_back(properties[key].toString().toStdString());
+        }
+        layer.attributes.push_back(row);
+    }
+}
+
 
 
 void MainWindow::clearLayout(QLayout *layout) {
@@ -205,7 +262,11 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 
         // falcultative
         QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer.name));
+    } else if (selectedAction == metadataAction) {
+        const Layer2d& layer = renderer->renderer2d->lst_layers2d[row];
+        showAttributeTable(layer);  // Appeler la fonction pour afficher la table attributaire
     }
+
 
     // metadata
 }
@@ -224,6 +285,40 @@ void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, cons
     renderer->update();
 }
 
+void MainWindow::showAttributeTable(const Layer2d& layer) {
+    // Créer une fenêtre pour afficher la table attributaire
+    QDialog* dialog = new QDialog(this);
+    dialog->setWindowTitle(QString::fromStdString("Attributs : " + layer.name));
+    dialog->resize(600, 400);
+
+    QVBoxLayout* layout = new QVBoxLayout(dialog);
+
+    // Créer un QTableWidget pour afficher les attributs
+    QTableWidget* tableWidget = new QTableWidget(dialog);
+    tableWidget->setColumnCount(layer.attributes.empty() ? 0 : layer.attributes[0].size());
+    tableWidget->setRowCount(layer.attributes.size());
+
+    // Définir les en-têtes des colonnes
+    QStringList headers;
+    for (const auto& header : layer.attributeHeaders) {
+        headers << QString::fromStdString(header);
+    }
+    tableWidget->setHorizontalHeaderLabels(headers);
+
+    // Remplir les données de la table
+    for (int i = 0; i < layer.attributes.size(); ++i) {
+        const auto& row = layer.attributes[i];
+        for (int j = 0; j < row.size(); ++j) {
+            tableWidget->setItem(i, j, new QTableWidgetItem(QString::fromStdString(row[j])));
+        }
+    }
+
+    tableWidget->resizeColumnsToContents();
+    layout->addWidget(tableWidget);
+
+    dialog->setLayout(layout);
+    dialog->exec(); // Afficher la boîte de dialogue
+}
 
 
 void MainWindow::setupCheckboxes() {
