@@ -42,10 +42,14 @@ TEST(API_WFSTest, DownloadTileToGeoTiff_FileGenerated) {
     //arrange
     const char* url = "WFS:https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities";
     API_WFS flux_valide = API_WFS(url);
-
+    flux_valide.loadDataset();
     // Act
-    flux_valide.ExportToGeoJSON(123,"../cute-gis/test.geojson");
-    const char* outputFile = "/home/formation/minisig/cute-gis/test.geojson"; // ** changer le lien
+    const char* layername = "LIMITES_ADMINISTRATIVES_EXPRESS.LATEST:arrondissement";
+    flux_valide.ExportToGeoJSON(layername);
+    const char* outputFile = "../data/geojson/LIMITES_ADMINISTRATIVES_EXPRESS.LATEST:arrondissement.geojson"; // ** changer le lien
+    flux_valide.getOutput();
+
+    EXPECT_EQ(*outputFile, *flux_valide.getOutput());
     // Assert
     std::ifstream file(outputFile);
     EXPECT_TRUE(file.is_open()); // Verifies exported file exists
