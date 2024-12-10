@@ -18,7 +18,7 @@
     <item row="2" column="2">
      <widget class="QPushButton" name="button_3d">
       <property name="text">
-       <string>2D/3D</string>
+       <string>Switch to 3D Mode</string>
       </property>
       <property name="iconSize">
        <size>
@@ -63,7 +63,7 @@
      <x>0</x>
      <y>0</y>
      <width>1060</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuhere">
