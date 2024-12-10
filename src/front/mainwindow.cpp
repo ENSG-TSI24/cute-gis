@@ -8,7 +8,10 @@
 #include <QListWidget>
 #include <QInputDialog>
 #include "../back/vectordata.h"
-
+#include "addFluxData.h"
+#include "geotiffloader.h"
+#include "renderer2d.h"
+#include "renderer3d.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -35,12 +38,12 @@ void MainWindow::onToggle3DMode()
     renderer->setIs3D(!isCurrently3D);
 
     if (!isCurrently3D) {
-        renderer->reset2D();
+        renderer->renderer2d->reset2D();
         name_layers.clear();
         setupCheckboxes();
         QMessageBox::information(this, "mode Changed", "3D mode activated");
     } else {
-        renderer->reset3D();
+        renderer->renderer3d->reset3D();
         QMessageBox::information(this, "Mode Changed", "2D mode activated");
     }
 
@@ -62,41 +65,50 @@ void MainWindow::onOpenFile()
     qDebug() << "Selected File:" << filePath;
     std::string filestr = filePath.toStdString();
     const char* filedata = filestr.c_str();
+    renderer->renderer3d->reset3D();
 
     try {
-        if (!is3DMode) {
-            if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
-                renderer->reset3D();
+        if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
+            renderer->renderer3d->reset3D();
+            //add layer2d
+            std::cout<<"############### ADD LAYER ################"<<std::endl;
 
-                // Add layer 2D
-                std::cout << "############### ADD LAYER ################" << std::endl;
+            
+            VectorData geo(filedata);
+            renderer->renderer2d->lst_layers2d.push_back(geo);
 
-                VectorData geo(filedata);
-                renderer->lst_layers2d.push_back(geo);
+            // add name layers
+            QFileInfo fileInfo(filePath);
+            std::string name = fileInfo.baseName().toStdString();
+            renderer->renderer2d->lst_layers2d.back().name = name;
+            name_layers.push_back(name);
+            setupCheckboxes();
+            ++nb_layers;
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->renderer2d->lst_layers2d.back().boundingBox);
+            renderer->setIs3D(false);
 
-                // Add layer name
-                QFileInfo fileInfo(filePath);
-                std::string name = fileInfo.baseName().toStdString();
-                renderer->lst_layers2d.back().name = name;
-                name_layers.push_back(name);
+        } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
+            renderer->renderer2d->reset2D();
+            nb_layers=0;
+            ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
+            renderer->renderer3d->setObjectLoader(objectLoader);
+            renderer->setIs3D(true);
+        } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
+            renderer->renderer2d->reset2D();
+            GeoTiffLoader loader;
+            loader.loadGeoTIFF(filePath);
+            QImage* image = loader.image;
 
-                setupCheckboxes();
-                ++nb_layers;
+            renderer->renderer2d->lst_layersraster.push_back(LayerRaster(image));
 
-                renderer->controller->getCamera().centerOnBoundingBox(renderer->lst_layers2d.back().boundingBox);
-            } else {
-                throw std::runtime_error("Unsupported file format for 2D mode!");
-            }
+            // add name layers
+            std::string name = "Couche " + std::to_string(nb_layers);
+            name_layers.push_back(name);
+            setupCheckboxes();
+            ++nb_layers;
+            renderer->setIs3D(false);
         } else {
-            if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
-                renderer->reset2D();
-                nb_layers = 0;
-
-                ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
-                renderer->setObjectLoader(objectLoader);
-            } else {
-                throw std::runtime_error("Unsupported file format for 3D mode!");
-            }
+                throw std::runtime_error("Unsupported file format!");
         }
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString::fromStdString(ex.what()));
@@ -118,6 +130,18 @@ void MainWindow::onOpenFile()
 }
 
 
+void MainWindow::on_actionFlux_Data_triggered() {
+    addFluxData dialog(this);  // Create the dialog instance
+    if (dialog.exec() == QDialog::Accepted) {  // Wait for user interaction
+        QString layerName = dialog.getLayerName();  // Get the layer name
+        QString layerURL = dialog.getLayerURL();    // Get the layer URL
+
+        qDebug() << "Layer Name:" << layerName;
+        qDebug() << "URL:" << layerURL;
+    }
+}
+
+
 void MainWindow::clearLayout(QLayout *layout) {
     while (QLayoutItem* item = layout->takeAt(0)) {
         if (QWidget* widget = item->widget()) {
@@ -133,7 +157,7 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
     std::cout<<checked<<std::endl;
     std::cout<<name<<std::endl;
 
-    for (auto& layer : renderer->lst_layers2d) {
+    for (auto& layer : renderer->renderer2d->lst_layers2d) {
         if (layer.name == name) {
             layer.isVisible = checked;
         }
@@ -161,7 +185,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
 
     int row = listWidget->row(item);
-        if (row < 0 || row >= static_cast<int>(renderer->lst_layers2d.size())) return;
+        if (row < 0 || row >= static_cast<int>(renderer->renderer2d->lst_layers2d.size())) return;
 
     if (selectedAction == renameAction) {
         bool ok;
@@ -174,9 +198,9 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         int row = listWidget->row(item);
         delete listWidget->takeItem(row);
         name_layers.erase(name_layers.begin() + row);
-        renderer->lst_layers2d.erase(renderer->lst_layers2d.begin() + row);
+        renderer->renderer2d->lst_layers2d.erase(renderer->renderer2d->lst_layers2d.begin() + row);
     } else if  (selectedAction == zoomLayer) {
-        const Layer2d& layer = renderer->lst_layers2d[row];
+        const Layer2d& layer = renderer->renderer2d->lst_layers2d[row];
         renderer->controller->getCamera().centerOnBoundingBox(layer.boundingBox);
 
         // falcultative
