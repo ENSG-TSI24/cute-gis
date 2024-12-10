@@ -44,6 +44,7 @@ set(PROJECT_SOURCES
     src/front/objectloader.h src/front/objectloader.cpp
     src/lib/tiny_obj_loader.h src/lib/tiny_obj_loader.cc
     src/front/layer2d.h src/front/layer2d.cpp
+    src/front/AttributeTableWindow.h src/front/AttributeTableWindow.cpp
 )
 
 set(TEST_SOURCES_1

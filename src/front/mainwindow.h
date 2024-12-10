@@ -12,6 +12,9 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+#include "AttributeTableWindow.h"
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

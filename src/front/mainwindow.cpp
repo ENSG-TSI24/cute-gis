@@ -152,9 +152,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QAction* zoomLayer = contextMenu.addAction("Zoom");
     QAction* renameAction = contextMenu.addAction("Rename");
     QAction* deleteAction = contextMenu.addAction("Delete");
-
-    // metadata à faire
-    QAction* metadataAction = contextMenu.addAction("Metadata");
+    QAction* attributeAction = contextMenu.addAction("Open Attribute Table");
 
 
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
