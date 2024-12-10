@@ -13,7 +13,7 @@ class DataManagmentTest : public ::testing::Test {
     protected:
         DataManagment data;
         VectorData vectordata;
-        const char* inputFile =  "/home/jbolivier/Documents/ProjetGeo/cute-gis/test_data/BASSIN_VERSANT.geojson";
+        const char* inputFile =  "../test_data/BASSIN_VERSANT.geojson";
 };
 
 /*
