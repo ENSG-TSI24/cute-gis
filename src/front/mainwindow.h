@@ -38,6 +38,7 @@ private:
     ObjectLoader *objectLoader = nullptr;
     std::vector<std::string> name_layers;
     int nb_layers = 0;
+    void onLayerContextMenuRequested(const QPoint& pos);
 
 };
 

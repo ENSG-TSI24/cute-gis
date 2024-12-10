@@ -5,8 +5,10 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDebug>
-#include "../back/vectordata.h"
 #include <QListWidget>
+#include <QInputDialog>
+#include "../back/vectordata.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -138,6 +140,53 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
 
 }
 
+void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
+    QListWidget* listWidget = qobject_cast<QListWidget*>(sender());
+    if (!listWidget) return;
+
+    QListWidgetItem* item = listWidget->itemAt(pos);
+    if (!item) return;
+
+    QMenu contextMenu(this);
+
+    QAction* zoomLayer = contextMenu.addAction("Zoom");
+    QAction* renameAction = contextMenu.addAction("Rename");
+    QAction* deleteAction = contextMenu.addAction("Delete");
+
+    // metadata à faire
+    QAction* metadataAction = contextMenu.addAction("Metadata");
+
+
+    QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
+
+    int row = listWidget->row(item);
+        if (row < 0 || row >= static_cast<int>(renderer->lst_layers2d.size())) return;
+
+    if (selectedAction == renameAction) {
+        bool ok;
+        QString newName = QInputDialog::getText(this, "Rename Layer", "New name:", QLineEdit::Normal, item->text(), &ok);
+        if (ok && !newName.isEmpty()) {
+            item->setText(newName);
+            name_layers[listWidget->row(item)] = newName.toStdString();
+        }
+    } else if (selectedAction == deleteAction) {
+        int row = listWidget->row(item);
+        delete listWidget->takeItem(row);
+        name_layers.erase(name_layers.begin() + row);
+        renderer->lst_layers2d.erase(renderer->lst_layers2d.begin() + row);
+    } else if  (selectedAction == zoomLayer) {
+        const Layer2d& layer = renderer->lst_layers2d[row];
+        renderer->controller->getCamera().centerOnBoundingBox(layer.boundingBox);
+
+        // falcultative
+        QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer.name));
+    }
+
+    // metadata
+}
+
+
+
 void MainWindow::setupCheckboxes() {
 
     // Clear the layout_manager
@@ -149,6 +198,9 @@ void MainWindow::setupCheckboxes() {
     // Create list of checkbox
     QListWidget* listWidget = new QListWidget(ui->layer_manager);
     listWidget->setDragDropMode(QAbstractItemView::InternalMove);
+    listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
+
 
     for (const auto& name : name_layers) {
         QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(name), listWidget);
