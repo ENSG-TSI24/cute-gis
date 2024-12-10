@@ -274,7 +274,7 @@ void MainWindow::setupCheckboxes() {
     auto* layout = new QVBoxLayout(ui->layer_manager);
     layout->setSizeConstraint(QLayout::SetMaximumSize);
     layout->setContentsMargins(10, 10, 10, 10);
-    layout->addWidget(listWidget);
+    //layout->addWidget(listWidget);
     layout->addStretch();
 
     layout->addWidget(layerListWidget);
