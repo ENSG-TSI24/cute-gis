@@ -12,12 +12,12 @@ class DataManagmentTest : public ::testing::Test {
     protected:
         DataManagment data;
         VectorData vectordata;
-        const char* inputPoint = "../test_data/point.geojson";
-        const char* inputLine = "../test_data/linestring.geojson";
-        const char* inputMultiLine = "../test_data/multilinestring.geojson";
-        const char* inputPolygon = "../test_data/polygon.geojson";
-        const char* inputMultiPolygons = "../test_data/multipolygon.geojson";
-        const char* inputFileDepartements =  "../test_data/departements.geojson";
+        const char* inputPoint = "../data/test_data/point.geojson";
+        const char* inputLine = "../data/test_data/linestring.geojson";
+        const char* inputMultiLine = "../data/test_data/multilinestring.geojson";
+        const char* inputPolygon = "../data/test_data/polygon.geojson";
+        const char* inputMultiPolygons = "../data/test_data/multipolygon.geojson";
+        const char* inputFileDepartements =  "../data/test_data/departements.geojson";
 };
 
 /*
