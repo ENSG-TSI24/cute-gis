@@ -9,7 +9,7 @@ class DataProvider {
         GDALDataset* getDataset() ;
 
         // Get Metadata
-        void displayMetadata();
+        char** displayMetadata();
 
         bool isEmpty() ;
 
