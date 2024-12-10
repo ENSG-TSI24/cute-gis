@@ -175,6 +175,7 @@ std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> CityGMLParser::pro
     std::vector<std::vector<std::vector<glm::vec3>>> normalsListUniform;
     std::vector<std::vector<glm::vec3>> normalsList;
     std::vector<std::vector<std::vector<glm::vec3>>> multipolygontexture;
+    std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> returnTuple;
     if (data.contains("coordinates")) {
 
         for (auto& multiPolygon : data["coordinates"]) {
@@ -274,7 +275,7 @@ std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> CityGMLParser::pro
             multipolygontexture.push_back(polygontexture);
         }
 
-        std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> returnTuple;
+
         returnTuple.push_back(multipolygonList);
 
         normalsListUniform.push_back(normalsList);
@@ -284,6 +285,7 @@ std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> CityGMLParser::pro
 
         return returnTuple;
     }
+    return returnTuple;
 }
 
 bool CityGMLParser::executeOgr2Ogr(const std::string& inputFile, const std::string& outputFile) {
@@ -420,7 +422,7 @@ void CityGMLParser::exportToMtl(const std::string& filePath) const {
     }
 
     for (const auto& feature : features) {
-        std::string materialName = "Material_" + feature.id;
+        std::string materialName = &"Material_" [ feature.id];
 
         // Default material properties
         float ambient[3] = {1.0f, 1.0f, 1.0f}; // Default white
