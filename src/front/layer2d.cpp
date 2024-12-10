@@ -1,13 +1,22 @@
 #include "layer2d.h"
 #include <QOpenGLFunctions>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QDebug>
 
 
-Layer2d::Layer2d(VectorData data)
-{
+Layer2d::Layer2d(VectorData data, const std::string& geoJsonPath)
+    : geoJsonPath(geoJsonPath) {
     points = data.GetPoints();
     linestrings = data.GetLineStrings();
     polygons = data.GetPolygons();
     calculateBoundingBox();
+
+    if (!geoJsonPath.empty()) {
+        loadPropertiesFromGeoJson();
+    }
 }
 
 Layer2d::~Layer2d(){
@@ -112,3 +121,30 @@ void Layer2d::calculateBoundingBox() {
     //std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
 }
 
+
+void Layer2d::loadPropertiesFromGeoJson() {
+    QFile file(QString::fromStdString(geoJsonPath));
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open GeoJSON file:" << QString::fromStdString(geoJsonPath);
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+    if (jsonDoc.isNull() || !jsonDoc.isObject()) {
+        qWarning() << "Invalid GeoJSON file.";
+        return;
+    }
+
+    QJsonObject rootObj = jsonDoc.object();
+    QJsonArray features = rootObj["features"].toArray();
+
+    for (const QJsonValue& feature : features) {
+        QJsonObject featureObj = feature.toObject();
+        if (featureObj.contains("properties") && featureObj["properties"].isObject()) {
+            properties.push_back(featureObj["properties"].toObject());
+        }
+    }
+}

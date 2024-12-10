@@ -11,7 +11,8 @@ class AttributeTableWindow : public QDialog {
 
 public:
     explicit AttributeTableWindow(QWidget *parent = nullptr);
-    void populateTable(const QVector<QVector<QString>> &data);
+    void populateTable(const QVector<QVector<QString>> &data, const QStringList &headers);
+
 
 private:
     QTableWidget *tableWidget;

@@ -13,6 +13,11 @@
 #include "renderer2d.h"
 #include "renderer3d.h"
 
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -75,7 +80,9 @@ void MainWindow::onOpenFile()
 
             
             VectorData geo(filedata);
-            renderer->renderer2d->lst_layers2d.push_back(geo);
+            Layer2d newLayer(geo, filePath.toStdString());
+            renderer->renderer2d->lst_layers2d.push_back(newLayer);
+//            renderer->renderer2d->lst_layers2d.push_back(geo);
 
             // add name layers
             QFileInfo fileInfo(filePath);
@@ -177,7 +184,8 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QAction* zoomLayer = contextMenu.addAction("Zoom");
     QAction* renameAction = contextMenu.addAction("Rename");
     QAction* deleteAction = contextMenu.addAction("Delete");
-    QAction* attributeAction = contextMenu.addAction("Open Attribute Table");
+
+    QAction* attributeAction = contextMenu.addAction("Open Attribute Table", this, [this, item]() { openAttributeTable(item); });
 
 
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
@@ -205,7 +213,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer.name));
     }
 
-    // metadata
+    // Open Attribute Table
 }
 
 
@@ -248,6 +256,20 @@ void MainWindow::setupCheckboxes() {
     font.setPointSize(15);
     listWidget->setFont(font);
 
+
+    // Create QListWidget
+    layerListWidget = new QListWidget(ui->layer_manager);
+    layerListWidget->setDragDropMode(QAbstractItemView::InternalMove);
+    layerListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(layerListWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
+
+    for (const auto& name : name_layers) {
+        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(name), layerListWidget);
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+        item->setCheckState(Qt::Checked);
+    }
+
+
     // Set layer_manager main layout
     auto* layout = new QVBoxLayout(ui->layer_manager);
     layout->setSizeConstraint(QLayout::SetMaximumSize);
@@ -255,7 +277,89 @@ void MainWindow::setupCheckboxes() {
     layout->addWidget(listWidget);
     layout->addStretch();
 
+    layout->addWidget(layerListWidget);
+
     ui->layer_manager->setLayout(layout);
 
 }
 
+
+
+QVector<QVector<QString>> parseGeoJson(const QString &filePath, QStringList &headers) {
+    QVector<QVector<QString>> tableData;
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open file:" << filePath;
+        return tableData;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+    if (jsonDoc.isNull() || !jsonDoc.isObject()) {
+        qWarning() << "Invalid GeoJSON file.";
+        return tableData;
+    }
+
+    QJsonObject rootObj = jsonDoc.object();
+    QJsonArray features = rootObj["features"].toArray();
+
+    // Parse features
+    for (const QJsonValue &feature : features) {
+        QJsonObject featureObj = feature.toObject();
+        QJsonObject properties = featureObj["properties"].toObject();
+
+        // Collect headers
+        if (headers.isEmpty()) {
+            headers = properties.keys();
+        }
+
+        // Collect row data
+        QVector<QString> row;
+        for (const QString &key : headers) {
+            row.append(properties[key].toString());
+        }
+        tableData.append(row);
+    }
+
+    return tableData;
+}
+
+
+
+void MainWindow::openAttributeTable(QListWidgetItem* item) {
+    if (!item || !layerListWidget) return;
+
+    int row = layerListWidget->row(item);
+    if (row < 0 || row >= static_cast<int>(renderer->renderer2d->lst_layers2d.size())) return;
+
+    // get the layer
+    Layer2d& layer = renderer->renderer2d->lst_layers2d[row];
+
+    if (layer.properties.empty()) {
+        QMessageBox::warning(this, "Error", "No properties available for this layer.");
+        return;
+    }
+
+    // prepare table data
+    QStringList headers;
+    QVector<QVector<QString>> tableData;
+
+    for (const auto& property : layer.properties) {
+        if (headers.isEmpty()) {
+            headers = property.keys();
+        }
+        QVector<QString> rowData;
+        for (const QString& key : headers) {
+            rowData.append(property[key].toString());
+        }
+        tableData.append(rowData);
+    }
+
+    // create AttributeTableWindow
+    AttributeTableWindow* attrWindow = new AttributeTableWindow(this);
+    attrWindow->populateTable(tableData, headers);
+    attrWindow->exec();
+}

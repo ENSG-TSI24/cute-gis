@@ -15,7 +15,12 @@ AttributeTableWindow::AttributeTableWindow(QWidget *parent)
     setLayout(layout);
 }
 
-void AttributeTableWindow::populateTable(const QVector<QVector<QString>> &data) {
+
+
+void AttributeTableWindow::populateTable(const QVector<QVector<QString>> &data, const QStringList &headers) {
+    tableWidget->setColumnCount(headers.size());
+    tableWidget->setHorizontalHeaderLabels(headers);
+
     tableWidget->setRowCount(data.size());
     for (int i = 0; i < data.size(); ++i) {
         for (int j = 0; j < data[i].size(); ++j) {

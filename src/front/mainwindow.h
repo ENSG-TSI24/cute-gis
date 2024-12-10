@@ -7,13 +7,13 @@
 #include "./ui_mainwindow.h"
 #include "renderer.h"
 #include "objectloader.h"
+#include "AttributeTableWindow.h"
 
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QFileDialog>
-
-#include "AttributeTableWindow.h"
+#include <QListWidgetItem>
 
 
 QT_BEGIN_NAMESPACE
@@ -35,6 +35,7 @@ public:
 
 private slots:
     void on_actionFlux_Data_triggered();
+    void onLayerContextMenuRequested(const QPoint& pos);
 
 private:
     Ui::MainWindow *ui;
@@ -45,7 +46,11 @@ private:
     ObjectLoader *objectLoader = nullptr;
     std::vector<std::string> name_layers;
     int nb_layers = 0;
-    void onLayerContextMenuRequested(const QPoint& pos);
+
+    QListWidget* layerListWidget = nullptr;
+
+
+    void openAttributeTable(QListWidgetItem* item);
 
 };
 

@@ -3,15 +3,16 @@
 
 #include <vector>
 #include <utility>
+#include <string>
+#include <map>
+#include <QJsonObject>
 #include "../back/vectordata.h"
 #include "controller.h"
-
-
 
 class Layer2d
 {
 public:
-    Layer2d(VectorData data);
+    Layer2d(VectorData data, const std::string& geoJsonPath = "");
     ~Layer2d();
     void renderPoints();
     void renderLinestrings();
@@ -21,6 +22,11 @@ public:
     bool isVisible = true;
     std::string name = "no name";
 
+    std::string geoJsonPath;
+    std::vector<QJsonObject> properties;
+
+    void loadPropertiesFromGeoJson();
+
 private:
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;
@@ -28,3 +34,4 @@ private:
 };
 
 #endif // LAYER2D_H
+
