@@ -28,6 +28,7 @@ public:
     ~MainWindow();
     void clearLayout(QLayout *layout);
     void onCheckboxToggled(bool checked, std::string name);
+    void onToggle3DMode();
 
 private slots:
     void on_actionFlux_Data_triggered();
@@ -41,6 +42,7 @@ private:
     ObjectLoader *objectLoader = nullptr;
     std::vector<std::string> name_layers;
     int nb_layers = 0;
+    void onLayerContextMenuRequested(const QPoint& pos);
 
 };
 

@@ -101,3 +101,7 @@ void Controller::ControllerMouseMoveEvent(QMouseEvent* event) {
 void Controller::set3DMode(bool is3D) {
     is3DMode = is3D;
 }
+
+bool Controller::get3DMode() {
+    return is3DMode;
+}

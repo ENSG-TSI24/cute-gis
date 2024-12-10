@@ -26,6 +26,9 @@ public:
 
     //void reset();
 
+    bool getIs3D();
+    void calculateBoundingBox();
+    BoundingBox boundingBox;
     Controller* controller;
     Renderer2D* renderer2d;
     Renderer3D* renderer3d;

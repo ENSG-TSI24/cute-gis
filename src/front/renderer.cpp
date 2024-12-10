@@ -67,7 +67,9 @@ void Renderer::paintGL() {
     if (!is3D) {
         controller->getCamera().update();
         renderer2d->paintGl2D();
-    } else renderer3d->paintGl3D();
+    } else {
+        if (renderer3d->objectLoader) renderer3d->paintGl3D();
+    };
 }
 
 
@@ -77,6 +79,9 @@ void Renderer::setIs3D(bool enabled) {
     controller->set3DMode(enabled);
 }
 
+bool Renderer::getIs3D() {
+    return controller->get3DMode();
+}
 
 void Renderer::mouseReleaseEvent(QMouseEvent* event) {
     controller->ControllerMouseReleaseEvent(event);

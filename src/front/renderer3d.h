@@ -11,10 +11,7 @@ public:
     void paintGl3D();
     void reset3D();
     void setObjectLoader(ObjectLoader* loader);
-
     Renderer& parent;
-
-private:
     ObjectLoader* objectLoader;
 
 };

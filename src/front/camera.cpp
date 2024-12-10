@@ -54,6 +54,7 @@ void Camera::setZ(float zChange) {
     this->position[2] *= (zChange > 0) ? scale : 1.0f / scale;
     this->position[2] = std::max(this->position[2], 0.001f);
 
+    std::cout << "Camera Z position: " << this->position[2] << std::endl;
 }
 
 

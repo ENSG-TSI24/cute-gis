@@ -9,6 +9,8 @@ Renderer3D::~Renderer3D() {
     }
 }
 
+
+
 void Renderer3D::paintGl3D(){
     if (objectLoader) {
             parent.controller->set3DMode(true);
@@ -50,4 +52,6 @@ void Renderer3D::setObjectLoader(ObjectLoader* loader) {
     }
     objectLoader = loader;
 }
+
+
 
