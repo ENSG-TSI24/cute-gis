@@ -12,7 +12,7 @@ class DataProvider {
         char** displayMetadata();
 
         bool isEmpty() ;
-
+        std::string GetTypeStream(const char* url);
         // Crucial to free memory, otherwise bugs
         ~DataProvider() ;
 

@@ -2,6 +2,8 @@
 #include <gdal_priv.h>
 #include <ogrsf_frmts.h>
 #include <iostream>
+#include <string>
+#include <algorithm>
 
 
 
@@ -72,6 +74,32 @@ bool DataProvider::isEmpty(){
     return m_dataset==nullptr;
 }
 
+std::string DataProvider::GetTypeStream(const char* url){
+       std::string urlLower = url;
+
+       std::transform(urlLower.begin(), urlLower.end(), urlLower.begin(), ::tolower);
+
+
+       // Check for specific keywords in the URL
+
+       if (urlLower.find("wfs") != std::string::npos) {
+
+           return "WFS";
+
+       } else if (urlLower.find("wms") != std::string::npos) {
+
+           return "WMS";
+
+       } else if (urlLower.find("wmts") != std::string::npos) {
+
+           return "WMTS";
+
+       }  else {
+
+           return "Unknown";
+
+       }
+}
 // Crucial to free memory, otherwise bugs
 DataProvider::~DataProvider() {
     // Si le dataset existe, on le ferme

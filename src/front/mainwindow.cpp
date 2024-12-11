@@ -14,7 +14,6 @@
 #include "renderer3d.h"
 #include "../back/API_WFS.h"
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -239,9 +238,14 @@ void MainWindow::on_actionFlux_Data_triggered() {
                     }
             std::cout <<"I'm here"<<std::endl ;
             wfs.ExportToGeoJSON(intername);
-
+            std::vector<std::pair<std::string, std::string>> FieldsLayers = wfs.GetLayerFields(cclayerName);
+            for (const auto& field : FieldsLayers) {
+                   std::cout << "Field: " << field.first << ", Type: " << field.second << std::endl;
+               }
             const char* chemin = wfs.getOutput();
             onOpenFile_stream(chemin);
+
+
     }
         }  catch (const std::exception& e) {
             std::cout << "An error occurred: " << e.what() << std::endl; // **frontend team ( error log )

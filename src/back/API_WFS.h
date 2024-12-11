@@ -20,6 +20,7 @@ public:
 
     OGRLayer* GetLayer(const char* name = "");
     void ExportToGeoJSON(const std::string& layerName);
+    std::vector<std::pair<std::string, std::string>> GetLayerFields(const char* layerName);
     const char* getOutput();
 
 protected:
