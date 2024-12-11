@@ -48,9 +48,12 @@ private:
     int nb_layers = 0;
 
     QListWidget* layerListWidget = nullptr;
-
+    AttributeTableWindow *attributeTableWindow = nullptr;
 
     void openAttributeTable(QListWidgetItem* item);
+    void showAttributeTable();
+    void highlightSelectedElement(int rowIndex);
+
 
 };
 

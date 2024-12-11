@@ -28,3 +28,8 @@ void AttributeTableWindow::populateTable(const QVector<QVector<QString>> &data, 
         }
     }
 }
+
+void AttributeTableWindow::handleRowSelection() {
+    int selectedRow = tableWidget->currentRow();
+    emit rowSelected(selectedRow);  // 发出信号
+}

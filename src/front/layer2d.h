@@ -18,16 +18,19 @@ public:
     void renderLinestrings();
     void renderPolygons();
     void calculateBoundingBox();
+
     BoundingBox boundingBox;
     bool isVisible = true;
-    std::string name = "no name";
 
+    std::string name = "no name";
     std::string geoJsonPath;
     std::vector<QJsonObject> properties;
 
-    void loadPropertiesFromGeoJson();
+    bool isHighlighted() const { return highlightFlag; }
+    void setHighlighted(bool value) { highlightFlag = value; }
 
 private:
+    bool highlightedFlag = false;  
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;
     std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons;

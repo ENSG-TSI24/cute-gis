@@ -8,7 +8,7 @@
 
 
 Layer2d::Layer2d(VectorData data, const std::string& geoJsonPath)
-    : geoJsonPath(geoJsonPath) {
+    : geoJsonPath(geoJsonPath) highlightedFlag(false){
     points = data.GetPoints();
     linestrings = data.GetLineStrings();
     polygons = data.GetPolygons();
@@ -24,15 +24,20 @@ Layer2d::~Layer2d(){
 }
 
 void Layer2d::renderPoints() {
-    glColor3f(0.0f, 0.0f, 1.0f); // Couleur bleue
-    glPointSize(5.0f);
+    if (highlightedFlag) {
+        glColor3f(1.0f, 1.0f, 0.0f); // 高亮颜色：黄色
+    } else {
+        glColor3f(0.0f, 0.0f, 1.0f); // 默认颜色：蓝色
+    }
 
+    glPointSize(5.0f);
     glBegin(GL_POINTS);
     for (const auto& coord : points) {
         glVertex3f(coord.first, coord.second, 0.0f);
     }
     glEnd();
 }
+
 
 void Layer2d::renderLinestrings() {
     glColor3f(0.0f, 1.0f, 0.0f);
@@ -147,4 +152,12 @@ void Layer2d::loadPropertiesFromGeoJson() {
             properties.push_back(featureObj["properties"].toObject());
         }
     }
+}
+
+bool Layer2d::isHighlighted() const { 
+    return highlightedFlag; 
+}
+
+void Layer2d::setHighlighted(bool value) { 
+    highlightedFlag = value; 
 }
