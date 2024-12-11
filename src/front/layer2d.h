@@ -20,6 +20,8 @@ public:
     BoundingBox boundingBox;
     bool isVisible = true;
     std::string name = "no name";
+    std::vector<std::vector<std::string>> attributes;
+    std::vector<std::string> attributeHeaders;
 
 private:
     std::vector<std::pair<float, float>> points;

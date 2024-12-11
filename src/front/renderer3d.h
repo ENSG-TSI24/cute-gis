@@ -8,14 +8,15 @@ class Renderer3D {
 public:
     Renderer3D();
     ~Renderer3D();
-    void paintGl3D(QMatrix4x4 modelMatrix);
+    void paintGl3D(QMatrix4x4 modelViewMatrix);
     void reset3D();
     void setObjectLoader(ObjectLoader* loader);
-
-    Renderer& parent;
-    ObjectLoader* getObjectLoader() const;
     QMatrix4x4 getModelMatrix();
 
+    ObjectLoader* getObjectLoader() const;
+
+private:
+    ObjectLoader* objectLoader;
 
 };
 

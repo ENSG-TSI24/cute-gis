@@ -15,7 +15,6 @@ ObjectLoader* Renderer3D::getObjectLoader() const {
 
 void Renderer3D::paintGl3D(QMatrix4x4 modelViewMatrix){
     if (objectLoader) {
-
             glMatrixMode(GL_MODELVIEW);
             glLoadMatrixf(modelViewMatrix.constData());
 
