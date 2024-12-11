@@ -227,4 +227,25 @@ void Camera::setRWidth(int width){
     this->renderer_width=width;
 }
 
+void Camera::centerOn3DModel(std::vector<glm::vec3> &vertices){
+    float minX=vertices[0].x;
+    float maxX=vertices[0].x;
+    float minY=vertices[0].y;
+    float maxY=vertices[0].y;
+    this->VertAng=-90;
+    for (const auto& vertex : vertices) {
+        if (vertex.x>maxX){
+            maxX=vertex.x;
+        } else if (vertex.x<minX){
+            minX=vertex.x;
+        }
+        if (vertex.y<minY){
+            minY=vertex.y;
+        } else if (vertex.y>maxY){
+            maxY=vertex.y;
+        }
+
+    }
+}
+
 
