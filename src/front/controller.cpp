@@ -9,13 +9,21 @@ Camera& Controller::getCamera() {
 
 void Controller::ControllerwheelEvent(QWheelEvent* event) {
     float zoomStep = 1.0f;
-    if (event->angleDelta().y() > 0) {
-        camera.setZ(-zoomStep);
-    } else if (event->angleDelta().y() < 0) {
-        camera.setZ(zoomStep);
-    }
+    if (is3DMode){
+        if (event->angleDelta().y() > 0) {
 
-    camera.update2D();
+        } else if (event->angleDelta().y() < 0) {
+
+        }
+    }
+    else{
+        if (event->angleDelta().y() > 0) {
+            camera.setZ(-zoomStep);
+        } else if (event->angleDelta().y() < 0) {
+            camera.setZ(zoomStep);
+        }
+        camera.update2D();
+    }
     update();
 }
 
@@ -52,7 +60,7 @@ void Controller::ControllerkeyPressEvent(QKeyEvent *event){
     }
     else{
         switch (event->key()) {
-        case( Qt::Key_A):
+        case( Qt::Key_Control):
             isCtrlPressed = true;
             break;
         case( Qt::Key_Up):
@@ -92,7 +100,7 @@ void Controller::ControllerkeyPressEvent(QKeyEvent *event){
 }
 
 void Controller::ControllerkeyReleaseEvent(QKeyEvent *event) {
-    if (event->key() == Qt::Key_A) {
+    if (event->key() == Qt::Key_Control) {
         isCtrlPressed = false;
     }
 }
@@ -113,14 +121,13 @@ void Controller::ControllerMouseReleaseEvent(QMouseEvent* event) {
 
 void Controller::ControllerMouseMoveEvent(QMouseEvent* event) {
     if (isDragging) {
-        float sensitivity = is3DMode ? 0.1f : 0.02f;
+        float sensitivity = is3DMode ? 0.15f : 0.02f;
         QPoint currentMousePosition = event->pos();
         QPoint delta = currentMousePosition - lastMousePosition;
         if (is3DMode){
             if(isCtrlPressed){
-                std::cout<<"y'a control"<<std::endl;
-                camera.rotateYaw(delta.x() * sensitivity);
-                camera.rotatePitch(delta.y() * sensitivity);
+                camera.rotateVertAng(delta.y() * sensitivity);
+                camera.rotateHorAng(-delta.x() * sensitivity);
             }
             else{
                 camera.moveRight3D(-delta.x() * sensitivity);

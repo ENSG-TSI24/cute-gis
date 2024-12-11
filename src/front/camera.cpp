@@ -67,11 +67,11 @@ void Camera::moveBack3D(float step){
 }
 
 void Camera::moveLeft3D(float step){
-    this->position -= step*this->right;
+    this->position += step*this->right;
 }
 
 void Camera::moveRight3D(float step){
-    this->position += step*this->right;
+    this->position -= step*this->right;
 }
 
 void Camera::setZ(float zChange) {
@@ -85,55 +85,63 @@ float Camera::getZ(){
     return position[2];
 }
 
-float Camera::getPitch(){
-    return pitch;
+float Camera::getVertAng(){
+    return VertAng;
 }
 
-float Camera::getYaw(){
-    return yaw;
+float Camera::getHorAng(){
+    return HorAng;
 }
 
-void Camera::rotateYaw(float angle){
-    this->yaw+=angle;
-}
-
-void Camera::rotatePitch(float angle){
-    this->pitch+=angle;
-    if(pitch > 179.9){
-      pitch =  179.9;
+void Camera::rotateHorAng(float angle){
+    this->HorAng+=angle;
+    if(HorAng > 360){
+        HorAng -=  360;
     }
-    if(pitch < 0.1){
-      pitch = 0.1;
+    if(HorAng < 0){
+        HorAng += 360;
     }
 }
 
+void Camera::rotateVertAng(float angle){
+    this->VertAng+=angle;
+    if(VertAng > 89.9){
+        VertAng =  89.9;
+    }
+    if(VertAng < -89.9){
+        VertAng = 89.9;
+    }
+}
 
 QMatrix4x4 Camera::getViewMatrix() {
-    float yawRad = glm::radians(this->yaw);  // Convertir le yaw en radians
-    float pitchRad = glm::radians(this->pitch);  // Convertir le pitch en radians
+    // Convertir les angles de rotation en radians
+    float pitchRad = glm::radians(this->VertAng); // Rotation autour de X
+    float rollRad = glm::radians(this->HorAng);   // Rotation autour de Z
 
-    // Calculer le vecteur forward (direction de la vue)
-    // La direction de la caméra est influencée par le yaw et le pitch
-    this->forward = glm::vec3(cos(pitchRad) * sin(yawRad), sin(pitchRad), cos(pitchRad) * cos(yawRad));
+    glm::vec3 forward;
+    forward.x = cos(pitchRad) * sin(rollRad);
+    forward.z = sin(pitchRad);
+    forward.y = cos(pitchRad) * cos(rollRad);
 
-    // Calculer le vecteur right (perpendiculaire à forward et up global)
-    glm::vec3 globalUp = glm::vec3(0.0f, 0.0f, -1.0f); // L'axe vertical global
-    this->right = glm::normalize(glm::cross(globalUp, forward));
-
-    // Calculer le vecteur up local (perpendiculaire à forward et right)
-    this->up = glm::normalize(glm::cross(this->right, this->forward));
+    // Calculer les autres axes (right, up) à partir de la direction forward
+    glm::vec3 right = glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), forward)); // Calculer l'axe droit (X)
+    glm::vec3 up = glm::normalize(glm::cross(forward, right));
 
     // Récupérer la position de la caméra
     glm::vec3 position = this->getPosition();
 
     // Définir la cible à une certaine distance devant la caméra
-    float distance = 0.1f; // Distance devant la caméra
-    glm::vec3 target = position + this->forward * distance;
+    glm::vec3 target = position + forward;
 
     // Construction de la matrice de vue avec QMatrix4x4
     QVector3D cameraPos(position.x, position.y, position.z);
     QVector3D targetQ3D(target.x, target.y, target.z);
     QVector3D upQ3D(up.x, up.y, up.z);
+
+    // Mettre à jour les directions locales de la caméra (facultatif)
+    this->forward = forward;
+    this->right = right;
+    this->up = up;
 
     // Créer la matrice de vue en utilisant lookAt
     QMatrix4x4 viewMatrix;
@@ -169,7 +177,6 @@ void Camera::update2D() {
     // Passer en mode modèle
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
 }
 
 void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
@@ -219,4 +226,5 @@ void Camera::setRHeight(int height){
 void Camera::setRWidth(int width){
     this->renderer_width=width;
 }
+
 

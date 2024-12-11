@@ -13,6 +13,9 @@
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
 
+
+#include <glm/gtc/quaternion.hpp>
+
 struct BoundingBox {
     float minX, maxX, minY, maxY;
 };
@@ -88,8 +91,8 @@ public:
     void moveDown3D(float step);
     void moveUp3D(float step);
 
-    void rotateYaw(float angle);
-    void rotatePitch(float angle);
+    void rotateVertAng(float angle);
+    void rotateHorAng(float angle);
 
     void update2D();
     float speedFactor;
@@ -103,8 +106,8 @@ public:
     void centerOnBoundingBox(const BoundingBox& bbox);
     int getRWidth();
     int getRHeight();
-    float getPitch();
-    float getYaw();
+    float getHorAng();
+    float getVertAng();
     void setRWidth(int width);
     void setRHeight(int height);
 
@@ -115,8 +118,8 @@ private:
     glm::vec3 forward;
     glm::vec3 right;
     glm::vec3 up;
-    float yaw=0;
-    float pitch=90;
+    float VertAng=0;
+    float HorAng=0;
 };
 
 #endif // CAMERA_H
