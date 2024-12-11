@@ -89,14 +89,6 @@ void Renderer::paintGl3D() {
         // Dessiner les objets
         glColor3f(1.0f, 1.0f, 0.0f);
         glBegin(GL_TRIANGLES);
-/*
-        std::cout << controller->getCamera().getX() << " "
-                  << controller->getCamera().getY() << " "
-                  << controller->getCamera().getZ() << " "
-                  << controller->getCamera().getPitch() << " "
-                  << controller->getCamera().getYaw() << " "
-                  << controller->getCamera().getRoll() <<std::endl;
-                  */
 
         const auto& vertices = objectLoader->getVertices();
         for (const auto& vertex : vertices) {
