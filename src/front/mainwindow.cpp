@@ -64,7 +64,7 @@ void MainWindow::onOpenFile()
 {
     bool is3DMode = renderer->getIs3D();
 
-    QString filter = is3DMode ? "OBJ Files (*.obj);;All Files (*.*)" : "GeoJSON Files (*.geojson);;All Files (*.*)";
+    QString filter = is3DMode ? "3D Files (*.obj);;All Files (*.*)" : "2D Files (*.geojson, *.shp);;All Files (*.*)";
     QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", filter);
 
     if (filePath.isEmpty()) {
@@ -78,7 +78,7 @@ void MainWindow::onOpenFile()
     renderer->renderer3d->reset3D();
 
     try {
-        if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
+        if (filePath.endsWith(".geojson", Qt::CaseInsensitive) || filePath.endsWith(".shp", Qt::CaseInsensitive)) {
             renderer->renderer3d->reset3D();
 
             VectorData geo(filedata);
@@ -90,7 +90,7 @@ void MainWindow::onOpenFile()
             renderer->renderer2d->lst_layers2d.back().name = name;
 
             // Parse GeoJSON for attributes
-            parseGeoJSON(filePath, renderer->renderer2d->lst_layers2d.back());
+            if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) parseGeoJSON(filePath, renderer->renderer2d->lst_layers2d.back());
 
             name_layers.push_back(name);
             setupCheckboxes();
