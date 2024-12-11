@@ -96,7 +96,6 @@ add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
 qt_add_executable(cute-gis
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
-    ${UI_HEADERS}
 )
 
 # Link libraries
