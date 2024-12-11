@@ -1,6 +1,7 @@
 #include "vectordata.h"
 #include "src/back/datamanagment.h"
 #include <cstddef>
+#include <iostream>
 #include <ogrsf_frmts.h>
 
 VectorData::VectorData() : DataManagment() {}
@@ -252,4 +253,108 @@ std::vector<std::vector<std::vector<std::pair<float, float>>>> VectorData::Get2D
     }
     GDALClose(dataset);
     return polygons;
+}
+
+std::vector<std::string> VectorData::GetAttributName() {
+    GDALAllRegister();
+    GDALDataset* dataset = (GDALDataset *) GDALOpenEx(this->GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (!dataset) {
+        throw std::runtime_error("Invalid GDALDataset pointer provided.");
+    }
+
+    std::vector<std::string> header_name;
+
+    OGRLayer* layer = dataset->GetLayer(0); //On considère que chaque fichier contient une seule couche?
+    int field_count = layer->GetLayerDefn()->GetFieldCount(); //Nombre d'attributs dans la couche
+
+    for (int i = 0; i < field_count; ++i) {
+        const char *field_name = layer->GetLayerDefn()->GetFieldDefn(i)->GetNameRef();//On récupère le nom de chaque champs et on le passe en char
+        std::cout << field_name << std::endl;
+        header_name.emplace_back(field_name);
+    }
+    GDALClose(dataset);
+    return header_name;
+}
+
+std::vector<std::string> VectorData::GetAllAttributData() {
+    GDALAllRegister();
+    GDALDataset* dataset = (GDALDataset *) GDALOpenEx(this->GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (!dataset) {
+        throw std::runtime_error("Invalid GDALDataset pointer provided.");
+    }
+
+    std::vector<std::string> data_field;
+
+    OGRLayer* poLayer = dataset->GetLayer(0); //On considère que chaque fichier contient une seule couche?
+    for( auto& poFeature: poLayer )
+    {
+        for( auto&& oField: *poFeature )
+        {
+            if( oField.IsUnset() )
+        {
+            printf("(unset),");
+            continue;
+        }
+        if( oField.IsNull() )
+        {
+            printf("(null),");
+            continue;
+        }
+            data_field.emplace_back(oField.GetAsString());
+            std::cout << oField.GetAsString() << std::endl;
+        }
+    }
+    GDALClose(dataset);
+    return data_field;
+}
+
+
+
+std::vector<std::string> VectorData::GetAttributeDataByHeader(const char* fieldName) {
+    GDALAllRegister();
+    GDALDataset* dataset = (GDALDataset *) GDALOpenEx(this->GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (!dataset) {
+        throw std::runtime_error("Invalid GDALDataset pointer provided.");
+    }
+
+    std::vector<std::string> data_field;
+
+    OGRLayer* poLayer = dataset->GetLayer(0); //On considère que chaque fichier contient une seule couche?
+    for( auto& poFeature: poLayer )
+    {
+        data_field.emplace_back(poFeature->GetFieldAsString(fieldName));
+        std::cout << poFeature->GetFieldAsString(fieldName) << std::endl;
+    }
+    GDALClose(dataset);
+    return data_field;
+}
+
+std::vector<std::vector<std::string>> VectorData::GetAttributeDataById(int id) {
+    GDALAllRegister();
+    GDALDataset* dataset = (GDALDataset *) GDALOpenEx(this->GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (!dataset) {
+        throw std::runtime_error("Invalid GDALDataset pointer provided.");
+    }
+
+    std::vector<std::vector<std::string>> row;
+    std::vector<std::string> column;
+
+    OGRLayer* poLayer = dataset->GetLayer(0);
+    OGRFeature *poFeature = poLayer->GetFeature(id);
+        for( auto&& oField: *poFeature ) {
+            if( oField.IsNull() )
+            {
+                //column.emplace_back(NULL);
+                continue;
+            }
+            else
+            {
+                column.emplace_back(oField.GetAsString());
+                std::cout << oField.GetAsString() << std::endl;
+            }
+            row.emplace_back(column);
+        }
+
+    GDALClose(dataset);
+    return row;
 }
