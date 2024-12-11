@@ -82,7 +82,6 @@ void MainWindow::onOpenFile()
             VectorData geo(filedata);
             Layer2d newLayer(geo, filePath.toStdString());
             renderer->renderer2d->lst_layers2d.push_back(newLayer);
-//            renderer->renderer2d->lst_layers2d.push_back(geo);
 
             // add name layers
             QFileInfo fileInfo(filePath);
@@ -181,7 +180,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 
     QMenu contextMenu(this);
 
-    QAction* zoomLayer = contextMenu.addAction("Zoom");
+    QAction* zoomLayer = contextMenu.addAction("Re-.center");
     QAction* renameAction = contextMenu.addAction("Rename");
     QAction* deleteAction = contextMenu.addAction("Delete");
 
@@ -219,69 +218,52 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 
 
 void MainWindow::setupCheckboxes() {
-
     // Clear the layout_manager
     if (ui->layer_manager->layout()) {
         clearLayout(ui->layer_manager->layout());
         delete ui->layer_manager->layout();
     }
 
-    // Create list of checkbox
-    QListWidget* listWidget = new QListWidget(ui->layer_manager);
-    listWidget->setDragDropMode(QAbstractItemView::InternalMove);
-    listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
-
-
-    for (const auto& name : name_layers) {
-        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(name), listWidget);
-        item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        item->setCheckState(Qt::Checked);
-    }
-
-    // Link event to checkbox
-    connect(listWidget, &QListWidget::itemChanged, [this](QListWidgetItem *item) {
-        bool checked = item->checkState() == Qt::Checked;
-        QString name = item->text();
-        onCheckboxToggled(checked, name.toStdString());
-    });
-
-    // Set checkbox style
-    listWidget->setSpacing(10);
-    listWidget->setMaximumWidth(300);
-    listWidget->setStyleSheet("QListWidget::item { padding: 5px; font-family: Sans Serif; font-size: 10pt; }");
-
-    // setting police size
-    QFont font = listWidget->font();
-    font.setPointSize(15);
-    listWidget->setFont(font);
-
-
-    // Create QListWidget
-    layerListWidget = new QListWidget(ui->layer_manager);
+    // Create the QListWidget for the layer manager
+    layerListWidget = new QListWidget(ui->layer_manager); // Use layerListWidget as the single QListWidget instance
     layerListWidget->setDragDropMode(QAbstractItemView::InternalMove);
     layerListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(layerListWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
 
+    // Add layers to the QListWidget
     for (const auto& name : name_layers) {
         QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(name), layerListWidget);
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         item->setCheckState(Qt::Checked);
     }
 
+    // Connect the itemChanged signal for checkboxes
+    connect(layerListWidget, &QListWidget::itemChanged, [this](QListWidgetItem *item) {
+        bool checked = item->checkState() == Qt::Checked;
+        QString name = item->text();
+        onCheckboxToggled(checked, name.toStdString());
+    });
 
-    // Set layer_manager main layout
+    // Customize the appearance of the QListWidget
+    layerListWidget->setSpacing(10);
+    layerListWidget->setMaximumWidth(300);
+    layerListWidget->setStyleSheet("QListWidget::item { padding: 5px; font-family: Sans Serif; font-size: 10pt; }");
+
+    // Set font size
+    QFont font = layerListWidget->font();
+    font.setPointSize(15);
+    layerListWidget->setFont(font);
+
+    // Create a layout for the layer manager and add the QListWidget
     auto* layout = new QVBoxLayout(ui->layer_manager);
     layout->setSizeConstraint(QLayout::SetMaximumSize);
     layout->setContentsMargins(10, 10, 10, 10);
-    layout->addWidget(listWidget);
+    layout->addWidget(layerListWidget);
     layout->addStretch();
 
-    layout->addWidget(layerListWidget);
-
     ui->layer_manager->setLayout(layout);
-
 }
+
 
 
 
