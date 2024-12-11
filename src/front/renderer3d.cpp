@@ -10,25 +10,36 @@ Renderer3D::~Renderer3D() {
 }
 
 ObjectLoader* Renderer3D::getObjectLoader() const {
-     return objectLoader;
- }
+    return objectLoader;
+}
 
-void Renderer3D::paintGl3D(QMatrix4x4 modelViewMatrix){
+void Renderer3D::paintGl3D(QMatrix4x4 ViewMatrix,float width,float height){
     if (objectLoader) {
-            glMatrixMode(GL_MODELVIEW);
-            glLoadMatrixf(modelViewMatrix.constData());
+        // Configurer la matrice de projection
+        QMatrix4x4 projectionMatrix;
+        float aspectRatio = width/height;
+        projectionMatrix.perspective(45.0f, aspectRatio, 0.1f, 1000.0f);
 
-            glColor3f(1.0f, 1.0f, 0.0f);
-            glBegin(GL_TRIANGLES);
+        // Appliquer la matrice de projection
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrixf(projectionMatrix.constData());
 
-            const auto& vertices = objectLoader->getVertices();
-            for (const auto& vertex : vertices) {
-                glVertex3f(vertex.x, vertex.y, vertex.z);
-            }
-            glEnd();
-        } else {
-            qWarning() << "No ObjectLoader assigned for 3D rendering.";
+        // Appliquer la matrice de vue
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrixf(ViewMatrix.constData());
+
+        // Dessiner les objets
+        glColor3f(1.0f, 1.0f, 0.0f);
+        glBegin(GL_TRIANGLES);
+
+        const auto& vertices = objectLoader->getVertices();
+        for (const auto& vertex : vertices) {
+            glVertex3f(vertex.x, vertex.z, vertex.y);
         }
+        glEnd();
+    } else {
+        qWarning() << "No ObjectLoader assigned for 3D rendering.";
+    }
 }
 
 void Renderer3D::reset3D(){
@@ -43,14 +54,6 @@ void Renderer3D::setObjectLoader(ObjectLoader* loader) {
         delete objectLoader;
     }
     objectLoader = loader;
-}
-
-QMatrix4x4 Renderer3D::getModelMatrix() {
-    QMatrix4x4 modelMatrix;
-    modelMatrix.translate(0.0f, 0.0f, -3.0f);
-    modelMatrix.rotate(objectLoader->getAngle(), 0.0f, 1.0f, 0.0f);
-    modelMatrix.scale(0.005f);
-    return modelMatrix;
 }
 
 
