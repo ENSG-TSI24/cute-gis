@@ -31,8 +31,6 @@ set(PROJECT_SOURCES
     src/back/citygmlfile.h src/back/citygmlfile.cpp
     src/back/rasterdata.h src/back/rasterdata.cpp
     src/back/datamanagment.h src/back/datamanagment.cpp
-    src/back/dataextract/abstractdatavisitor.h
-    src/back/dataextract/intersectvisitor.h src/back/dataextract/intersectvisitor.cpp
     src/back/vectordata.h src/back/vectordata.cpp
     src/back/API_WMS.h src/back/API_WMS.cpp
     src/back/API_WMTS.h src/back/API_WMTS.cpp
@@ -47,13 +45,6 @@ set(PROJECT_SOURCES
     src/front/objectloader.h src/front/objectloader.cpp
     src/lib/tiny_obj_loader.h src/lib/tiny_obj_loader.cc
     src/front/layer2d.h src/front/layer2d.cpp
-    src/front/addFluxData.cpp
-    src/front/addFluxData.h
-    src/front/addFluxData.ui
-    src/front/layerraster.h src/front/layerraster.cpp
-    src/front/geotiffloader.h src/front/geotiffloader.cpp
-    src/front/renderer2d.h src/front/renderer2d.cpp
-    src/front/renderer3d.h src/front/renderer3d.cpp
 )
 
 set(TEST_SOURCES_1
@@ -87,12 +78,12 @@ set(TEST_SOURCES_WFS
     src/back/DataProvider.h
 )
 
-set(TEST_SOURCES_rasterdata
-    tests/rasterdataTest.cpp
-    src/back/rasterdata.cpp
-    src/back/rasterdata.h
-    src/back/datamanagment.cpp
+set(TEST_SOURCES_CITYGMLPARSER
+    tests/api_citygmlparsertest.cpp
+    src/back/citygmlparser.cpp
+    src/back/citygmlparser.h
     src/back/datamanagment.h
+    src/back/datamanagment.cpp
 )
 
 # Backend tests
@@ -100,7 +91,8 @@ add_executable(testDataManagment ${TEST_SOURCES_1})
 add_executable(API_WMSTest ${TEST_SOURCES_WMS})
 add_executable(API_WFSTest ${TEST_SOURCES_WFS})
 add_executable(API_WMTSTest ${TEST_SOURCES_WMTS})
-add_executable(RasterData ${TEST_SOURCES_rasterdata})
+add_executable(API_CITYGMLPARSER_TEST ${TEST_SOURCES_CITYGMLPARSER})
+
 
 
 
@@ -116,7 +108,8 @@ target_link_libraries(testDataManagment PRIVATE GTest::GTest GTest::Main ${GDAL_
 target_link_libraries(API_WMSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WFSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 target_link_libraries(API_WMTSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
-target_link_libraries(RasterData PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
+target_link_libraries(API_CITYGMLPARSER_TEST PRIVATE GTest::GTest GTest::Main  ${GDAL_LIBRARIES})
+
 
 
 # Finalize application
@@ -130,7 +123,7 @@ add_test(NAME testDataManagment COMMAND testDataManagment)
 add_test(NAME API_WMSTest COMMAND API_WMSTest)
 add_test(NAME API_WFSTest COMMAND API_WFSTest)
 add_test(NAME API_WMTSTest COMMAND API_WMTSTest)
-add_test(NAME RasterData COMMAND RasterData)
+add_test(NAME API_CITYGMLPARSER_TEST COMMAND API_CITYGMLPARSER_TEST)
 
 
 if(QT_VERSION_MAJOR EQUAL 6)
