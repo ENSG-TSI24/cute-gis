@@ -12,6 +12,7 @@
 #include "geotiffloader.h"
 #include "renderer2d.h"
 #include "renderer3d.h"
+#include "../back/API_WFS.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -38,12 +39,12 @@ void MainWindow::onToggle3DMode()
     renderer->setIs3D(!isCurrently3D);
 
     if (!isCurrently3D) {
-        renderer->renderer2d->reset2D();
+        renderer->reset();
         name_layers.clear();
         setupCheckboxes();
         QMessageBox::information(this, "mode Changed", "3D mode activated");
     } else {
-        renderer->renderer3d->reset3D();
+        renderer->reset();
         QMessageBox::information(this, "Mode Changed", "2D mode activated");
     }
 
@@ -54,7 +55,7 @@ void MainWindow::onOpenFile()
 {
     bool is3DMode = renderer->getIs3D();
 
-    QString filter = is3DMode ? "OBJ Files (*.obj);;All Files (*.*)" : "GeoJSON Files (*.geojson);;All Files (*.*)";
+    QString filter = is3DMode ? "OBJ Files (*.obj);;All Files (*.*)" : "GeoJSON Files (*.geojson);;GeoTIFF Files (*.tif *.tiff);;Shapefile Files (*.shp);;All Files (*.*)";
     QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", filter);
 
     if (filePath.isEmpty()) {
@@ -65,41 +66,120 @@ void MainWindow::onOpenFile()
     qDebug() << "Selected File:" << filePath;
     std::string filestr = filePath.toStdString();
     const char* filedata = filestr.c_str();
-    renderer->renderer3d->reset3D();
+    renderer->reset();
 
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) {
-            renderer->renderer3d->reset3D();
+            renderer->reset();
             //add layer2d
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 
             
             VectorData geo(filedata);
-            renderer->renderer2d->lst_layers2d.push_back(geo);
+            renderer->getRenderer2D()->lst_layers2d.push_back(geo);
 
             // add name layers
             QFileInfo fileInfo(filePath);
             std::string name = fileInfo.baseName().toStdString();
-            renderer->renderer2d->lst_layers2d.back().name = name;
+            renderer->getRenderer2D()->lst_layers2d.back().name = name;
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->renderer2d->lst_layers2d.back().boundingBox);
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2D()->lst_layers2d.back().boundingBox);
             renderer->setIs3D(false);
 
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
-            renderer->renderer2d->reset2D();
+            renderer->reset();
             nb_layers=0;
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
-            renderer->renderer3d->setObjectLoader(objectLoader);
+            renderer->getRenderer3D()->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
-            renderer->renderer2d->reset2D();
+            renderer->reset();
             GeoTiffLoader loader;
             loader.loadGeoTIFF(filePath);
             QImage* image = loader.image;
 
-            renderer->renderer2d->lst_layersraster.push_back(LayerRaster(image));
+            renderer->getRenderer2D()->lst_layersraster.push_back(LayerRaster(image));
+
+            // add name layers
+            std::string name = "Couche " + std::to_string(nb_layers);
+            name_layers.push_back(name);
+            setupCheckboxes();
+            ++nb_layers;
+            renderer->setIs3D(false);
+        } else {
+                throw std::runtime_error("Unsupported file format!");
+        }
+    } catch (const std::exception& ex) {
+        QMessageBox::critical(this, "Error", QString::fromStdString(ex.what()));
+        return;
+    }
+
+    if (!ui->openGLWidget->layout()) {
+        auto* layout = new QVBoxLayout(ui->openGLWidget);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->addWidget(renderer);
+    } else if (ui->openGLWidget->layout()->indexOf(renderer) == -1) {
+        ui->openGLWidget->layout()->addWidget(renderer);
+    }
+
+    connect(refreshTimer, &QTimer::timeout, renderer, QOverload<>::of(&QWidget::update));
+    if (!refreshTimer->isActive()) {
+        refreshTimer->start(16); // Refresh at ~60 FPS
+    }
+}
+
+void MainWindow::onOpenFile_stream(const char* chemin)
+{
+    bool is3DMode = renderer->getIs3D();
+
+    QString filter = is3DMode ? "OBJ Files (*.obj);;All Files (*.*)" : "GeoJSON Files (*.geojson);;GeoTIFF Files (*.tif *.tiff);;Shapefile Files (*.shp);;All Files (*.*)";
+    //QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", filter);
+    QString stream_path = chemin;
+    if (stream_path.isEmpty()) {
+        qWarning() << "No stream dataset !";
+        return;
+    }
+
+    qDebug() << "Selected File:" <<stream_path;
+    std::string filestr = stream_path.toStdString();
+    const char* filedata = filestr.c_str();
+    renderer->reset();
+
+    try {
+        if (stream_path.endsWith(".geojson", Qt::CaseInsensitive)) {
+            renderer->reset();
+            //add layer2d
+            std::cout<<"############### ADD LAYER ################"<<std::endl;
+
+
+            VectorData geo(filedata);
+            renderer->getRenderer2D()->lst_layers2d.push_back(geo);
+
+            // add name layers
+            QFileInfo fileInfo(stream_path);
+            std::string name = fileInfo.baseName().toStdString();
+            renderer->getRenderer2D()->lst_layers2d.back().name = name;
+            name_layers.push_back(name);
+            setupCheckboxes();
+            ++nb_layers;
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2D()->lst_layers2d.back().boundingBox);
+            renderer->setIs3D(false);
+
+        } else if (stream_path.endsWith(".obj", Qt::CaseInsensitive)) {
+            renderer->reset();
+            nb_layers=0;
+            ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
+            renderer->getRenderer3D()->setObjectLoader(objectLoader);
+            renderer->setIs3D(true);
+        } else if (stream_path.endsWith(".tif", Qt::CaseInsensitive) || stream_path.endsWith(".tiff", Qt::CaseInsensitive)) {
+            renderer->reset();
+            GeoTiffLoader loader;
+            loader.loadGeoTIFF(stream_path);
+            QImage* image = loader.image;
+
+            renderer->getRenderer2D()->lst_layersraster.push_back(LayerRaster(image));
 
             // add name layers
             std::string name = "Couche " + std::to_string(nb_layers);
@@ -138,6 +218,42 @@ void MainWindow::on_actionFlux_Data_triggered() {
 
         qDebug() << "Layer Name:" << layerName;
         qDebug() << "URL:" << layerURL;
+        std::string  intername =layerName.toStdString();
+        const char* cclayerName = intername.c_str();
+
+        // intername.c_str();
+        std::string  intername2 =layerURL.toStdString();
+        const char* wfsUrl = intername2.c_str();
+        std::cout << wfsUrl << std::endl;
+
+        std::cout <<"oui 1" <<std::endl;
+        API_WFS wfs(wfsUrl);
+        try {
+            wfs.loadDataset();
+            if (!wfs.isEmpty()) {
+            char** layers = wfs.displayMetadata(); // Get the list of layers
+
+                    for (int i = 0; layers[i] != nullptr; ++i) { // Iterate until null terminator
+                        std::cout << "Layer " << i + 1 << ": " << layers[i] << std::endl;
+                    }
+            std::cout <<"I'm here"<<std::endl ;
+            wfs.ExportToGeoJSON(intername);
+            std::vector<std::pair<std::string, std::string>> FieldsLayers = wfs.GetLayerFields(cclayerName);
+            for (const auto& field : FieldsLayers) {
+                   std::cout << "Field: " << field.first << ", Type: " << field.second << std::endl;
+               }
+            const char* chemin = wfs.getOutput();
+            onOpenFile_stream(chemin);
+
+
+    }
+        }  catch (const std::exception& e) {
+            std::cout << "An error occurred: " << e.what() << std::endl; // **frontend team ( error log )
+            on_actionFlux_Data_triggered();
+        }
+
+
+
     }
 }
 
@@ -157,7 +273,7 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
     std::cout<<checked<<std::endl;
     std::cout<<name<<std::endl;
 
-    for (auto& layer : renderer->renderer2d->lst_layers2d) {
+    for (auto& layer : renderer->getRenderer2D()->lst_layers2d) {
         if (layer.name == name) {
             layer.isVisible = checked;
         }
@@ -185,7 +301,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
 
     int row = listWidget->row(item);
-        if (row < 0 || row >= static_cast<int>(renderer->renderer2d->lst_layers2d.size())) return;
+        if (row < 0 || row >= static_cast<int>(renderer->getRenderer2D()->lst_layers2d.size())) return;
 
     if (selectedAction == renameAction) {
         bool ok;
@@ -198,9 +314,9 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         int row = listWidget->row(item);
         delete listWidget->takeItem(row);
         name_layers.erase(name_layers.begin() + row);
-        renderer->renderer2d->lst_layers2d.erase(renderer->renderer2d->lst_layers2d.begin() + row);
+        renderer->getRenderer2D()->lst_layers2d.erase(renderer->getRenderer2D()->lst_layers2d.begin() + row);
     } else if  (selectedAction == zoomLayer) {
-        const Layer2d& layer = renderer->renderer2d->lst_layers2d[row];
+        const Layer2d& layer = renderer->getRenderer2D()->lst_layers2d[row];
         renderer->controller->getCamera().centerOnBoundingBox(layer.boundingBox);
 
         // falcultative

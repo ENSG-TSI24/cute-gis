@@ -6,24 +6,26 @@
 #include <vector>
 #include <ogrsf_frmts.h>
 #include "DataProvider.h"
+#include "vectordata.h"
+#include <cstring>
+
 
 class API_WFS: public DataProvider {
 public:
     API_WFS(const char* link) ;
-    //~API_WFS() ;
 
-    // Ouvre un flux WFS
     void loadDataset();
 
     void getData(const char* name);
 
     OGRLayer* GetLayer(const char* name = "");
-    std::string ExportToGeoJSON(int n, const std::string& outputFilePath);
-
-
+    void ExportToGeoJSON(const std::string& layerName);
+    std::vector<std::pair<std::string, std::string>> GetLayerFields(const char* layerName);
+    const char* getOutput();
 
 protected:
     const char* url;
+    const char* output_path ;
 };
 
 #endif // API_WFS_H
