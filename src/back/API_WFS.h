@@ -13,9 +13,7 @@
 class API_WFS: public DataProvider {
 public:
     API_WFS(const char* link) ;
-    //~API_WFS() ;
 
-    // Ouvre un flux WFS
     void loadDataset();
 
     void getData(const char* name);

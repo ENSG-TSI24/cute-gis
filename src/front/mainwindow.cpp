@@ -229,19 +229,26 @@ void MainWindow::on_actionFlux_Data_triggered() {
 
         std::cout <<"oui 1" <<std::endl;
         API_WFS wfs(wfsUrl);
-        wfs.loadDataset();
+        try {
+            wfs.loadDataset();
+            if (!wfs.isEmpty()) {
+            char** layers = wfs.displayMetadata(); // Get the list of layers
+
+                    for (int i = 0; layers[i] != nullptr; ++i) { // Iterate until null terminator
+                        std::cout << "Layer " << i + 1 << ": " << layers[i] << std::endl;
+                    }
+            std::cout <<"I'm here"<<std::endl ;
+            wfs.ExportToGeoJSON(intername);
+
+            const char* chemin = wfs.getOutput();
+            onOpenFile_stream(chemin);
+    }
+        }  catch (const std::exception& e) {
+            std::cout << "An error occurred: " << e.what() << std::endl; // **frontend team ( error log )
+            on_actionFlux_Data_triggered();
+        }
 
 
-        char** layers = wfs.displayMetadata(); // Get the list of layers
-
-                for (int i = 0; layers[i] != nullptr; ++i) { // Iterate until null terminator
-                    std::cout << "Layer " << i + 1 << ": " << layers[i] << std::endl;
-                }
-        std::cout <<"I'm here"<<std::endl ;
-        wfs.ExportToGeoJSON(intername);
-
-        const char* chemin = wfs.getOutput();
-        onOpenFile_stream(chemin);
 
     }
 }
