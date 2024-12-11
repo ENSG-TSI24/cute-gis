@@ -68,7 +68,7 @@ void Renderer::paintGL() {
         controller->getCamera().update();
         renderer2d->paintGl2D();
     } else {
-        if (renderer3d->objectLoader) renderer3d->paintGl3D();
+        if (renderer3d->getObjectLoader()) renderer3d->paintGl3D();
     };
 }
 
