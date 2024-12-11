@@ -24,8 +24,7 @@ void API_WFS::loadDataset() {
     /* Display error message and exit program if dataset fails to open correctly ** to be replaced
         when the front end team finishes ( to reinsert or close window) */
     if (isEmpty()) {
-        std::cerr << "Error: Impossible to connect to WFS or unsupported format" << std::endl;
-        //throw std::runtime_error("Failed to load dataset"); //** Lancer une exception au lieu d'exit
+        std::cerr<< "Error: Impossible to connect to WFS or unsupported format" << std::endl;
     }
 }
 
@@ -220,6 +219,5 @@ void API_WFS::ExportToGeoJSON(const std::string& layerName)
     std::cout << "GeoJSON successfully created at: " << output_path << std::endl;
 }
 const char* API_WFS:: getOutput(){
-    std::cout << " hello world : " << output_path << std::endl;
     return output_path;
 }
