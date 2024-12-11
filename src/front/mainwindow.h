@@ -37,6 +37,7 @@ private:
     Renderer* renderer;
     QTimer* refreshTimer;
     void onOpenFile();
+    void onOpenFile_stream(const char* chemin);
     ObjectLoader *objectLoader = nullptr;
     std::vector<std::string> name_layers;
     int nb_layers = 0;

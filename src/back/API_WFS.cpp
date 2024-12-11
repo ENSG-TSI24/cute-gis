@@ -25,7 +25,7 @@ void API_WFS::loadDataset() {
         when the front end team finishes ( to reinsert or close window) */
     if (isEmpty()) {
         std::cerr << "Error: Impossible to connect to WFS or unsupported format" << std::endl;
-        throw std::runtime_error("Failed to load dataset"); // Lancer une exception au lieu d'exit
+        //throw std::runtime_error("Failed to load dataset"); //** Lancer une exception au lieu d'exit
     }
 }
 
@@ -156,7 +156,7 @@ OGRLayer* API_WFS::GetLayer(const char* name)
 void API_WFS::ExportToGeoJSON(const std::string& layerName)
 {
     // Définir le chemin relatif pour le dossier GeoJSON
-    std::string relativePath = "../data/geojson/";
+    std::string relativePath = "../cute-gis/data/geojson/";
     std::string outputFileName = layerName + ".geojson";
     const std::string& outputPath = relativePath + outputFileName;
 
@@ -219,7 +219,6 @@ void API_WFS::ExportToGeoJSON(const std::string& layerName)
     // Afficher le chemin
     std::cout << "GeoJSON successfully created at: " << output_path << std::endl;
 }
-
 const char* API_WFS:: getOutput(){
     std::cout << " hello world : " << output_path << std::endl;
     return output_path;
