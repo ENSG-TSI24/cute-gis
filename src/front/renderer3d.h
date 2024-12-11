@@ -11,9 +11,11 @@ public:
     void paintGl3D(QMatrix4x4 modelMatrix);
     void reset3D();
     void setObjectLoader(ObjectLoader* loader);
+
+    Renderer& parent;
+    ObjectLoader* getObjectLoader() const;
     QMatrix4x4 getModelMatrix();
 
-    ObjectLoader* objectLoader;
 
 };
 

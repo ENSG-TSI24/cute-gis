@@ -27,6 +27,7 @@ public:
     void clearLayout(QLayout *layout);
     void onCheckboxToggled(bool checked, std::string name);
     void onToggle3DMode();
+    void onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow);
 
 private slots:
     void on_actionFlux_Data_triggered();

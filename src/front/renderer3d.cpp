@@ -9,7 +9,9 @@ Renderer3D::~Renderer3D() {
     }
 }
 
-
+ObjectLoader* Renderer3D::getObjectLoader() const {
+     return objectLoader;
+ }
 
 void Renderer3D::paintGl3D(QMatrix4x4 modelViewMatrix){
     if (objectLoader) {

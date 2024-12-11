@@ -68,12 +68,15 @@ void Renderer::paintGL() {
         controller->getCamera().update();
         renderer2d->paintGl2D();
     } else {
+(renderer3d->getObjectLoader()) renderer3d->paintGl3D();
+
         if (renderer3d->objectLoader) {
             controller->set3DMode(true);
 
             QMatrix4x4 modelViewMatrix = controller->getCamera().getModelViewMatrix(renderer3d->getModelMatrix());
             renderer3d->paintGl3D(modelViewMatrix);
         }
+
     };
 }
 
