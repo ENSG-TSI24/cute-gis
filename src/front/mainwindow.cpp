@@ -10,6 +10,7 @@
 #include "../back/vectordata.h"
 #include "addFluxData.h"
 #include "geotiffloader.h"
+#include "renderer.h"
 #include "renderer2d.h"
 #include "renderer3d.h"
 
@@ -50,12 +51,12 @@ void MainWindow::onToggle3DMode()
     renderer->setIs3D(!isCurrently3D);
 
     if (!isCurrently3D) {
-        renderer->renderer2d->reset2D();
+        renderer->reset2D();
         name_layers.clear();
         setupCheckboxes();
         QMessageBox::information(this, "mode Changed", "3D mode activated");
     } else {
-        renderer->renderer3d->reset3D();
+        renderer->reset3D();
         QMessageBox::information(this, "Mode Changed", "2D mode activated");
     }
 
@@ -77,42 +78,44 @@ void MainWindow::onOpenFile()
     qDebug() << "Selected File:" << filePath;
     std::string filestr = filePath.toStdString();
     const char* filedata = filestr.c_str();
-    renderer->renderer3d->reset3D();
+    renderer->reset3D();
 
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive) || filePath.endsWith(".shp", Qt::CaseInsensitive)) {
-            renderer->renderer3d->reset3D();
+            renderer->reset3D();
+            //add layer2d
+            std::cout<<"############### ADD LAYER ################"<<std::endl;
 
             VectorData geo(filedata);
-            renderer->renderer2d->lst_layers2d.push_back(geo);
+            renderer->getRenderer2d()->lst_layers2d.push_back(geo);
 
             // Add name layers
             QFileInfo fileInfo(filePath);
             std::string name = fileInfo.baseName().toStdString();
-            renderer->renderer2d->lst_layers2d.back().name = name;
+            renderer->getRenderer2d()->lst_layers2d.back().name = name;
 
-            // Parse GeoJSON for attributes
-            if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) parseGeoJSON(filePath, renderer->renderer2d->lst_layers2d.back());
-            if (filePath.endsWith(".shp", Qt::CaseInsensitive)) parseShapefile(filePath, renderer->renderer2d->lst_layers2d.back());
+            if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) parseGeoJSON(filePath, renderer->getRenderer2d()->lst_layers2d.back());
+            if (filePath.endsWith(".shp", Qt::CaseInsensitive)) parseShapefile(filePath, renderer->getRenderer2d()->lst_layers2d.back());
+
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->renderer2d->lst_layers2d.back().boundingBox);
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back().boundingBox);
             renderer->setIs3D(false);
 
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
-            renderer->renderer2d->reset2D();
+            renderer->reset2D();
             nb_layers=0;
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
-            renderer->renderer3d->setObjectLoader(objectLoader);
+            renderer->getRenderer3d()->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
-            renderer->renderer2d->reset2D();
+            renderer->reset3D();
             GeoTiffLoader loader;
             loader.loadGeoTIFF(filePath);
             QImage* image = loader.image;
 
-            renderer->renderer2d->lst_layersraster.push_back(LayerRaster(image));
+            renderer->getRenderer2d()->lst_layersraster.push_back(LayerRaster(image));
 
             // add name layers
             std::string name = "Couche " + std::to_string(nb_layers);
@@ -277,7 +280,7 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
     std::cout<<checked<<std::endl;
     std::cout<<name<<std::endl;
 
-    for (auto& layer : renderer->renderer2d->lst_layers2d) {
+    for (auto& layer : renderer->getRenderer2d()->lst_layers2d) {
         if (layer.name == name) {
             layer.isVisible = checked;
         }
@@ -305,7 +308,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
 
     int row = listWidget->row(item);
-        if (row < 0 || row >= static_cast<int>(renderer->renderer2d->lst_layers2d.size())) return;
+        if (row < 0 || row >= static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size())) return;
 
     if (selectedAction == renameAction) {
         bool ok;
@@ -318,15 +321,15 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         int row = listWidget->row(item);
         delete listWidget->takeItem(row);
         name_layers.erase(name_layers.begin() + row);
-        renderer->renderer2d->lst_layers2d.erase(renderer->renderer2d->lst_layers2d.begin() + row);
+        renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + row);
     } else if  (selectedAction == zoomLayer) {
-        const Layer2d& layer = renderer->renderer2d->lst_layers2d[row];
+        const Layer2d& layer = renderer->getRenderer2d()->lst_layers2d[row];
         renderer->controller->getCamera().centerOnBoundingBox(layer.boundingBox);
 
         // falcultative
         QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer.name));
     } else if (selectedAction == metadataAction) {
-        const Layer2d& layer = renderer->renderer2d->lst_layers2d[row];
+        const Layer2d& layer = renderer->getRenderer2d()->lst_layers2d[row];
         showAttributeTable(layer);
     }
 
@@ -336,11 +339,11 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 
 
 void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow) {
-    auto layer = renderer->renderer2d->lst_layers2d[start];
-    renderer->renderer2d->lst_layers2d.erase(renderer->renderer2d->lst_layers2d.begin() + start);
+    auto layer = renderer->getRenderer2d()->lst_layers2d[start];
+    renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + start);
 
     int adjustedDestination = (destinationRow > start) ? destinationRow - 1 : destinationRow;
-    renderer->renderer2d->lst_layers2d.insert(renderer->renderer2d->lst_layers2d.begin() + adjustedDestination, layer);
+    renderer->getRenderer2d()->lst_layers2d.insert(renderer->getRenderer2d()->lst_layers2d.begin() + adjustedDestination, layer);
     auto name = name_layers[start];
     name_layers.erase(name_layers.begin() + start);
     name_layers.insert(name_layers.begin() + adjustedDestination, name);

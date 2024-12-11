@@ -26,7 +26,8 @@ public:
 private:
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;
-    std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons;
+    std::vector<std::vector<std::vector<std::tuple<float, float, float>>>> polygons;
+    std::vector<std::vector<std::vector<std::pair<float, float>>> > polygons2d;
 };
 
 #endif // LAYER2D_H
