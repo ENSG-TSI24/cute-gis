@@ -27,8 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
     connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
-    connect(ui->actionAttributeTable, &QAction::triggered, this, &MainWindow::showAttributeTable);
-
+    // connect(ui->actionAttributeTable, &QAction::triggered, this, &MainWindow::showAttributeTable);
 
 
 }
@@ -209,7 +208,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         name_layers.erase(name_layers.begin() + row);
         renderer->renderer2d->lst_layers2d.erase(renderer->renderer2d->lst_layers2d.begin() + row);
     } else if  (selectedAction == zoomLayer) {
-        Layer2d& layer = renderer->renderer2d->lst_layers2d[row];
+        const Layer2d& layer = renderer->renderer2d->lst_layers2d[row];
         renderer->controller->getCamera().centerOnBoundingBox(layer.boundingBox);
 
         // falcultative
@@ -331,6 +330,7 @@ QVector<QVector<QString>> parseGeoJson(const QString &filePath, QStringList &hea
 }
 
 
+
 void MainWindow::openAttributeTable(QListWidgetItem* item) {
     if (!item || !layerListWidget) return;
 
@@ -366,31 +366,3 @@ void MainWindow::openAttributeTable(QListWidgetItem* item) {
     attrWindow->exec();
 }
 
-void MainWindow::showAttributeTable() {
-    if (!attributeTableWindow) {
-        attributeTableWindow = new AttributeTableWindow(this);
-
-        // 监听行选择信号
-        connect(attributeTableWindow, &AttributeTableWindow::rowSelected, this, &MainWindow::highlightSelectedElement);
-    }
-
-    // 模拟数据填充，实际数据来源于 GeoJSON 文件解析
-    QVector<QVector<QString>> data = {
-        {"1", "Point A", "100"},
-        {"2", "Point B", "200"},
-        {"3", "Point C", "300"}
-    };
-    QStringList headers = {"ID", "Name", "Value"};
-    attributeTableWindow->populateTable(data, headers);
-
-    attributeTableWindow->exec();
-}
-
-void MainWindow::highlightSelectedElement(int rowIndex) {
-    qDebug() << "Row selected:" << rowIndex;
-
-    // 在此处实现高亮逻辑，例如更新渲染器或显示元素细节
-    auto &layer = renderer->renderer2d->lst_layers2d[rowIndex];
-    layer.isHighlighted = true;  // 假设渲染器支持高亮标记
-    renderer->update();
-}

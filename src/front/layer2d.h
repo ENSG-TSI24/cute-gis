@@ -26,8 +26,8 @@ public:
     std::string geoJsonPath;
     std::vector<QJsonObject> properties;
 
-    bool isHighlighted() const { return highlightFlag; }
-    void setHighlighted(bool value) { highlightFlag = value; }
+    bool isHighlighted() const { return highlightedFlag; }
+    void setHighlighted(bool value) { highlightedFlag = value; }
 
 private:
     bool highlightedFlag = false;  
