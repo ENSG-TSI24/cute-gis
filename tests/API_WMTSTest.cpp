@@ -35,3 +35,8 @@ TEST(API_WMTSTest, GetDataset_WMTS_ReturnsNonNullptr_AfterLoadingValidDataset) {
     ASSERT_NE(flux_valide.getDataset(), nullptr);
     EXPECT_FALSE(flux_valide.isEmpty());
 }
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

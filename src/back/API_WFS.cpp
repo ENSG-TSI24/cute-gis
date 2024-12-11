@@ -24,8 +24,7 @@ void API_WFS::loadDataset() {
     /* Display error message and exit program if dataset fails to open correctly ** to be replaced
         when the front end team finishes ( to reinsert or close window) */
     if (isEmpty()) {
-        std::cerr << "Error: Impossible to connect to WFS or unsupported format" << std::endl;
-        throw std::runtime_error("Failed to load dataset"); // Lancer une exception au lieu d'exit
+        std::cerr<< "Error: Impossible to connect to WFS or unsupported format" << std::endl;
     }
 }
 
@@ -156,7 +155,7 @@ OGRLayer* API_WFS::GetLayer(const char* name)
 void API_WFS::ExportToGeoJSON(const std::string& layerName)
 {
     // Définir le chemin relatif pour le dossier GeoJSON
-    std::string relativePath = "../data/geojson/";
+    std::string relativePath = "../cute-gis/data/geojson/";
     std::string outputFileName = layerName + ".geojson";
     const std::string& outputPath = relativePath + outputFileName;
 
@@ -220,7 +219,46 @@ void API_WFS::ExportToGeoJSON(const std::string& layerName)
     std::cout << "GeoJSON successfully created at: " << output_path << std::endl;
 }
 
+std::vector<std::pair<std::string, std::string>> API_WFS::GetLayerFields(const char* layerName)
+{
+    std::vector<std::pair<std::string, std::string>> fields;
+
+    if (isEmpty()) {
+        std::cerr << "Dataset is not opened." << std::endl;
+        return fields;
+    }
+
+    // Obtenir la couche par nom
+    OGRLayer* layer = m_dataset->GetLayerByName(layerName);
+    if (layer == nullptr) {
+        std::cerr << "Layer '" << layerName << "' not found." << std::endl;
+        return fields;
+    }
+
+    // Récupérer la définition de la couche
+    OGRFeatureDefn* featureDefn = layer->GetLayerDefn();
+    if (featureDefn == nullptr) {
+        std::cerr << "Unable to retrieve feature definition for layer '" << layerName << "'." << std::endl;
+        return fields;
+    }
+
+    // Parcourir les champs
+    int fieldCount = featureDefn->GetFieldCount();
+    for (int i = 0; i < fieldCount; ++i) {
+        OGRFieldDefn* fieldDefn = featureDefn->GetFieldDefn(i);
+
+        if (fieldDefn != nullptr) {
+            // Récupérer le nom du champ et son type
+            std::string fieldName = fieldDefn->GetNameRef();
+            std::string fieldType = OGRFieldDefn::GetFieldTypeName(fieldDefn->GetType());
+            fields.emplace_back(fieldName, fieldType);
+        }
+    }
+
+    return fields;
+}
 const char* API_WFS:: getOutput(){
-    std::cout << " hello world : " << output_path << std::endl;
     return output_path;
 }
+
+

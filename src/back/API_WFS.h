@@ -13,15 +13,14 @@
 class API_WFS: public DataProvider {
 public:
     API_WFS(const char* link) ;
-    //~API_WFS() ;
 
-    // Ouvre un flux WFS
     void loadDataset();
 
     void getData(const char* name);
 
     OGRLayer* GetLayer(const char* name = "");
     void ExportToGeoJSON(const std::string& layerName);
+    std::vector<std::pair<std::string, std::string>> GetLayerFields(const char* layerName);
     const char* getOutput();
 
 protected:

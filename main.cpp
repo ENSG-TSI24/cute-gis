@@ -19,14 +19,14 @@ int main(int argc, char *argv[])
 
     const char* layerName = "ADMINEXPRESS-COG.LATEST:chflieu_commune";
 
-    API_WFS wfs(wfsUrl);
-    wfs.loadDataset();
+//    API_WFS wfs(wfsUrl);
+//    wfs.loadDataset();
 
-    std::cout << wfs.displayMetadata() << "";
-    char** layers = wfs.displayMetadata(); // Get the list of layers
 
-        for (int i = 0; layers[i] != nullptr; ++i) { // Iterate until null terminator
-            std::cout << "Layer " << i + 1 << ": " << layers[i] << std::endl;
-        }
+//    char** layers = wfs.displayMetadata(); // Get the list of layers
+
+//        for (int i = 0; layers[i] != nullptr; ++i) { // Iterate until null terminator
+//            std::cout << "Layer " << i + 1 << ": " << layers[i] << std::endl;
+//        }
     return app.exec();
 }

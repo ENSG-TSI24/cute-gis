@@ -20,7 +20,7 @@ class DataManagmentTest : public ::testing::Test {
 TEST_F(DataManagmentTest, DefaultConstructor) {
     data = DataManagment();
     EXPECT_TRUE(data.GetDATA() == nullptr);
-    EXPECT_TRUE(data.GetPath() == nullptr);
+    // EXPECT_TRUE(data.GetPath() == nullptr);
     GDALClose(data.GetDATA());
 }
 */

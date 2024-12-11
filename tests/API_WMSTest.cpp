@@ -55,3 +55,8 @@ TEST(API_WMSTest, DownloadTileToGeoTiff_FileGenerated) {
     // Nettoyage après test
     std::remove(outputFile);
 }
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
