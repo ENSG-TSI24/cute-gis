@@ -30,6 +30,7 @@ public:
     void onCheckboxToggled(bool checked, std::string name);
     void onToggle3DMode();
     void onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow);
+    void parseShapefile(const QString& filePath, Layer2d& layer);
 void showAttributeTable(const Layer2d& layer);
 void parseGeoJSON(const QString& filePath, Layer2d& layer);
 private slots:

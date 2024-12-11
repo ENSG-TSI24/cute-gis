@@ -21,6 +21,8 @@
 #include <QJsonArray>
 #include <QFile>
 
+#include <ogrsf_frmts.h>
+
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -64,7 +66,7 @@ void MainWindow::onOpenFile()
 {
     bool is3DMode = renderer->getIs3D();
 
-    QString filter = is3DMode ? "3D Files (*.obj);;All Files (*.*)" : "2D Files (*.geojson, *.shp);;All Files (*.*)";
+    QString filter = is3DMode ? "3D Files (*.obj);;All Files (*.*)" : "2D Files (*.geojson *.shp);;All Files (*.*)";
     QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", filter);
 
     if (filePath.isEmpty()) {
@@ -91,7 +93,7 @@ void MainWindow::onOpenFile()
 
             // Parse GeoJSON for attributes
             if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) parseGeoJSON(filePath, renderer->renderer2d->lst_layers2d.back());
-
+            if (filePath.endsWith(".shp", Qt::CaseInsensitive)) parseShapefile(filePath, renderer->renderer2d->lst_layers2d.back());
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
@@ -151,6 +153,67 @@ void MainWindow::on_actionFlux_Data_triggered() {
         qDebug() << "URL:" << layerURL;
     }
 }
+
+void MainWindow::parseShapefile(const QString& filePath, Layer2d& layer) {
+    GDALAllRegister();
+
+    GDALDataset* dataset = (GDALDataset*)GDALOpenEx(filePath.toStdString().c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (!dataset) {
+        QMessageBox::critical(this, "Error", "Failed to open Shapefile.");
+        return;
+    }
+
+    OGRLayer* ogrLayer = dataset->GetLayer(0);
+    if (!ogrLayer) {
+        QMessageBox::critical(this, "Error", "No layers found in Shapefile.");
+        GDALClose(dataset);
+        return;
+    }
+
+    layer.attributes.clear();
+    layer.attributeHeaders.clear();
+
+    OGRFeatureDefn* featureDefn = ogrLayer->GetLayerDefn();
+    int fieldCount = featureDefn->GetFieldCount();
+    for (int i = 0; i < fieldCount; ++i) {
+        OGRFieldDefn* fieldDefn = featureDefn->GetFieldDefn(i);
+        layer.attributeHeaders.push_back(fieldDefn->GetNameRef());
+    }
+
+    OGRFeature* feature = nullptr;
+    while ((feature = ogrLayer->GetNextFeature()) != nullptr) {
+        std::vector<std::string> row;
+
+        for (int i = 0; i < fieldCount; ++i) {
+            OGRFieldType fieldType = featureDefn->GetFieldDefn(i)->GetType();
+
+            if (fieldType == OFTString) {
+                row.push_back(feature->GetFieldAsString(i));
+            } else if (fieldType == OFTInteger) {
+                row.push_back(std::to_string(feature->GetFieldAsInteger(i)));
+            }
+            else if (fieldType == OFTInteger64) {
+                row.push_back(std::to_string(feature->GetFieldAsInteger64(i)));
+            }
+            else if (fieldType == OFTReal) {
+                row.push_back(std::to_string(feature->GetFieldAsDouble(i)));
+            } else if (fieldType == OFTDate || fieldType == OFTDateTime) {
+                const char* dateTime = feature->GetFieldAsString(i);
+                row.push_back(dateTime);
+            }
+            else {
+                row.push_back("N/A");
+            }
+        }
+        layer.attributes.push_back(row);
+
+        OGRFeature::DestroyFeature(feature);
+    }
+
+    GDALClose(dataset);
+}
+
+
 
 void MainWindow::parseGeoJSON(const QString& filePath, Layer2d& layer) {
     QFile file(filePath);
@@ -231,12 +294,12 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 
     QMenu contextMenu(this);
 
-    QAction* zoomLayer = contextMenu.addAction("Zoom");
+    QAction* zoomLayer = contextMenu.addAction("Focus");
     QAction* renameAction = contextMenu.addAction("Rename");
     QAction* deleteAction = contextMenu.addAction("Delete");
 
     // metadata à faire
-    QAction* metadataAction = contextMenu.addAction("Metadata");
+    QAction* metadataAction = contextMenu.addAction("Attribute table");
 
 
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
@@ -264,7 +327,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer.name));
     } else if (selectedAction == metadataAction) {
         const Layer2d& layer = renderer->renderer2d->lst_layers2d[row];
-        showAttributeTable(layer);  // Appeler la fonction pour afficher la table attributaire
+        showAttributeTable(layer);
     }
 
 
