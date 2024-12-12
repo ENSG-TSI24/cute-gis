@@ -26,6 +26,9 @@ public:
     std::vector<std::vector<std::string>> attributes;
     std::vector<std::string> attributeHeaders;
 
+
+        float opacity = 1.0f;
+
 private:
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;

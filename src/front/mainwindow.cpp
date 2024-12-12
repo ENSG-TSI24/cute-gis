@@ -21,7 +21,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
-
+#include <QLabel>
 #include <ogrsf_frmts.h>
 
 
@@ -310,10 +310,8 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QAction* zoomLayer = contextMenu.addAction("Focus");
     QAction* renameAction = contextMenu.addAction("Rename");
     QAction* deleteAction = contextMenu.addAction("Delete");
-
-    // metadata à faire
     QAction* metadataAction = contextMenu.addAction("Attribute table");
-
+    QAction* opacityAction = contextMenu.addAction("Opacity");
 
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
 
@@ -341,10 +339,32 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     } else if (selectedAction == metadataAction) {
         const Layer2d& layer = renderer->getRenderer2d()->lst_layers2d[row];
         showAttributeTable(layer);
+    } else if (selectedAction == opacityAction) {
+        QDialog* dialog = new QDialog(this);
+        dialog->setWindowTitle("Adjust Layer Opacity");
+        dialog->resize(300, 100);
+        QVBoxLayout* layout = new QVBoxLayout(dialog);
+        QLabel* label = new QLabel("Opacity (0% - 100%):", dialog);
+        layout->addWidget(label);
+        QSlider* slider = new QSlider(Qt::Horizontal, dialog);
+        slider->setRange(0, 100);
+        double currentOpacity = renderer->getRenderer2d()->lst_layers2d[row].opacity;
+        slider->setValue(static_cast<int>(currentOpacity * 100));
+        layout->addWidget(slider);
+
+        QLabel* valueLabel = new QLabel(QString::number(slider->value()) + "%", dialog);
+        layout->addWidget(valueLabel);
+        connect(slider, &QSlider::valueChanged, [this, row, valueLabel](int value) {
+            valueLabel->setText(QString::number(value) + "%");
+            if (row >= 0 && row < renderer->getRenderer2d()->lst_layers2d.size()) {
+                renderer->getRenderer2d()->lst_layers2d[row].opacity = value / 100.0;
+                renderer->update();
+            }
+        });
+        dialog->setLayout(layout);
+        dialog->exec();
     }
 
-
-    // metadata
 }
 
 
