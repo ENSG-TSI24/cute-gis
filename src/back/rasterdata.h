@@ -13,6 +13,7 @@ public:
 
     std::pair<double, double> GetGeoCoordinates(int pixelX, int pixelY);
     std::vector<std::pair<double, double>> GetGeoCoordinatesForPixels(const std::vector<std::pair<int, int>>& pixelCoordinates);
+    void displayData();
     QImage *GetImage();
 
     int GetWidth() const;

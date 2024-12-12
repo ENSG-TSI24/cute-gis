@@ -5,8 +5,16 @@ RasterData::RasterData() : filePath(nullptr), image(nullptr)
 {
 }
 
-RasterData::RasterData(const char* path) : filePath(path), image(nullptr)
-{
+RasterData::RasterData(const char* path) : filePath(path), width(0), height(0), image(nullptr) {
+    GDALAllRegister();
+    GDALDataset* dataset = static_cast<GDALDataset*>(GDALOpen(path, GA_ReadOnly));
+    if (dataset) {
+        width = dataset->GetRasterXSize();
+        height = dataset->GetRasterYSize();
+        GDALClose(dataset);
+    } else {
+        std::cerr << "Failed to open raster file: " << path << std::endl;
+    }
 }
 
 RasterData::~RasterData()
@@ -105,83 +113,116 @@ std::vector<std::pair<double, double>> RasterData::GetGeoCoordinatesForPixels(co
 }
 
 
-QImage* RasterData::GetImage()
-{
-    if (!filePath)
-    {
+QImage* RasterData::GetImage() {
+    if (!filePath) {
         std::cerr << "No file path provided." << std::endl;
         return nullptr;
     }
 
     GDALAllRegister();
-    GDALDataset* dataset = (GDALDataset*)GDALOpen(filePath, GA_ReadOnly);
-    if (!dataset)
-    {
+    GDALDataset* dataset = static_cast<GDALDataset*>(GDALOpen(filePath, GA_ReadOnly));
+    if (!dataset) {
         std::cerr << "Failed to open raster file." << std::endl;
         return nullptr;
     }
 
-    /////// SIZE IMAGE INITIALIZATION //////
-    width = dataset->GetRasterXSize();
-    height = dataset->GetRasterYSize();
+    int width = dataset->GetRasterXSize();
+    int height = dataset->GetRasterYSize();
     int bands = dataset->GetRasterCount();
 
-    if (bands < 1)
-    {
-        std::cerr << "No raster bands found." << std::endl;
+    if (bands < 3) { // We need at least 3 bands for the raster in color
+        std::cerr << "Not enough raster bands (expected 3 for RGB)." << std::endl;
         GDALClose(dataset);
         return nullptr;
     }
 
-    double geoTransform[6];
-    if (dataset->GetGeoTransform(geoTransform) != CE_None)
-    {
-        std::cerr << "Failed to get geotransform." << std::endl;
-        GDALClose(dataset);
-        return nullptr;
-    }
-
+    // Buffer for 3 bands
     std::vector<unsigned char> buffer(width * height * 3);
 
-    GDALRasterBand* rBand = dataset->GetRasterBand(1);
-    GDALRasterBand* gBand = dataset->GetRasterBand(2);
-    GDALRasterBand* bBand = dataset->GetRasterBand(3);
-
-    if (rBand->RasterIO(GF_Read, 0, 0, width, height, buffer.data(), width, height, GDT_Byte, 0, 0) != CE_None ||
-        gBand->RasterIO(GF_Read, 0, 0, width, height, buffer.data() + width * height, width, height, GDT_Byte, 0, 0) != CE_None ||
-        bBand->RasterIO(GF_Read, 0, 0, width, height, buffer.data() + 2 * width * height, width, height, GDT_Byte, 0, 0) != CE_None)
-    {
+    // Reading the 3 bands Red, Blue, Green with RasterIO
+    if (dataset->GetRasterBand(1)->RasterIO(GF_Read, 0, 0, width, height, buffer.data(), width, height, GDT_Byte, 0, 0) != CE_None ||
+        dataset->GetRasterBand(2)->RasterIO(GF_Read, 0, 0, width, height, buffer.data() + width * height, width, height, GDT_Byte, 0, 0) != CE_None ||
+        dataset->GetRasterBand(3)->RasterIO(GF_Read, 0, 0, width, height, buffer.data() + 2 * width * height, width, height, GDT_Byte, 0, 0) != CE_None) {
         std::cerr << "Failed to read RGB bands." << std::endl;
         GDALClose(dataset);
         return nullptr;
     }
 
-    if (image)
-    {
-        delete image;
+    const size_t maxLinesToDisplay = 3; // Limite du nombre de lignes à afficher
+
+    //////////COUT TO CHECK THE BUFFER DATA //////////////
+    /*
+    std::cout << "Red Band (limited display):" << std::endl;
+    for (size_t i = 0; i < width * height; ++i) {
+        if (i / width >= maxLinesToDisplay) break; // Arrêter après 'maxLinesToDisplay' lignes
+        if (i > 0 && i % width == 0) std::cout << std::endl; // Saut de ligne après chaque ligne
+        std::cout << static_cast<int>(buffer[i]) << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Green Band (limited display):" << std::endl;
+    for (size_t i = 0; i < width * height; ++i) {
+        if (i / width >= maxLinesToDisplay) break; // Arrêter après 'maxLinesToDisplay' lignes
+        if (i > 0 && i % width == 0) std::cout << std::endl;
+        std::cout << static_cast<int>(buffer[i + width * height]) << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Blue Band (limited display):" << std::endl;
+    for (size_t i = 0; i < width * height; ++i) {
+        if (i / width >= maxLinesToDisplay) break; // Arrêter après 'maxLinesToDisplay' lignes
+        if (i > 0 && i % width == 0) std::cout << std::endl;
+        std::cout << static_cast<int>(buffer[i + 2 * width * height]) << " ";
+    }
+    std::cout << std::endl;
+    */
+
+    // QImage Building
+    auto qImage = std::make_unique<QImage>(width, height, QImage::Format_RGB888);
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            int index = y * width + x;
+            int r = buffer[index];
+            int g = buffer[index + width * height];
+            int b = buffer[index + 2 * width * height];
+            qImage->setPixel(x, y, qRgb(r, g, b));
+        }
     }
 
-    image = new QImage(buffer.data(), width, height, QImage::Format_RGB888);
-
-    const char* projection = dataset->GetProjectionRef();
-    if (projection)
-    {
-        std::cout << "Projection: " << projection << std::endl;
-    }
-    else
-    {
-        std::cout << "No projection information available." << std::endl;
-    }
-
-    ////// SIZE OF PIXELS IN METERS ///////
-    double pixelSizeX = geoTransform[1];
-    double pixelSizeY = geoTransform[5];
-
-    std::cout << "Pixel size in X: " << pixelSizeX << " meters" << std::endl;
-    std::cout << "Pixel size in Y: " << pixelSizeY << " meters" << std::endl;
 
     GDALClose(dataset);
-    return image;
+
+    return qImage.release();
+}
+
+void RasterData::displayData()
+{
+    // Afficher les informations principales
+    std::cout << "Raster Width: " << this->GetWidth() << std::endl;
+    std::cout << "Raster Height: " << this->GetHeight() << std::endl;
+
+    // Afficher les coordonnées géographiques de quelques pixels
+    std::cout << "Geo-coordinates for pixel (0, 0):" << std::endl;
+    auto geoCoords = this->GetGeoCoordinates(0, 0);
+    std::cout << "Lon: " << geoCoords.first << ", Lat: " << geoCoords.second << std::endl;
+
+    std::cout << "Geo-coordinates for pixel (width / 2, height / 2):" << std::endl;
+    geoCoords = this->GetGeoCoordinates(this->GetWidth() / 2, this->GetHeight() / 2);
+    std::cout << "Lon: " << geoCoords.first << ", Lat: " << geoCoords.second << std::endl;
+
+    // Tester des coordonnées pour plusieurs pixels
+    std::vector<std::pair<int, int>> pixelCoordinates = {
+        {0, 0},
+        {this->GetWidth() / 2, this->GetHeight() / 2},
+        {this->GetWidth() - 1, this->GetHeight() - 1}
+    };
+    auto geoCoordsBatch = this->GetGeoCoordinatesForPixels(pixelCoordinates);
+    std::cout << "Geo-coordinates for batch of pixels:" << std::endl;
+    for (size_t i = 0; i < geoCoordsBatch.size(); ++i) {
+        std::cout << "Pixel (" << pixelCoordinates[i].first << ", " << pixelCoordinates[i].second
+                  << "): Lon: " << geoCoordsBatch[i].first
+                  << ", Lat: " << geoCoordsBatch[i].second << std::endl;
+    }
 }
 
 
