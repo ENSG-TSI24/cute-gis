@@ -13,11 +13,13 @@ ObjectLoader* Renderer3D::getObjectLoader() const {
     return objectLoader;
 }
 
-void Renderer3D::paintGl3D(QMatrix4x4 ViewMatrix,float width,float height){
+void Renderer3D::paintGl3D(QMatrix4x4 ViewMatrix, float width, float height) {
     if (objectLoader) {
+
+        const std::vector<glm::vec3>& vertices = objectLoader->getVertices();
         // Configurer la matrice de projection
         QMatrix4x4 projectionMatrix;
-        float aspectRatio = width/height;
+        float aspectRatio = width / height;
         projectionMatrix.perspective(45.0f, aspectRatio, 0.1f, 1000.0f);
 
         // Appliquer la matrice de projection
@@ -32,7 +34,9 @@ void Renderer3D::paintGl3D(QMatrix4x4 ViewMatrix,float width,float height){
         glColor3f(1.0f, 1.0f, 0.0f);
         glBegin(GL_TRIANGLES);
 
-        const auto& vertices = objectLoader->getVertices();
+        //camera.centerOn3DModel(vertices);
+
+        // Explicitly declare vertices as a constant reference
         for (const auto& vertex : vertices) {
             glVertex3f(vertex.x, vertex.z, vertex.y);
         }

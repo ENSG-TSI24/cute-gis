@@ -109,7 +109,7 @@ void Camera::rotateVertAng(float angle){
         VertAng =  89.9;
     }
     if(VertAng < -89.9){
-        VertAng = 89.9;
+        VertAng = -89.9;
     }
 }
 
@@ -227,12 +227,13 @@ void Camera::setRWidth(int width){
     this->renderer_width=width;
 }
 
-void Camera::centerOn3DModel(std::vector<glm::vec3> &vertices){
+void Camera::centerOn3DModel( const std::vector<glm::vec3> &vertices){
     float minX=vertices[0].x;
     float maxX=vertices[0].x;
     float minY=vertices[0].y;
     float maxY=vertices[0].y;
     this->VertAng=-90;
+    this->HorAng=0;
     for (const auto& vertex : vertices) {
         if (vertex.x>maxX){
             maxX=vertex.x;
@@ -244,8 +245,14 @@ void Camera::centerOn3DModel(std::vector<glm::vec3> &vertices){
         } else if (vertex.y>maxY){
             maxY=vertex.y;
         }
-
     }
+    float dX=abs((minX + maxX) / 2.0f - minX);
+    float dY=abs((minY + maxY) / 2.0f - minY);
+    this->setX((minX + maxX) / 2.0f);
+    this->setY((minY + maxY) / 2.0f);
+    this->setZ(std::max(dX,dY)/tan(45.0 / 2.0f));
+    std::cout<<getX()<<" "
+             <<getY()<<" "
+             <<getZ()<<" "<<std::endl;
 }
-
 

@@ -110,7 +110,7 @@ public:
     float getVertAng();
     void setRWidth(int width);
     void setRHeight(int height);
-    void centerOn3DModel(std::vector<glm::vec3> &vertices);
+    void centerOn3DModel(const std::vector<glm::vec3> &vertices);
 
 private:
     glm::vec3 position;
