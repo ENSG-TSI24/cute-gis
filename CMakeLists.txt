@@ -119,9 +119,6 @@ target_link_libraries(API_WMTSTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest:
 target_link_libraries(RasterData PRIVATE Qt${QT_VERSION_MAJOR}::Widgets GTest::GTest GTest::Main CURL::libcurl ${GDAL_LIBRARIES})
 
 
-# Finalize application
-qt_finalize_executable(cute-gis)
-
 # Enable testing
 enable_testing()
 
@@ -133,6 +130,7 @@ add_test(NAME API_WMTSTest COMMAND API_WMTSTest)
 add_test(NAME RasterData COMMAND RasterData)
 
 
+# Finalize application
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(cute-gis)
 endif()
