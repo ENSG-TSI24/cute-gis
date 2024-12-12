@@ -269,43 +269,40 @@ std::vector<std::string> VectorData::GetAttributName() {
 
     for (int i = 0; i < field_count; ++i) {
         const char *field_name = layer->GetLayerDefn()->GetFieldDefn(i)->GetNameRef();//On récupère le nom de chaque champs et on le passe en char
-        std::cout << field_name << std::endl;
+        //std::cout << field_name << std::endl;
         header_name.emplace_back(field_name);
     }
     GDALClose(dataset);
     return header_name;
 }
 
-std::vector<std::string> VectorData::GetAllAttributData() {
+std::vector<std::vector<std::string>> VectorData::GetAllAttributData() {
     GDALAllRegister();
     GDALDataset* dataset = (GDALDataset *) GDALOpenEx(this->GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
     if (!dataset) {
         throw std::runtime_error("Invalid GDALDataset pointer provided.");
     }
 
-    std::vector<std::string> data_field;
+    std::vector<std::vector<std::string>> row;
+    std::vector<std::string> column;
 
     OGRLayer* poLayer = dataset->GetLayer(0); //On considère que chaque fichier contient une seule couche?
-    for( auto& poFeature: poLayer )
+    for( auto& poFeature: poLayer )//On parcours les entités de la couche
     {
-        for( auto&& oField: *poFeature )
+        for( auto&& oField: *poFeature )//On parcours chaque champs pour toutes les entités
         {
-            if( oField.IsUnset() )
-        {
-            printf("(unset),");
-            continue;
-        }
         if( oField.IsNull() )
         {
-            printf("(null),");
+            column.emplace_back("");
             continue;
         }
-            data_field.emplace_back(oField.GetAsString());
-            std::cout << oField.GetAsString() << std::endl;
+            column.emplace_back(oField.GetAsString());
+            //std::cout << oField.GetAsString() << std::endl;
         }
+        row.emplace_back(column);
     }
     GDALClose(dataset);
-    return data_field;
+    return row;
 }
 
 
@@ -322,8 +319,8 @@ std::vector<std::string> VectorData::GetAttributeDataByHeader(const char* fieldN
     OGRLayer* poLayer = dataset->GetLayer(0); //On considère que chaque fichier contient une seule couche?
     for( auto& poFeature: poLayer )
     {
-        data_field.emplace_back(poFeature->GetFieldAsString(fieldName));
-        std::cout << poFeature->GetFieldAsString(fieldName) << std::endl;
+        data_field.emplace_back(poFeature->GetFieldAsString(fieldName));//Pour chaque entité, on récupère la valeur du champs fieldname
+        //std::cout << poFeature->GetFieldAsString(fieldName) << std::endl;
     }
     GDALClose(dataset);
     return data_field;
@@ -340,17 +337,16 @@ std::vector<std::vector<std::string>> VectorData::GetAttributeDataById(int id) {
     std::vector<std::string> column;
 
     OGRLayer* poLayer = dataset->GetLayer(0);
-    OGRFeature *poFeature = poLayer->GetFeature(id);
+    OGRFeature *poFeature = poLayer->GetFeature(id);//Entité unique placé à la ligne id
         for( auto&& oField: *poFeature ) {
             if( oField.IsNull() )
             {
-                //column.emplace_back(NULL);
-                continue;
+                column.emplace_back("");
             }
             else
             {
                 column.emplace_back(oField.GetAsString());
-                std::cout << oField.GetAsString() << std::endl;
+                //std::cout << oField.GetAsString() << std::endl;
             }
             row.emplace_back(column);
         }

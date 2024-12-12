@@ -95,8 +95,8 @@ void MainWindow::onOpenFile()
             std::string name = fileInfo.baseName().toStdString();
             renderer->getRenderer2d()->lst_layers2d.back().name = name;
 
-            if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) parseGeoJSON(filePath, renderer->getRenderer2d()->lst_layers2d.back());
-            if (filePath.endsWith(".shp", Qt::CaseInsensitive)) parseShapefile(filePath, renderer->getRenderer2d()->lst_layers2d.back());
+           // if (filePath.endsWith(".geojson", Qt::CaseInsensitive)) parseGeoJSON(filePath, renderer->getRenderer2d()->lst_layers2d.back());
+           // if (filePath.endsWith(".shp", Qt::CaseInsensitive)) parseShapefile(filePath, renderer->getRenderer2d()->lst_layers2d.back());
 
             name_layers.push_back(name);
             setupCheckboxes();
@@ -274,7 +274,7 @@ void MainWindow::on_actionFlux_Data_triggered() {
     }
 }
 
-void MainWindow::parseShapefile(const QString& filePath, Layer2d& layer) {
+/*void MainWindow::parseShapefile(const QString& filePath, Layer2d& layer) {
     GDALAllRegister();
 
     GDALDataset* dataset = (GDALDataset*)GDALOpenEx(filePath.toStdString().c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
@@ -378,7 +378,7 @@ void MainWindow::parseGeoJSON(const QString& filePath, Layer2d& layer) {
         }
         layer.attributes.push_back(row);
     }
-}
+}*/
 
 
 

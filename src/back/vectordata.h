@@ -15,7 +15,8 @@ public:
     std::vector<std::vector<std::vector<std::pair<float, float>>>> Get2DPolygons();
 
     std::vector<std::string> GetAttributName();
-    std::vector<std::string> GetAllAttributData();
+
+    std::vector<std::vector<std::string>> GetAllAttributData();
     std::vector<std::string> GetAttributeDataByHeader(const char *fieldName);
     std::vector<std::vector<std::string>> GetAttributeDataById(int id);
 protected:
