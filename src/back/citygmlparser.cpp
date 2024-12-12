@@ -2,9 +2,23 @@
 #include <vector>
 #include <glm/gtx/string_cast.hpp>
 #include <nlohmann/json.hpp>  //sudo apt install nlohmann-json3-dev
+#include "datamanagment.h"
+
 using json = nlohmann::json;
 
-CityGMLParser::CityGMLParser() : dataset(nullptr) {
+
+CityGMLParser::CityGMLParser(const char* path): DataManagment(path){
+    dataset = nullptr;
+    xMin = 10000000;
+    yMin = 10000000;
+    zMin = 10000000;
+    xMax = 0;
+    yMax = 0;
+    zMax = 0;
+}
+ CityGMLParser::CityGMLParser(): DataManagment(nullptr){
+
+    dataset = nullptr;
     xMin = 10000000;
     yMin = 10000000;
     zMin = 10000000;
@@ -13,20 +27,11 @@ CityGMLParser::CityGMLParser() : dataset(nullptr) {
     zMax = 0;
 }
 
-CityGMLParser::~CityGMLParser() {
-    if (dataset) {
-        GDALClose(dataset);
-    }
+GDALDataset*  CityGMLParser::GetDataset() const{
+    return dataset;
 }
 
-bool CityGMLParser::openFile(const std::string& filePath) {
-    GDALAllRegister();
-    dataset = static_cast<GDALDataset*>(GDALOpenEx(filePath.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
-    if (!dataset) {
-        std::cerr << "Error: Could not open file: " << filePath << std::endl;
-        return false;
-    }
-    return true;
+ CityGMLParser::~CityGMLParser() {
 }
 
 
@@ -69,6 +74,8 @@ OGRCoordinateTransformation* CityGMLParser::createLambertTransformation() {
 
 void CityGMLParser::parseFeatures() {
     features.clear();
+    GDALDataset* dataset = (GDALDataset *) GDALOpenEx(GetPath(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+
 
     if (!dataset) {
         std::cerr << "No dataset loaded for parsing!" << std::endl;
@@ -151,10 +158,6 @@ void CityGMLParser::parseFeatures() {
         // Passage des vertices à la feature
         std::cout<< "feature" <<to_string(feature.vertices.at(0).at(0).at(0)) << std::endl;
 
-
-
-
-
         //Passage de l'enveloppe à la feature
         feature.lowerCorner = std::make_tuple(xMin,yMin,zMin);
         feature.upperCorner = std::make_tuple(xMax,yMax,zMax);
@@ -167,10 +170,13 @@ void CityGMLParser::parseFeatures() {
     }
 
 }
+    GDALClose(dataset);
 }
 
 
 std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> CityGMLParser::processCoordinates(json& data) {
+
+
     std::vector<std::vector<std::vector<glm::vec3>>> multipolygonList;
     std::vector<std::vector<std::vector<glm::vec3>>> normalsListUniform;
     std::vector<std::vector<glm::vec3>> normalsList;
