@@ -33,7 +33,6 @@ public:
 
     bool getIs3D();
     void calculateBoundingBox();
-    BoundingBox boundingBox;
     Controller* controller;
 
 

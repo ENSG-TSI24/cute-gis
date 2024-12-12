@@ -8,12 +8,10 @@ Layer2d::Layer2d(VectorData data)
     linestrings = data.GetLineStrings();
     polygons = data.GetPolygons();
     polygons2d  = data.Get2DPolygons();
-    calculateBoundingBox();
+    boundingBox = calculateBoundingBox();
 }
 
-Layer2d::~Layer2d(){
-
-}
+Layer2d::~Layer2d(){}
 
 void Layer2d::renderPoints() {
     glColor3f(0.0f, 0.0f, 1.0f); // Couleur bleue
@@ -104,7 +102,7 @@ void Layer2d::renderPolygons() {
 
 
 
-void Layer2d::calculateBoundingBox() {
+BoundingBox Layer2d::calculateBoundingBox() {
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
     float minY = std::numeric_limits<float>::max();
@@ -154,7 +152,7 @@ void Layer2d::calculateBoundingBox() {
     }
 
     // Stocker la bounding box
-    this->boundingBox = {minX, maxX, minY, maxY};
+    return BoundingBox(minX, maxX, minY, maxY);
     //std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
 }
 

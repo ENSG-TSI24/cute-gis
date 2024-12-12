@@ -24,11 +24,9 @@ void Renderer2D::renderLayers2d() {
 }
 
 void Renderer2D::renderRasters() {
-    int i = 0;
-    for (auto& raster: lst_layersraster){
-        std::cout<<"------------ Layer : "<<i<< " ------------"<<std::endl;
+    for (int i = lst_layersraster.size() - 1; i >= 0; --i) {
+        auto& raster = lst_layersraster[i];
         raster.renderRasters();
-        ++i;
     }
 }
 

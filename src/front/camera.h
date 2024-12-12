@@ -12,10 +12,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
-
-struct BoundingBox {
-    float minX, maxX, minY, maxY;
-};
+#include "boundingbox.h"
 
 /**
  * \class Camera

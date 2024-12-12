@@ -4,9 +4,7 @@
 #include <vector>
 #include <utility>
 #include "../back/vectordata.h"
-#include "controller.h"
-
-
+#include "boundingbox.h"
 
 class Layer2d
 {
@@ -16,7 +14,7 @@ public:
     void renderPoints();
     void renderLinestrings();
     void renderPolygons();
-    void calculateBoundingBox();
+    BoundingBox calculateBoundingBox();
     BoundingBox boundingBox;
     bool isVisible = true;
     std::string name = "no name";

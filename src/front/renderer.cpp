@@ -12,7 +12,6 @@
 Renderer::Renderer(QWidget* parent)
     : QOpenGLWidget(parent) {
     controller = new Controller(this);
-    qDebug() << "Controller created: " << controller;
     renderer2d = new Renderer2D();
     renderer3d = new Renderer3D();
     setFocusPolicy(Qt::StrongFocus);

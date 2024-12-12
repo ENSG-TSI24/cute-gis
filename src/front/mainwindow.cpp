@@ -8,8 +8,8 @@
 #include <QListWidget>
 #include <QInputDialog>
 #include "../back/vectordata.h"
+#include "../back/rasterdata.h"
 #include "addFluxData.h"
-#include "geotiffloader.h"
 #include "renderer.h"
 #include "renderer2d.h"
 #include "renderer3d.h"
@@ -85,6 +85,7 @@ void MainWindow::onOpenFile()
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
+
             renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back().boundingBox);
             renderer->setIs3D(false);
 
@@ -96,17 +97,18 @@ void MainWindow::onOpenFile()
             renderer->setIs3D(true);
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
             renderer->reset3D();
-            GeoTiffLoader loader;
-            loader.loadGeoTIFF(filePath);
-            QImage* image = loader.image;
-
-            renderer->getRenderer2d()->lst_layersraster.push_back(LayerRaster(image));
+            RasterData raster = RasterData(filedata);
+            renderer->getRenderer2d()->lst_layersraster.push_back(LayerRaster(raster));
 
             // add name layers
-            std::string name = "Couche " + std::to_string(nb_layers);
+            QFileInfo fileInfo(filePath);
+            std::string name = fileInfo.baseName().toStdString();
+            renderer->getRenderer2d()->lst_layersraster.back().name = name;
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
+
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layersraster.back().boundingBox);
             renderer->setIs3D(false);
         } else {
                 throw std::runtime_error("Unsupported file format!");
