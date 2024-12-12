@@ -33,8 +33,20 @@ int RasterData::GetHeight() const {
     return height;
 }
 
+std::pair<double, double> RasterData::GetTopLeftGeoCoordinates() const {
+    std::pair<double, double> topLeftCoords = this->GetGeoCoordinates(0, 0);
+    std::cout << "Top Left GeoCoordinates: (" << topLeftCoords.first << ", " << topLeftCoords.second << ")" << std::endl;
+    return topLeftCoords;  // Le coin supérieur gauche est (0, 0)
+}
+
+std::pair<double, double> RasterData::GetBottomRightGeoCoordinates() const {
+    std::pair<double, double> bottomRightCoords = this->GetGeoCoordinates(this->GetWidth() - 1, this->GetHeight() - 1);
+    std::cout << "Bottom Right GeoCoordinates: (" << bottomRightCoords.first << ", " << bottomRightCoords.second << ")" << std::endl;
+    return bottomRightCoords;  // Le coin inférieur droit
+}
+
 // Get the coordinates of a single pixels
-std::pair<double, double> RasterData::GetGeoCoordinates(int pixelX, int pixelY)
+std::pair<double, double> RasterData::GetGeoCoordinates(int pixelX, int pixelY) const
 {
     if (!filePath)
     {
@@ -223,6 +235,11 @@ void RasterData::displayData()
                   << "): Lon: " << geoCoordsBatch[i].first
                   << ", Lat: " << geoCoordsBatch[i].second << std::endl;
     }
+
+    auto geoCoordsLowerRight = this->GetGeoCoordinates(this->GetWidth() - 1, this->GetHeight() - 1);
+    std::cout << "Geo-coordinates for the lower-right corner:" << std::endl;
+    std::cout << "Lon: " << geoCoordsLowerRight.first << ", Lat: " << geoCoordsLowerRight.second << std::endl;
+
 }
 
 
