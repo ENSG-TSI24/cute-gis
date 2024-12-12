@@ -20,6 +20,7 @@ public:
 
     // Properties
     BoundingBox boundingBox;
+    int highlightedIndex = -1;
     bool isVisible = true;
     std::string name = "no name";
     std::vector<std::vector<std::string>> attributes;

@@ -18,91 +18,149 @@ Layer2d::~Layer2d(){
 }
 
 void Layer2d::renderPoints() {
-    glColor3f(0.0f, 0.0f, 1.0f); // Couleur bleue
     glPointSize(5.0f);
-
     glBegin(GL_POINTS);
-    for (const auto& coord : points) {
-        glVertex3f(coord.first, coord.second, 0.0f);
+
+    for (size_t i = 0; i < points.size(); ++i) {
+        if (static_cast<int>(i) == highlightedIndex) {
+            glColor3f(1.0f, 1.0f, 0.0f); // Yellow for highlight
+        } else {
+            glColor3f(0.0f, 0.0f, 1.0f); // Blue for normal points
+        }
+        glVertex3f(points[i].first, points[i].second, 0.0f);
     }
+
     glEnd();
 }
 
+
 void Layer2d::renderLinestrings() {
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glLineWidth(2.0f);
-    for (const auto& line : linestrings) {
+    for (size_t i = 0; i < linestrings.size(); ++i) {
+        if (static_cast<int>(i) == highlightedIndex) {
+            // Highlighted linestring
+            glLineWidth(5.0f);
+            glColor3f(1.0f, 1.0f, 0.0f); // Yellow for highlight
+        } else {
+            // Normal linestring
+            glLineWidth(2.0f);
+            glColor3f(0.0f, 1.0f, 0.0f); // Green for normal
+        }
+
         glBegin(GL_LINE_STRIP);
-        for (const auto& coord : line) {
+        for (const auto& coord : linestrings[i]) {
             glVertex3f(coord.first, coord.second, 0.0f);
         }
         glEnd();
     }
+    // Reset line width
+    glLineWidth(1.0f);
 }
 
+
 void Layer2d::renderPolygons() {
-    glColor3f(1.0f, 0.0f, 0.0f);
     glLineWidth(1.0f);
-    if (!polygons.empty()){
-    for (const auto& polygon : polygons) {
-        for (const auto& ring : polygon) {
-                        // Dessiner l'intérieur du polygone
-            glEnable(GL_POLYGON_OFFSET_FILL);
-            glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
-            glColor3f(1.0f, 0.0f, 0.0f); // Rouge pour le remplissage
-            glBegin(GL_POLYGON);
-            for (const auto& coord : ring) {
-                glVertex3f(std::get<0>(coord), std::get<1>(coord) ,0.0f);
-            }
-            glEnd();
-            glDisable(GL_POLYGON_OFFSET_FILL);
 
-            // Dessiner le contour du polygone
-            glColor3f(0.0f, 0.0f, 0.0f); // Noir pour les contours
-            glLineWidth(1.0f);
-            glEnable(GL_LINE_SMOOTH); // Anti-aliasing pour des lignes lisses
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-            glBegin(GL_LINE_LOOP);
-            for (const auto& coord : ring) {
-                glVertex3f(std::get<0>(coord), std::get<1>(coord), 0.0f);
-            }
-            glEnd();
-            glDisable(GL_LINE_SMOOTH);
-            glDisable(GL_BLEND);
-        }
-        }
-    }else{
-        for (const auto& polygon2d : polygons2d) {
-        for (const auto& ring : polygon2d) {
-            // Dessiner l'intérieur du polygone
-            glEnable(GL_POLYGON_OFFSET_FILL);
-            glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
-            glColor3f(1.0f, 0.0f, 0.0f); // Rouge pour le remplissage
-            glBegin(GL_POLYGON);
-            for (const auto& coord : ring) {
-                glVertex3f(coord.first, coord.second, 0.0f);
-            }
-            glEnd();
-            glDisable(GL_POLYGON_OFFSET_FILL);
+    if (!polygons.empty()) {
+        for (size_t i = 0; i < polygons.size(); ++i) {
+            const auto& polygon = polygons[i];
 
-            // Dessiner le contour du polygone
-            glColor3f(0.0f, 0.0f, 0.0f); // Noir pour les contours
-            glLineWidth(1.0f);
-            glEnable(GL_LINE_SMOOTH); // Anti-aliasing pour des lignes lisses
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-            glBegin(GL_LINE_LOOP);
-            for (const auto& coord : ring) {
-                glVertex3f(coord.first, coord.second,0.0f);
+            for (const auto& ring : polygon) {
+                // Highlight logic
+                if (static_cast<int>(i) == highlightedIndex) {
+                    glEnable(GL_POLYGON_OFFSET_FILL);
+                    glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
+                    glColor3f(1.0f, 1.0f, 0.0f); // Yellow for highlight
+                    glBegin(GL_POLYGON);
+                    for (const auto& coord : ring) {
+                        glVertex3f(std::get<0>(coord), std::get<1>(coord), 0.0f);
+                    }
+                    glEnd();
+                    glDisable(GL_POLYGON_OFFSET_FILL);
+
+                    glColor3f(1.0f, 1.0f, 0.0f); // Yellow for the contour
+                    glLineWidth(3.0f);
+                } else {
+                    // Normal polygon fill
+                    glEnable(GL_POLYGON_OFFSET_FILL);
+                    glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
+                    glColor3f(1.0f, 0.0f, 0.0f); // Rouge pour le remplissage
+                    glBegin(GL_POLYGON);
+                    for (const auto& coord : ring) {
+                        glVertex3f(std::get<0>(coord), std::get<1>(coord), 0.0f);
+                    }
+                    glEnd();
+                    glDisable(GL_POLYGON_OFFSET_FILL);
+
+                    glColor3f(0.0f, 0.0f, 0.0f); // Noir pour les contours
+                    glLineWidth(1.0f);
+                }
+
+                // Draw the contour of the polygon
+                glEnable(GL_LINE_SMOOTH); // Anti-aliasing for smooth lines
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+                glBegin(GL_LINE_LOOP);
+                for (const auto& coord : ring) {
+                    glVertex3f(std::get<0>(coord), std::get<1>(coord), 0.0f);
+                }
+                glEnd();
+                glDisable(GL_LINE_SMOOTH);
+                glDisable(GL_BLEND);
             }
-            glEnd();
+        }
+    } else {
+        for (size_t i = 0; i < polygons2d.size(); ++i) {
+            const auto& polygon2d = polygons2d[i];
+
+            for (const auto& ring : polygon2d) {
+                // Highlight logic
+                if (static_cast<int>(i) == highlightedIndex) {
+                    glEnable(GL_POLYGON_OFFSET_FILL);
+                    glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
+                    glColor3f(1.0f, 1.0f, 0.0f); // Yellow for highlight
+                    glBegin(GL_POLYGON);
+                    for (const auto& coord : ring) {
+                        glVertex3f(coord.first, coord.second, 0.0f);
+                    }
+                    glEnd();
+                    glDisable(GL_POLYGON_OFFSET_FILL);
+
+                    glColor3f(1.0f, 1.0f, 0.0f); // Yellow for the contour
+                    glLineWidth(3.0f);
+                } else {
+                    // Normal polygon fill
+                    glEnable(GL_POLYGON_OFFSET_FILL);
+                    glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
+                    glColor3f(1.0f, 0.0f, 0.0f); // Rouge pour le remplissage
+                    glBegin(GL_POLYGON);
+                    for (const auto& coord : ring) {
+                        glVertex3f(coord.first, coord.second, 0.0f);
+                    }
+                    glEnd();
+                    glDisable(GL_POLYGON_OFFSET_FILL);
+
+                    glColor3f(0.0f, 0.0f, 0.0f); // Noir pour les contours
+                    glLineWidth(1.0f);
+                }
+
+                // Draw the contour of the polygon
+                glEnable(GL_LINE_SMOOTH); // Anti-aliasing for smooth lines
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+                glBegin(GL_LINE_LOOP);
+                for (const auto& coord : ring) {
+                    glVertex3f(coord.first, coord.second, 0.0f);
+                }
+                glEnd();
+                glDisable(GL_LINE_SMOOTH);
+                glDisable(GL_BLEND);
+            }
         }
     }
 }
-}
+
 
 
 
@@ -164,7 +222,11 @@ void Layer2d::calculateBoundingBox() {
 
 
 void Layer2d::highlightGeometry(int rowIndex) {
-    if (rowIndex < 0 || rowIndex >= attributes.size()) return;
+    if (rowIndex >= 0 && rowIndex < attributes.size()) {
+        highlightedIndex = rowIndex; // Store the highlighted feature index
+    } else {
+        highlightedIndex = -1; // Clear highlight if the index is invalid
+    }
 
     glColor3f(1.0f, 1.0f, 0.0f); // Highlight color (yellow)
 
