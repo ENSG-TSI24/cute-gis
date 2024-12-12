@@ -12,8 +12,8 @@ public:
     void paintGl2D();
     void reset2D();
 
-    std::vector<LayerRaster> lst_layersraster;
-    std::vector<Layer2d> lst_layers2d;
+    std::vector<std::shared_ptr<LayerRaster>> lst_layersraster;
+    std::vector<std::shared_ptr<Layer2d>> lst_layersvector;
 
 private:
     void renderLayers2d();

@@ -5,21 +5,28 @@
 #include <utility>
 #include "../back/vectordata.h"
 #include "boundingbox.h"
+#include "layerbase.h"
 
-class Layer2d
+class Layer2d : public LayerBase
 {
 public:
-    Layer2d(VectorData data);
-    ~Layer2d();
+    explicit Layer2d(VectorData data);
+    ~Layer2d() override;
     void renderPoints();
     void renderLinestrings();
     void renderPolygons();
-    BoundingBox calculateBoundingBox();
+    BoundingBox calculateBoundingBox() override;
+
+    std::string getName() override; // Méthode virtuelle pour accéder au nom
+    void setIsVisible(bool isVisible) override; // (Optionnel) Méthode virtuelle pour définir le nom
+    BoundingBox getBoundingBox(BoundingBox boundingBox) override;
+
+
+private:
     BoundingBox boundingBox;
     bool isVisible = true;
     std::string name = "no name";
 
-private:
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;
     std::vector<std::vector<std::vector<std::tuple<float, float, float>>>> polygons;

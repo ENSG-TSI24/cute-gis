@@ -6,11 +6,11 @@
 #include <vector>
 #include <utility>
 #include <QMatrix4x4>
-#include "controller.h"
 #include <QGraphicsSceneMouseEvent>
-
 #include <QMouseEvent>
+#include "controller.h"
 
+class LayerBase;
 class Renderer2D;
 class Renderer3D;
 
@@ -35,6 +35,7 @@ public:
     void calculateBoundingBox();
     Controller* controller;
 
+    std::vector<std::shared_ptr<LayerBase>> lst_layers2d;
 
 protected:
     void initializeGL() override;
