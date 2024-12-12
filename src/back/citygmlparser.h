@@ -8,6 +8,7 @@
 #include <gdal/ogrsf_frmts.h>
 #include <glm/glm.hpp>
 #include "datamanagment.h"
+#define GLM_ENABLE_EXPERIMENTAL
 
 
 #include <nlohmann/json.hpp>  //sudo apt install nlohmann-json3-dev
