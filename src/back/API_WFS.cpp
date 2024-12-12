@@ -3,6 +3,13 @@
 #include <ogrsf_frmts.h>
 #include <fstream>
 
+#include <iostream>
+#include <filesystem>
+#include <string>
+#include "gdal_priv.h"
+#include "gdal_priv.h"
+
+
 API_WFS::API_WFS(const char* link) : url(link)
 {
     GDALAllRegister();
@@ -17,8 +24,7 @@ void API_WFS::loadDataset() {
     /* Display error message and exit program if dataset fails to open correctly ** to be replaced
         when the front end team finishes ( to reinsert or close window) */
     if (isEmpty()) {
-        std::cerr << "Error: Impossible to connect to WFS or unsupported format" << std::endl;
-        throw std::runtime_error("Failed to load dataset"); // Lancer une exception au lieu d'exit
+        std::cerr<< "Error: Impossible to connect to WFS or unsupported format" << std::endl;
     }
 }
 
@@ -146,82 +152,113 @@ OGRLayer* API_WFS::GetLayer(const char* name)
 }
 
 
-std::string API_WFS::ExportToGeoJSON(int n, const std::string& outputFilePath)
+void API_WFS::ExportToGeoJSON(const std::string& layerName)
 {
+    // Définir le chemin relatif pour le dossier GeoJSON
+    std::string relativePath = "../cute-gis/data/geojson/";
+    std::string outputFileName = layerName + ".geojson";
+    const std::string& outputPath = relativePath + outputFileName;
+
+
+
+    // Créer le dossier si nécessaire
+    std::filesystem::create_directories(relativePath);
+
     if (isEmpty())
     {
         std::cout << "Dataset is not opened." << std::endl;
-        return "";
+        return;
+
     }
 
-    // Get the GeoJSON driver
+    // Obtenir le driver GeoJSON
     GDALDriver* geoJsonDriver = GetGDALDriverManager()->GetDriverByName("GeoJSON");
     if (geoJsonDriver == nullptr)
     {
         std::cout << "GeoJSON driver not available." << std::endl;
-        return "";
+        return;
     }
 
-    // Create an temp dataset file to hold the GeoJSON output
+    // Créer un dataset GeoJSON pour écrire le fichier
     char** options = nullptr;
-    GDALDataset* geoJsonDataset = geoJsonDriver->Create("/vsimem/temp.geojson", 0, 0, 0, GDT_Unknown, options);
+    GDALDataset* geoJsonDataset = geoJsonDriver->Create(outputPath.c_str(), 0, 0, 0, GDT_Unknown, options);
     if (geoJsonDataset == nullptr)
     {
-        std::cout << "Failed to create the temp GeoJSON dataset." << std::endl;
-        return "";
+        std::cout << "Failed to create GeoJSON file: " << outputPath << std::endl;
+        return;
     }
 
-    // Get the selected layer
-    OGRLayer* layer = m_dataset->GetLayer(n);
+    // Obtenir la couche par son nom
+    OGRLayer* layer = m_dataset->GetLayerByName(layerName.c_str());
     if (layer == nullptr)
     {
-        std::cout << "No layer found in the dataset." << std::endl;
-        GDALClose(geoJsonDataset); // Clean up
-        return "";
+        std::cout << "Layer '" << layerName << "' not found in the dataset." << std::endl;
+        GDALClose(geoJsonDataset);
+        return;
+
     }
 
-    // Copy the layer to the GeoJSON dataset
+    // Copier la couche dans le fichier GeoJSON
     if (geoJsonDataset->CopyLayer(layer, layer->GetName()) == nullptr)
     {
-        std::cout << "Failed to copy layer to GeoJSON dataset." << std::endl;
-        GDALClose(geoJsonDataset); // Clean up
-        return "";
+        std::cout << "Failed to copy layer to GeoJSON file." << std::endl;
+        GDALClose(geoJsonDataset);
+        return;
+
     }
 
-    // Close the in-memory dataset to flush data to /vsimem/
+    // Fermer le dataset pour sauvegarder le fichier sur le disque
     GDALClose(geoJsonDataset);
 
-    // Open the in-memory file
-    VSILFILE* file = VSIFOpenL("/vsimem/temp.geojson", "r");
-    if (file == nullptr)
-    {
-        std::cout << "Failed to open in-memory GeoJSON file." << std::endl;
-        return "";
+    // Allouer une nouvelle mémoire pour stocker le chemin
+    static std::string outputPathStatic = outputPath;  // Variable statique pour persister la valeur
+    output_path = outputPathStatic.c_str();
+
+
+    // Afficher le chemin
+    std::cout << "GeoJSON successfully created at: " << output_path << std::endl;
+}
+
+std::vector<std::pair<std::string, std::string>> API_WFS::GetLayerFields(const char* layerName)
+{
+    std::vector<std::pair<std::string, std::string>> fields;
+
+    if (isEmpty()) {
+        std::cerr << "Dataset is not opened." << std::endl;
+        return fields;
     }
 
-    // Read the contents of the file
-    VSIFSeekL(file, 0, SEEK_END); // Move to the end of the file to determine size
-    size_t fileSize = VSIFTellL(file);
-    VSIFSeekL(file, 0, SEEK_SET); // Move back to the beginning of the file
+    // Obtenir la couche par nom
+    OGRLayer* layer = m_dataset->GetLayerByName(layerName);
+    if (layer == nullptr) {
+        std::cerr << "Layer '" << layerName << "' not found." << std::endl;
+        return fields;
+    }
 
-    std::string geoJsonContent(fileSize, '\0'); // Allocate a string with the required size
-    VSIFReadL(&geoJsonContent[0], 1, fileSize, file);
+    // Récupérer la définition de la couche
+    OGRFeatureDefn* featureDefn = layer->GetLayerDefn();
+    if (featureDefn == nullptr) {
+        std::cerr << "Unable to retrieve feature definition for layer '" << layerName << "'." << std::endl;
+        return fields;
+    }
 
+    // Parcourir les champs
+    int fieldCount = featureDefn->GetFieldCount();
+    for (int i = 0; i < fieldCount; ++i) {
+        OGRFieldDefn* fieldDefn = featureDefn->GetFieldDefn(i);
 
-    std::ofstream outputFile(outputFilePath);
-        if (outputFile.is_open())
-        {
-            outputFile << geoJsonContent;
-            outputFile.close();
-            std::cout << "GeoJSON written to file: " << outputFilePath << std::endl;
+        if (fieldDefn != nullptr) {
+            // Récupérer le nom du champ et son type
+            std::string fieldName = fieldDefn->GetNameRef();
+            std::string fieldType = OGRFieldDefn::GetFieldTypeName(fieldDefn->GetType());
+            fields.emplace_back(fieldName, fieldType);
         }
-        else
-        {
-            std::cout << "Failed to write GeoJSON to file: " << outputFilePath << std::endl;
-        }
-    // Close and clean up
-    VSIFCloseL(file);
-    VSIUnlink("/vsimem/temp.geojson");
+    }
 
-    return geoJsonContent;
+    return fields;
 }
+const char* API_WFS:: getOutput(){
+    return output_path;
+}
+
+

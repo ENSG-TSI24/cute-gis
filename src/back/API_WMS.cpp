@@ -10,16 +10,6 @@ API_WMS::API_WMS(const char* link) : url(link)
     GDALAllRegister();
 }
 
-// Crucial to free memory, otherwise bugs
-/*API_WMS::~API_WMS() {
-    // Si le dataset existe, on le ferme
-    if (m_dataset != nullptr) {
-        //m_dataset->FlushCache();  // Facultatif : vide le cache du dataset avant de le fermer
-        GDALClose(m_dataset);     // Libère la mémoire associée au dataset
-        //m_dataset = nullptr;      // Nullifie le pointeur pour éviter les références ultérieures
-    }
-}*/
-
 void API_WMS::loadDataset() {
     // Ouvrir le dataset avec GDAL pour un flux WMS
     m_dataset = static_cast<GDALDataset*>(
@@ -101,14 +91,9 @@ void API_WMS::loadTileGridToGeoTiff(const char* layerName, int zoom, int centerR
     }
 }
 
-/*API_WMS::~API_WMS() {
-    // Si le dataset existe, on le ferme
-    if (m_dataset != nullptr) {
-        //m_dataset->FlushCache();  // Facultatif : vide le cache du dataset avant de le fermer
-        GDALClose(m_dataset);     // Libère la mémoire associée au dataset
-        //m_dataset = nullptr;      // Nullifie le pointeur pour éviter les références ultérieures
-    }
-}*/
+const char* API_WMS:: getOutput(){
+    return output_path;
+}
 
 
 

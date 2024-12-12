@@ -115,6 +115,14 @@ bool Renderer::getIs3D() {
     return controller->get3DMode();
 }
 
+Renderer2D* Renderer::getRenderer2D() {
+    return renderer2d;
+}
+
+Renderer3D* Renderer::getRenderer3D() {
+    return renderer3d;
+}
+
 void Renderer::mouseReleaseEvent(QMouseEvent* event) {
     controller->ControllerMouseReleaseEvent(event);
 }

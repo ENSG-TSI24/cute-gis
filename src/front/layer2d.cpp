@@ -9,6 +9,8 @@ Layer2d::Layer2d(VectorData data)
     polygons = data.GetPolygons();
     polygons2d  = data.Get2DPolygons();
     calculateBoundingBox();
+    attributeHeaders = data.GetAttributName();
+    attributes = data.GetAllAttributData();
 }
 
 Layer2d::~Layer2d(){

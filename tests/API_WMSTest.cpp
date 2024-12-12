@@ -39,7 +39,9 @@ TEST(API_WMSTest, DownloadTileToGeoTiff_FileGenerated) {
     API_WMS flux_valide = API_WMS(url1);
 
     const char* layerName = "OI.OrthoimageCoverage";
-    const char* outputFile = "../data/test_data/tile_orthoimage.tiff";
+
+    const char* outputFile = "../data/geojson/tile_orthoimage.tiff"; // ** changer le lien
+
     int zoom = 1;
     int row = 1;
     int col = 0;

@@ -28,6 +28,9 @@ public:
     Renderer2D* getRenderer2d();
     Renderer3D* getRenderer3d();
 
+    Renderer2D* getRenderer2D();
+    Renderer3D* getRenderer3D();
+
 
     //void reset();
 
@@ -35,7 +38,6 @@ public:
     void calculateBoundingBox();
     BoundingBox boundingBox;
     Controller* controller;
-
 
 protected:
     void initializeGL() override;
