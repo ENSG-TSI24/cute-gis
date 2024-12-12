@@ -1,0 +1,37 @@
+<GMLFeatureClassList>
+  <GMLFeatureClass>
+    <Name>GenericCityObject</Name>
+    <ElementPath>GenericCityObject</ElementPath>
+    <GeometryName>lod3Geometry</GeometryName>
+    <GeometryElementPath>lod3Geometry</GeometryElementPath>
+    <!--MULTIPOLYGON-->
+    <GeometryType>6</GeometryType>
+    <DatasetSpecificInfo>
+      <FeatureCount>1</FeatureCount>
+      <ExtentXMin>507.79585</ExtentXMin>
+      <ExtentXMax>5182785.97805</ExtentXMax>
+      <ExtentYMin>507.79585</ExtentYMin>
+      <ExtentYMax>5182785.97805</ExtentYMax>
+    </DatasetSpecificInfo>
+    <PropertyDefn>
+      <Name>description</Name>
+      <ElementPath>description</ElementPath>
+      <Type>Untyped</Type>
+    </PropertyDefn>
+    <PropertyDefn>
+      <Name>class</Name>
+      <ElementPath>class</ElementPath>
+      <Type>Untyped</Type>
+    </PropertyDefn>
+    <PropertyDefn>
+      <Name>function</Name>
+      <ElementPath>function</ElementPath>
+      <Type>Untyped</Type>
+    </PropertyDefn>
+    <PropertyDefn>
+      <Name>usage</Name>
+      <ElementPath>usage</ElementPath>
+      <Type>Untyped</Type>
+    </PropertyDefn>
+  </GMLFeatureClass>
+</GMLFeatureClassList>

@@ -7,6 +7,8 @@
 #include <fstream>
 #include <gdal/ogrsf_frmts.h>
 #include <glm/glm.hpp>
+#include "datamanagment.h"
+
 
 #include <nlohmann/json.hpp>  //sudo apt install nlohmann-json3-dev
 using json = nlohmann::json;
@@ -29,17 +31,20 @@ struct Feature {
 
 
 
-class CityGMLParser {
-private:
+class CityGMLParser: public DataManagment {
+protected:
     //file dataset
     GDALDataset* dataset;
     OGRCoordinateTransformation* transform = createLambertTransformation();
+    const char* path;
 
     //bounding box
     float xMin, yMin, xMax, yMax, zMin, zMax;
 
     //object list
     std::vector<Feature> features;
+
+    
 
 public:
 
@@ -49,6 +54,7 @@ public:
     //May repair empty or null geometries
     bool executeOgr2Ogr(const std::string& inputFile, const std::string& outputFile);
 
+    CityGMLParser(const char* path);
     CityGMLParser();
     ~CityGMLParser();
 
@@ -56,7 +62,6 @@ public:
     std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> processCoordinates(json& data);
 
     //opening the file
-    bool openFile(const std::string& filePath);
 
     //filling the list of feature
     void parseFeatures();
@@ -80,6 +85,9 @@ public:
         float getYMax() const;
         float getZMin() const;
         float getZMax() const;
+
+        GDALDataset* GetDataset() const;
+
         std::vector<Feature> getFeatures() const;
 
 };
