@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
     connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
-    connect(this, &MainWindow::geometrySelected, renderer->getRenderer2d(), &Renderer2D::highlightGeometry);
+//    connect(this, &MainWindow::geometrySelected, renderer->getRenderer2d(), &Renderer2D::highlightGeometry);
 
 }
 
@@ -348,53 +348,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 }
 
 
-void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow) {
-    auto layer = renderer->getRenderer2d()->lst_layers2d[start];
-    renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + start);
 
-    int adjustedDestination = (destinationRow > start) ? destinationRow - 1 : destinationRow;
-    renderer->getRenderer2d()->lst_layers2d.insert(renderer->getRenderer2d()->lst_layers2d.begin() + adjustedDestination, layer);
-    auto name = name_layers[start];
-    name_layers.erase(name_layers.begin() + start);
-    name_layers.insert(name_layers.begin() + adjustedDestination, name);
-
-    renderer->update();
-}
-
-void MainWindow::showAttributeTable(const Layer2d& layer) {
-    // Créer une fenêtre pour afficher la table attributaire
-    QDialog* dialog = new QDialog(this);
-    dialog->setWindowTitle(QString::fromStdString("Attributs : " + layer.name));
-    dialog->resize(600, 400);
-
-    QVBoxLayout* layout = new QVBoxLayout(dialog);
-
-    // Créer un QTableWidget pour afficher les attributs
-    QTableWidget* tableWidget = new QTableWidget(dialog);
-    tableWidget->setColumnCount(layer.attributes.empty() ? 0 : layer.attributes[0].size());
-    tableWidget->setRowCount(layer.attributes.size());
-
-    // Définir les en-têtes des colonnes
-    QStringList headers;
-    for (const auto& header : layer.attributeHeaders) {
-        headers << QString::fromStdString(header);
-    }
-    tableWidget->setHorizontalHeaderLabels(headers);
-
-    // Remplir les données de la table
-    for (int i = 0; i < layer.attributes.size(); ++i) {
-        const auto& row = layer.attributes[i];
-        for (int j = 0; j < row.size(); ++j) {
-            tableWidget->setItem(i, j, new QTableWidgetItem(QString::fromStdString(row[j])));
-        }
-    }
-
-    tableWidget->resizeColumnsToContents();
-    layout->addWidget(tableWidget);
-
-    dialog->setLayout(layout);
-    dialog->exec(); // Afficher la boîte de dialogue
-}
 
 void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow) {
     auto layer = renderer->getRenderer2d()->lst_layers2d[start];
@@ -442,14 +396,18 @@ void MainWindow::showAttributeTable(const Layer2d& layer) {
 
     dialog->setLayout(layout);
 
-    // Connect the selection change to emit a signal for geometry highlighting
+    // Connect the table's selection signal to directly call the highlightGeometry method
     connect(tableWidget, &QTableWidget::itemSelectionChanged, this, [this, &layer, tableWidget]() {
         QList<QTableWidgetItem*> selectedItems = tableWidget->selectedItems();
         if (!selectedItems.isEmpty()) {
             int row = selectedItems.first()->row();
-            emit geometrySelected(layer.name, row);
+            renderer->getRenderer2d()->highlightGeometry(layer.name, row);
+
+            // Trigger a refresh of the OpenGL widget
+            this->update(); // Or call the appropriate method to refresh the rendering
         }
     });
+
 
     dialog->exec(); // Afficher la boîte de dialogue
 }

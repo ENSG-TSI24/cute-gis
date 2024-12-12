@@ -46,8 +46,8 @@ private:
     int nb_layers = 0;
     void onLayerContextMenuRequested(const QPoint& pos);
 
-signals:
-    void geometrySelected(const std::string& layerName, int rowIndex);
+//signals:
+//    void geometrySelected(const std::string& layerName, int rowIndex);
 
 
 };

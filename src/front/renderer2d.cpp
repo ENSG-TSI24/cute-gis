@@ -45,7 +45,8 @@ void Renderer2D::highlightGeometry(const std::string& layerName, int rowIndex) {
         if (layer.name == layerName) {
             // Highlight the geometry in the specified layer
             layer.highlightGeometry(rowIndex);
-            parent.update(); // Ensure the renderer refreshes the display
+            return; // Stop once the target layer is found
         }
     }
 }
+

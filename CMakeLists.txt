@@ -31,8 +31,6 @@ set(PROJECT_SOURCES
     src/back/citygmlfile.h src/back/citygmlfile.cpp
     src/back/rasterdata.h src/back/rasterdata.cpp
     src/back/datamanagment.h src/back/datamanagment.cpp
-    src/back/dataextract/abstractdatavisitor.h
-    src/back/dataextract/intersectvisitor.h src/back/dataextract/intersectvisitor.cpp
     src/back/vectordata.h src/back/vectordata.cpp
     src/back/API_WMS.h src/back/API_WMS.cpp
     src/back/API_WMTS.h src/back/API_WMTS.cpp
@@ -54,7 +52,6 @@ set(PROJECT_SOURCES
     src/front/geotiffloader.h src/front/geotiffloader.cpp
     src/front/renderer2d.h src/front/renderer2d.cpp
     src/front/renderer3d.h src/front/renderer3d.cpp
-    src/front/AttributeTableWindow.h src/front/AttributeTableWindow.cpp
 )
 
 set(TEST_SOURCES_1
