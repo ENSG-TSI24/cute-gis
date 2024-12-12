@@ -20,12 +20,13 @@ Layer2d::~Layer2d(){
 void Layer2d::renderPoints() {
     glPointSize(5.0f);
     glBegin(GL_POINTS);
-
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     for (size_t i = 0; i < points.size(); ++i) {
         if (static_cast<int>(i) == highlightedIndex) {
-            glColor3f(1.0f, 1.0f, 0.0f); // Yellow for highlight
+            glColor4f(1.0f, 1.0f, 0.0f, opacity); // Yellow for highlight
         } else {
-            glColor3f(0.0f, 0.0f, 1.0f); // Blue for normal points
+            glColor4f(0.0f, 0.0f, 1.0f, opacity); // Blue for normal points
         }
         glVertex3f(points[i].first, points[i].second, 0.0f);
     }
@@ -36,14 +37,16 @@ void Layer2d::renderPoints() {
 
 void Layer2d::renderLinestrings() {
     for (size_t i = 0; i < linestrings.size(); ++i) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         if (static_cast<int>(i) == highlightedIndex) {
             // Highlighted linestring
             glLineWidth(5.0f);
-            glColor3f(1.0f, 1.0f, 0.0f); // Yellow for highlight
+            glColor4f(1.0f, 1.0f, 0.0f, opacity); // Yellow for highlight
         } else {
             // Normal linestring
             glLineWidth(2.0f);
-            glColor3f(0.0f, 1.0f, 0.0f); // Green for normal
+            glColor4f(0.0f, 1.0f, 0.0f, opacity); // Green for normal
         }
 
         glBegin(GL_LINE_STRIP);
@@ -65,11 +68,15 @@ void Layer2d::renderPolygons() {
             const auto& polygon = polygons[i];
 
             for (const auto& ring : polygon) {
+
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
                 // Highlight logic
                 if (static_cast<int>(i) == highlightedIndex) {
                     glEnable(GL_POLYGON_OFFSET_FILL);
                     glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
-                    glColor3f(1.0f, 1.0f, 0.0f); // Yellow for highlight
+                    glColor4f(1.0f, 1.0f, 0.0f, opacity); // Yellow for highlight
                     glBegin(GL_POLYGON);
                     for (const auto& coord : ring) {
                         glVertex3f(std::get<0>(coord), std::get<1>(coord), 0.0f);
@@ -77,13 +84,13 @@ void Layer2d::renderPolygons() {
                     glEnd();
                     glDisable(GL_POLYGON_OFFSET_FILL);
 
-                    glColor3f(1.0f, 1.0f, 0.0f); // Yellow for the contour
+                    glColor4f(1.0f, 1.0f, 0.0f, opacity); // Yellow for the contour
                     glLineWidth(3.0f);
                 } else {
                     // Normal polygon fill
                     glEnable(GL_POLYGON_OFFSET_FILL);
                     glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
-                    glColor3f(1.0f, 0.0f, 0.0f); // Rouge pour le remplissage
+                    glColor4f(1.0f, 0.0f, 0.0f, opacity); // Rouge pour le remplissage
                     glBegin(GL_POLYGON);
                     for (const auto& coord : ring) {
                         glVertex3f(std::get<0>(coord), std::get<1>(coord), 0.0f);
@@ -91,7 +98,7 @@ void Layer2d::renderPolygons() {
                     glEnd();
                     glDisable(GL_POLYGON_OFFSET_FILL);
 
-                    glColor3f(0.0f, 0.0f, 0.0f); // Noir pour les contours
+                    glColor4f(0.0f, 0.0f, 0.0f, opacity); // Noir pour les contours
                     glLineWidth(1.0f);
                 }
 
@@ -118,7 +125,7 @@ void Layer2d::renderPolygons() {
                 if (static_cast<int>(i) == highlightedIndex) {
                     glEnable(GL_POLYGON_OFFSET_FILL);
                     glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
-                    glColor3f(1.0f, 1.0f, 0.0f); // Yellow for highlight
+                    glColor4f(1.0f, 1.0f, 0.0f, opacity); // Yellow for highlight
                     glBegin(GL_POLYGON);
                     for (const auto& coord : ring) {
                         glVertex3f(coord.first, coord.second, 0.0f);
@@ -126,13 +133,13 @@ void Layer2d::renderPolygons() {
                     glEnd();
                     glDisable(GL_POLYGON_OFFSET_FILL);
 
-                    glColor3f(1.0f, 1.0f, 0.0f); // Yellow for the contour
+                    glColor4f(1.0f, 1.0f, 0.0f, opacity); // Yellow for the contour
                     glLineWidth(3.0f);
                 } else {
                     // Normal polygon fill
                     glEnable(GL_POLYGON_OFFSET_FILL);
                     glPolygonOffset(1.0f, 1.0f); // Décalage Z pour éviter les conflits
-                    glColor3f(1.0f, 0.0f, 0.0f); // Rouge pour le remplissage
+                    glColor4f(1.0f, 0.0f, 0.0f, opacity); // Rouge pour le remplissage
                     glBegin(GL_POLYGON);
                     for (const auto& coord : ring) {
                         glVertex3f(coord.first, coord.second, 0.0f);
@@ -140,7 +147,7 @@ void Layer2d::renderPolygons() {
                     glEnd();
                     glDisable(GL_POLYGON_OFFSET_FILL);
 
-                    glColor3f(0.0f, 0.0f, 0.0f); // Noir pour les contours
+                    glColor4f(0.0f, 0.0f, 0.0f, opacity); // Noir pour les contours
                     glLineWidth(1.0f);
                 }
 
@@ -228,7 +235,7 @@ void Layer2d::highlightGeometry(int rowIndex) {
         highlightedIndex = -1; // Clear highlight if the index is invalid
     }
 
-    glColor3f(1.0f, 1.0f, 0.0f); // Highlight color (yellow)
+    glColor4f(1.0f, 1.0f, 0.0f, opacity); // Highlight color (yellow)
 
     // Highlight point
     if (!points.empty() && rowIndex < points.size()) {
