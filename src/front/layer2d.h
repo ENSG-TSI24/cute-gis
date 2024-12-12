@@ -3,16 +3,13 @@
 
 #include <vector>
 #include <utility>
-#include <string>
-#include <map>
-#include <QJsonObject>
 #include "../back/vectordata.h"
 #include "controller.h"
 
 class Layer2d
 {
 public:
-    Layer2d(VectorData data, const std::string& geoJsonPath = "");
+    Layer2d(VectorData data);
     ~Layer2d();
     void renderPoints();
     void renderLinestrings();
@@ -21,17 +18,14 @@ public:
     BoundingBox boundingBox;
     bool isVisible = true;
     std::string name = "no name";
-
-    std::string geoJsonPath;
-    std::vector<QJsonObject> properties;
-
-    void loadPropertiesFromGeoJson();
+    std::vector<std::vector<std::string>> attributes;
+    std::vector<std::string> attributeHeaders;
 
 private:
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;
-    std::vector<std::vector<std::vector<std::pair<float, float>>>> polygons;
+    std::vector<std::vector<std::vector<std::tuple<float, float, float>>>> polygons;
+    std::vector<std::vector<std::vector<std::pair<float, float>>> > polygons2d;
 };
 
 #endif // LAYER2D_H
-

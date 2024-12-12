@@ -7,20 +7,16 @@
 #include "./ui_mainwindow.h"
 #include "renderer.h"
 #include "objectloader.h"
-#include "AttributeTableWindow.h"
 
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QListWidgetItem>
-
+#include "layer2d.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
-
-class GeoJsonViewer;
 
 class MainWindow : public QMainWindow
 {
@@ -32,10 +28,11 @@ public:
     void clearLayout(QLayout *layout);
     void onCheckboxToggled(bool checked, std::string name);
     void onToggle3DMode();
+    void onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow);
+    void showAttributeTable(const Layer2d& layer);
 
 private slots:
     void on_actionFlux_Data_triggered();
-    void onLayerContextMenuRequested(const QPoint& pos);
 
 private:
     Ui::MainWindow *ui;
@@ -43,14 +40,11 @@ private:
     Renderer* renderer;
     QTimer* refreshTimer;
     void onOpenFile();
+    void onOpenFile_stream(const char* chemin);
     ObjectLoader *objectLoader = nullptr;
     std::vector<std::string> name_layers;
     int nb_layers = 0;
-
-    QListWidget* layerListWidget = nullptr;
-
-
-    void openAttributeTable(QListWidgetItem* item);
+    void onLayerContextMenuRequested(const QPoint& pos);
 
 };
 

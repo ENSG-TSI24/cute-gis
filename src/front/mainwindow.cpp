@@ -27,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
     connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
+    // connect(ui->actionAttributeTable, &QAction::triggered, this, &MainWindow::showAttributeTable);
+
 
 }
 
@@ -345,3 +347,4 @@ void MainWindow::openAttributeTable(QListWidgetItem* item) {
     attrWindow->populateTable(tableData, headers);
     attrWindow->exec();
 }
+
