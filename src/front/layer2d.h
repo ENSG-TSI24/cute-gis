@@ -15,6 +15,10 @@ public:
     void renderLinestrings();
     void renderPolygons();
     void calculateBoundingBox();
+    // Highlight specific geometry
+    void highlightGeometry(int rowIndex);
+
+    // Properties
     BoundingBox boundingBox;
     bool isVisible = true;
     std::string name = "no name";

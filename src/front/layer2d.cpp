@@ -159,3 +159,42 @@ void Layer2d::calculateBoundingBox() {
     this->boundingBox = {minX, maxX, minY, maxY};
     //std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
 }
+
+
+
+
+void Layer2d::highlightGeometry(int rowIndex) {
+    if (rowIndex < 0 || rowIndex >= attributes.size()) return;
+
+    glColor3f(1.0f, 1.0f, 0.0f); // Highlight color (yellow)
+
+    // Highlight point
+    if (!points.empty() && rowIndex < points.size()) {
+        glPointSize(10.0f);
+        glBegin(GL_POINTS);
+        glVertex3f(points[rowIndex].first, points[rowIndex].second, 0.0f);
+        glEnd();
+    }
+
+    // Highlight linestring
+    if (!linestrings.empty() && rowIndex < linestrings.size()) {
+        glLineWidth(5.0f);
+        glBegin(GL_LINE_STRIP);
+        for (const auto& coord : linestrings[rowIndex]) {
+            glVertex3f(coord.first, coord.second, 0.0f);
+        }
+        glEnd();
+    }
+
+    // Highlight polygon
+    if (!polygons.empty() && rowIndex < polygons.size()) {
+        glLineWidth(5.0f);
+        for (const auto& ring : polygons[rowIndex]) {
+            glBegin(GL_LINE_LOOP);
+            for (const auto& coord : ring) {
+                glVertex3f(std::get<0>(coord), std::get<1>(coord), 0.0f);
+            }
+            glEnd();
+        }
+    }
+}

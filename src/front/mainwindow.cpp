@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
     connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
+    connect(this, &MainWindow::geometrySelected, renderer->getRenderer2d(), &Renderer2D::highlightGeometry);
 
 }
 
@@ -392,6 +393,16 @@ void MainWindow::showAttributeTable(const Layer2d& layer) {
     layout->addWidget(tableWidget);
 
     dialog->setLayout(layout);
+
+    // Connect the selection change to emit a signal for geometry highlighting
+    connect(tableWidget, &QTableWidget::itemSelectionChanged, this, [this, &layer, tableWidget]() {
+        QList<QTableWidgetItem*> selectedItems = tableWidget->selectedItems();
+        if (!selectedItems.isEmpty()) {
+            int row = selectedItems.first()->row();
+            emit geometrySelected(layer.name, row);
+        }
+    });
+
     dialog->exec(); // Afficher la boîte de dialogue
 }
 

@@ -35,3 +35,14 @@ void Renderer2D::reset2D(){
         parent.update();
     }
 }
+
+
+void Renderer2D::highlightGeometry(const std::string& layerName, int rowIndex) {
+    for (auto& layer : lst_layers2d) {
+        if (layer.name == layerName) {
+            // Highlight the geometry in the specified layer
+            layer.highlightGeometry(rowIndex);
+            parent.update(); // Ensure the renderer refreshes the display
+        }
+    }
+}
