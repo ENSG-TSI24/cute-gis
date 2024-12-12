@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
     connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
+//    connect(this, &MainWindow::geometrySelected, renderer->getRenderer2d(), &Renderer2D::highlightGeometry);
 
 }
 
@@ -347,6 +348,8 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 }
 
 
+
+
 void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow) {
     auto layer = renderer->getRenderer2d()->lst_layers2d[start];
     renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + start);
@@ -392,6 +395,20 @@ void MainWindow::showAttributeTable(const Layer2d& layer) {
     layout->addWidget(tableWidget);
 
     dialog->setLayout(layout);
+
+    // Connect the table's selection signal to directly call the highlightGeometry method
+    connect(tableWidget, &QTableWidget::itemSelectionChanged, this, [this, &layer, tableWidget]() {
+        QList<QTableWidgetItem*> selectedItems = tableWidget->selectedItems();
+        if (!selectedItems.isEmpty()) {
+            int row = selectedItems.first()->row();
+            renderer->getRenderer2d()->highlightGeometry(layer.name, row);
+
+            // Trigger a refresh of the OpenGL widget
+            this->update(); // Or call the appropriate method to refresh the rendering
+        }
+    });
+
+
     dialog->exec(); // Afficher la boîte de dialogue
 }
 
@@ -445,4 +462,3 @@ void MainWindow::setupCheckboxes() {
     ui->layer_manager->setLayout(layout);
 
 }
-

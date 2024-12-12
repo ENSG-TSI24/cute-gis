@@ -63,7 +63,7 @@
      <x>0</x>
      <y>0</y>
      <width>1060</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuhere">
@@ -102,9 +102,9 @@
     <addaction name="menuGeometric_Operations"/>
     <addaction name="actionIntersection_Calculation"/>
    </widget>
-   <widget class="QMenu" name="menuRastor">
+   <widget class="QMenu" name="menuRaster">
     <property name="title">
-     <string>Rastor</string>
+     <string>Raster</string>
     </property>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -129,7 +129,7 @@
    <addaction name="menuhere"/>
    <addaction name="menuedition"/>
    <addaction name="menuProjet"/>
-   <addaction name="menuRastor"/>
+   <addaction name="menuRaster"/>
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

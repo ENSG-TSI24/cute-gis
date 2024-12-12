@@ -12,6 +12,7 @@ public:
     void paintGl2D();
     void calculateBoundingBox();
     void reset2D();
+    void highlightGeometry(const std::string& layerName, int rowIndex);
 
     std::vector<LayerRaster> lst_layersraster;
     std::vector<Layer2d> lst_layers2d;

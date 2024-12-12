@@ -6,8 +6,6 @@
 #include "../back/vectordata.h"
 #include "controller.h"
 
-
-
 class Layer2d
 {
 public:
@@ -17,7 +15,12 @@ public:
     void renderLinestrings();
     void renderPolygons();
     void calculateBoundingBox();
+    // Highlight specific geometry
+    void highlightGeometry(int rowIndex);
+
+    // Properties
     BoundingBox boundingBox;
+    int highlightedIndex = -1;
     bool isVisible = true;
     std::string name = "no name";
     std::vector<std::vector<std::string>> attributes;

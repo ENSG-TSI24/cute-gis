@@ -299,7 +299,7 @@ std::vector<std::vector<std::string>> VectorData::GetAllAttributData() {
             column.emplace_back(oField.GetAsString());
             //std::cout << oField.GetAsString() << std::endl;
         }
-        row.emplace_back(column);
+        row.emplace_back(std::move(column));
     }
     GDALClose(dataset);
     return row;
