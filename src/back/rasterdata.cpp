@@ -19,10 +19,7 @@ RasterData::RasterData(const char* path) : filePath(path), width(0), height(0), 
 
 RasterData::~RasterData()
 {
-    if (image)
-    {
-        delete image;
-    }
+
 }
 
 int RasterData::GetWidth() const {
@@ -125,17 +122,17 @@ std::vector<std::pair<double, double>> RasterData::GetGeoCoordinatesForPixels(co
 }
 
 
-QImage* RasterData::GetImage() {
+QImage RasterData::GetImage() {
     if (!filePath) {
         std::cerr << "No file path provided." << std::endl;
-        return nullptr;
+
     }
 
     GDALAllRegister();
     GDALDataset* dataset = static_cast<GDALDataset*>(GDALOpen(filePath, GA_ReadOnly));
     if (!dataset) {
         std::cerr << "Failed to open raster file." << std::endl;
-        return nullptr;
+
     }
 
     int width = dataset->GetRasterXSize();
@@ -145,7 +142,7 @@ QImage* RasterData::GetImage() {
     if (bands < 3) { // We need at least 3 bands for the raster in color
         std::cerr << "Not enough raster bands (expected 3 for RGB)." << std::endl;
         GDALClose(dataset);
-        return nullptr;
+
     }
 
     // Buffer for 3 bands
@@ -157,7 +154,7 @@ QImage* RasterData::GetImage() {
         dataset->GetRasterBand(3)->RasterIO(GF_Read, 0, 0, width, height, buffer.data() + 2 * width * height, width, height, GDT_Byte, 0, 0) != CE_None) {
         std::cerr << "Failed to read RGB bands." << std::endl;
         GDALClose(dataset);
-        return nullptr;
+
     }
 
     const size_t maxLinesToDisplay = 3; // Limite du nombre de lignes à afficher
@@ -204,7 +201,7 @@ QImage* RasterData::GetImage() {
 
     GDALClose(dataset);
 
-    return qImage.release();
+    return *qImage.release();
 }
 
 void RasterData::displayData()
