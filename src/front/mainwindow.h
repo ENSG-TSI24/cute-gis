@@ -6,6 +6,7 @@
 
 #include "./ui_mainwindow.h"
 #include "renderer.h"
+#include "objectloader.h"
 
 #include <QVBoxLayout>
 #include <QCheckBox>
@@ -27,8 +28,11 @@ public:
     ~MainWindow();
     void clearLayout(QLayout *layout);
     void onCheckboxToggled(bool checked, std::string name);
+    void onToggle3DMode();
+    void onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow);
 
-
+private slots:
+    void on_actionFlux_Data_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -39,6 +43,7 @@ private:
     ObjectLoader *objectLoader = nullptr;
     std::vector<std::string> name_layers;
     int nb_layers = 0;
+    void onLayerContextMenuRequested(const QPoint& pos);
 
 };
 

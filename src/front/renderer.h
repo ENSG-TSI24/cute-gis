@@ -7,11 +7,12 @@
 #include <utility>
 #include <QMatrix4x4>
 #include "controller.h"
-#include "objectloader.h"
 #include <QGraphicsSceneMouseEvent>
-#include "layer2d.h"
 
 #include <QMouseEvent>
+
+class Renderer2D;
+class Renderer3D;
 
 class Renderer : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -22,17 +23,15 @@ public:
 
     void setIs3D(bool enabled);
 
-    void setObjectLoader(ObjectLoader* loader);
-    //void reset();
-    void reset2D();
-    void reset3D();
 
+    //void reset();
+
+    bool getIs3D();
     void calculateBoundingBox();
     BoundingBox boundingBox;
     Controller* controller;
-    std::vector<Layer2d> lst_layers2d;
-
-
+    Renderer2D* renderer2d;
+    Renderer3D* renderer3d;
 
 protected:
     void initializeGL() override;
@@ -43,12 +42,6 @@ protected:
     void wheelEvent(QWheelEvent* event) override;
 
 private:
-
-    void renderLayers2d();
-    void paintGl3D();
-    void paintGl2D();
-
-    ObjectLoader* objectLoader;
     bool is3D;
 
     void mousePressEvent(QMouseEvent* event) override;

@@ -1,4 +1,7 @@
 #include "renderer.h"
+#include "renderer2d.h"
+#include "renderer3d.h"
+
 #include <QMatrix4x4>
 #include <QDebug>
 #include <QOpenGLFunctions>
@@ -7,18 +10,19 @@
 
 
 Renderer::Renderer(QWidget* parent)
-    : QOpenGLWidget(parent), objectLoader(nullptr) {
+    : QOpenGLWidget(parent) {
     controller = new Controller(this);
+    qDebug() << "Controller created: " << controller;
+    renderer2d = new Renderer2D(*this);
+    renderer3d = new Renderer3D(*this);
     setFocusPolicy(Qt::StrongFocus);
     is3D = false;
-
 }
 
 Renderer::~Renderer() {
-    if (objectLoader) {
-        delete objectLoader;
-    }
     delete controller;
+    delete renderer2d;
+    delete renderer3d;
 }
 
 void Renderer::keyPressEvent(QKeyEvent *event){
@@ -57,81 +61,26 @@ void Renderer::resizeGL(int w, int h) {
     glLoadMatrixf(projectionMatrix.constData());
 }
 
-void Renderer::paintGl2D(){
-    controller->getCamera().update();
-    renderLayers2d();
-}
-
-void Renderer::paintGl3D(){
-    if (objectLoader) {
-            controller->set3DMode(true);
-
-            QMatrix4x4 modelMatrix;
-            modelMatrix.translate(0.0f, 0.0f, -3.0f);
-            modelMatrix.rotate(objectLoader->getAngle(), 0.0f, 1.0f, 0.0f);
-            modelMatrix.scale(0.005f);
-
-            QMatrix4x4 modelViewMatrix = controller->getCamera().getModelViewMatrix(modelMatrix);
-            glMatrixMode(GL_MODELVIEW);
-            glLoadMatrixf(modelViewMatrix.constData());
-
-            glColor3f(1.0f, 1.0f, 0.0f);
-            glBegin(GL_TRIANGLES);
-
-            const auto& vertices = objectLoader->getVertices();
-            for (const auto& vertex : vertices) {
-                glVertex3f(vertex.x, vertex.y, vertex.z);
-            }
-            glEnd();
-        } else {
-            qWarning() << "No ObjectLoader assigned for 3D rendering.";
-        }
-}
 
 void Renderer::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (!is3D) {
-        paintGl2D();
-    } else paintGl3D();
+        controller->getCamera().update();
+        renderer2d->paintGl2D();
+    } else {
+        if (renderer3d->getObjectLoader()) renderer3d->paintGl3D();
+    };
 }
 
-void Renderer::renderLayers2d(){
-    for (auto& layer: lst_layers2d){
-        if (layer.isVisible){
-            layer.renderPoints();
-            layer.renderLinestrings();
-            layer.renderPolygons();
-        }
-    }
-}
 
-void Renderer::setObjectLoader(ObjectLoader* loader) {
-    if (objectLoader) {
-        delete objectLoader;
-    }
-    objectLoader = loader;
-}
 
 void Renderer::setIs3D(bool enabled) {
     is3D = enabled;
     controller->set3DMode(enabled);
 }
 
-void Renderer::reset3D(){
-    if (objectLoader) {
-        delete objectLoader;
-        objectLoader = nullptr;
-        this->controller->getCamera().resetCamera();
-        update();
-    }
-}
-
-void Renderer::reset2D(){
-    if(lst_layers2d.size()!=0 ){
-        lst_layers2d.clear();
-        this->controller->getCamera().resetCamera();
-        update();
-    }
+bool Renderer::getIs3D() {
+    return controller->get3DMode();
 }
 
 void Renderer::mouseReleaseEvent(QMouseEvent* event) {
