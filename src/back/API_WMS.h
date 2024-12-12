@@ -10,9 +10,7 @@
 class API_WMS: public DataProvider {
 public:
     API_WMS(const char* link) ;
-    //~API_WMS() ;
 
-    // Ouvre un flux WMS
     void loadDataset();
 
     // Télécharge une tuile spécifique et la convertit en GeoTIFF
@@ -20,9 +18,11 @@ public:
 
     // Charge une grille de tuiles autour d'une position donnée et les convertit en GeoTIFF
     void loadTileGridToGeoTiff(const char* layerName, int zoom, int centerRow, int centerCol, int gridSize, const char* outputPrefix);
+    const char* getOutput();
 
 protected:
     const char* url;
+    const char* output_path ;
 };
 
 #endif // API_WMS_H

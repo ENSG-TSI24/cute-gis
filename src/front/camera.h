@@ -1,5 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
+#define GLM_ENABLE_EXPERIMENTAL
 
 #include "glm/glm.hpp"
 #include "glm/gtx/transform.hpp"
@@ -12,6 +13,9 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
+
+
+#include <glm/gtc/quaternion.hpp>
 
 struct BoundingBox {
     float minX, maxX, minY, maxY;
@@ -81,6 +85,15 @@ public:
     * the fov
     *
     */
+    void moveFront3D(float step);
+    void moveBack3D(float step);
+    void moveLeft3D(float step);
+    void moveRight3D(float step);
+    void moveDown3D(float step);
+    void moveUp3D(float step);
+
+    void rotateVertAng(float angle);
+    void rotateHorAng(float angle);
 
     void update();
     float speedFactor;
@@ -89,12 +102,13 @@ public:
     glm::vec3 getPosition();
     QMatrix4x4 getViewMatrix(); // Matrice de vue pour le mode 3D
     QMatrix4x4 getProjectionMatrix(int screenWidth, int screenHeight); // Projection 2D/3D
-    QMatrix4x4 getModelViewMatrix(const QMatrix4x4& modelMatrix);
 
     void resetCamera();
     void centerOnBoundingBox(const BoundingBox& bbox);
     int getRWidth();
     int getRHeight();
+    float getHorAng();
+    float getVertAng();
     void setRWidth(int width);
     void setRHeight(int height);
 
@@ -102,6 +116,11 @@ private:
     glm::vec3 position;
     int renderer_width;
     int renderer_height;
+    glm::vec3 forward;
+    glm::vec3 right;
+    glm::vec3 up;
+    float VertAng=0;
+    float HorAng=0;
 };
 
 #endif // CAMERA_H
