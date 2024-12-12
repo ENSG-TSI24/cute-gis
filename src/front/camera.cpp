@@ -49,12 +49,35 @@ void Camera::moveRight(float step){
     this->position[0] += step*(position[2]*0.1);
 }
 
+void Camera::moveUp3D(float step){
+    this->position += step*this->up;
+}
+
+void Camera::moveDown3D(float step){
+    this->position -= step*this->up;
+}
+
+void Camera::moveFront3D(float step){
+    this->position += step*this->forward;
+}
+
+void Camera::moveBack3D(float step){
+
+    this->position -= step*this->forward;
+}
+
+void Camera::moveLeft3D(float step){
+    this->position += step*this->right;
+}
+
+void Camera::moveRight3D(float step){
+    this->position -= step*this->right;
+}
+
 void Camera::setZ(float zChange) {
     float scale = 1.0f + this->speedFactor;
     this->position[2] *= (zChange > 0) ? scale : 1.0f / scale;
     this->position[2] = std::max(this->position[2], 0.001f);
-
-    //std::cout << "Camera Z position: " << this->position[2] << std::endl;
 }
 
 
@@ -62,23 +85,71 @@ float Camera::getZ(){
     return position[2];
 }
 
+float Camera::getVertAng(){
+    return VertAng;
+}
+
+float Camera::getHorAng(){
+    return HorAng;
+}
+
+void Camera::rotateHorAng(float angle){
+    this->HorAng+=angle;
+    if(HorAng > 360){
+        HorAng -=  360;
+    }
+    if(HorAng < 0){
+        HorAng += 360;
+    }
+}
+
+void Camera::rotateVertAng(float angle){
+    this->VertAng+=angle;
+    if(VertAng > 89.9){
+        VertAng =  89.9;
+    }
+    if(VertAng < -89.9){
+        VertAng = 89.9;
+    }
+}
 
 QMatrix4x4 Camera::getViewMatrix() {
-    glm::vec3 position = this->getPosition();
-    QVector3D cameraPos(position.x, position.y, 3.0f);
-    QVector3D target(position.x, position.y, 0.0f);
-    QVector3D upVector(0.0f, 1.0f, 0.0f);
+    // Convertir les angles de rotation en radians
+    float pitchRad = glm::radians(this->VertAng); // Rotation autour de X
+    float rollRad = glm::radians(this->HorAng);   // Rotation autour de Z
 
+    glm::vec3 forward;
+    forward.x = cos(pitchRad) * sin(rollRad);
+    forward.z = sin(pitchRad);
+    forward.y = cos(pitchRad) * cos(rollRad);
+
+    // Calculer les autres axes (right, up) à partir de la direction forward
+    glm::vec3 right = glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), forward)); // Calculer l'axe droit (X)
+    glm::vec3 up = glm::normalize(glm::cross(forward, right));
+
+    // Récupérer la position de la caméra
+    glm::vec3 position = this->getPosition();
+
+    // Définir la cible à une certaine distance devant la caméra
+    glm::vec3 target = position + forward;
+
+    // Construction de la matrice de vue avec QMatrix4x4
+    QVector3D cameraPos(position.x, position.y, position.z);
+    QVector3D targetQ3D(target.x, target.y, target.z);
+    QVector3D upQ3D(up.x, up.y, up.z);
+
+    // Mettre à jour les directions locales de la caméra (facultatif)
+    this->forward = forward;
+    this->right = right;
+    this->up = up;
+
+    // Créer la matrice de vue en utilisant lookAt
     QMatrix4x4 viewMatrix;
-    viewMatrix.lookAt(cameraPos, target, upVector);
+    viewMatrix.lookAt(cameraPos, targetQ3D, upQ3D);
+
     return viewMatrix;
 }
 
-
-QMatrix4x4 Camera::getModelViewMatrix(const QMatrix4x4& modelMatrix) {
-    QMatrix4x4 viewMatrix = getViewMatrix();
-    return viewMatrix * modelMatrix;
-}
 void Camera::update() {
 
     // Passer en mode projection
@@ -106,25 +177,6 @@ void Camera::update() {
     // Passer en mode modèle
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-    /*
-    // Configurer la projection 3D standard
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    // Vous pouvez ajuster les valeurs pour adapter la perspective
-    gluPerspective(45.0f, 1.0f, 0.1f, 100.0f);  // Perspective classique pour 3D (par exemple)
-
-    // Configurer la matrice de modèle/vue
-    QMatrix4x4 modelMatrix;
-    modelMatrix.translate(0.0f, 0.0f, -position[2]);  // Caméra positionnée en Z
-
-    QMatrix4x4 modelViewMatrix;
-    modelViewMatrix.translate(-position[0], -position[1], 0.0f);  // Centrage de la caméra
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(modelViewMatrix.constData());
-*/
-
 }
 
 void Camera::centerOnBoundingBox(const BoundingBox& bbox) {
@@ -174,4 +226,5 @@ void Camera::setRHeight(int height){
 void Camera::setRWidth(int width){
     this->renderer_width=width;
 }
+
 

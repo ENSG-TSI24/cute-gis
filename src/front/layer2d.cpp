@@ -96,7 +96,7 @@ void Layer2d::renderPolygons() {
             glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
             glBegin(GL_LINE_LOOP);
             for (const auto& coord : ring) {
-                glVertex3f(coord.first, coord.second, 0.0f);
+                glVertex3f(coord.first, coord.second,0.0f);
             }
             glEnd();
         }
