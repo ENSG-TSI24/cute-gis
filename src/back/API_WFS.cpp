@@ -262,4 +262,3 @@ const char* API_WFS:: getOutput(){
     return output_path;
 }
 
-

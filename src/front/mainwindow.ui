@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1060</width>
-    <height>607</height>
+    <width>1233</width>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,6 +50,16 @@
       <property name="flat">
        <bool>false</bool>
       </property>
+      <widget class="QListWidget" name="listWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>381</width>
+         <height>551</height>
+        </rect>
+       </property>
+      </widget>
      </widget>
     </item>
     <item row="0" column="1" rowspan="2" colspan="2">
@@ -62,8 +72,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1060</width>
-     <height>22</height>
+     <width>1233</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuhere">

@@ -1,4 +1,3 @@
-
 #ifndef WMTSDATA_H
 #define WMTSDATA_H
 
