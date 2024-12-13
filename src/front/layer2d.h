@@ -3,9 +3,19 @@
 
 #include <vector>
 #include <utility>
+#include <string>
+#include <tuple> // For std::tuple
+#include <cstdlib> // For std::srand and std::rand
+#include <ctime>   // For std::time
 #include "../back/vectordata.h"
 #include "boundingbox.h"
 #include "layerbase.h"
+
+
+// Struct to represent a color
+struct Color {
+    float r, g, b;
+};
 
 class Layer2d : public LayerBase
 {
@@ -49,6 +59,8 @@ private:
     std::vector<std::vector<std::pair<float, float>>> linestrings;
     std::vector<std::vector<std::vector<std::tuple<float, float, float>>>> polygons;
     std::vector<std::vector<std::vector<std::pair<float, float>>> > polygons2d;
+
+    Color color;
 };
 
 #endif // LAYER2D_H
