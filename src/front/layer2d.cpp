@@ -1,11 +1,12 @@
 #include "layer2d.h"
+#include "src/back/session.h"
 #include <QOpenGLFunctions>
 #include <cstdlib> 
 #include <ctime> 
 
 
 Layer2d::Layer2d(VectorData data)
-{
+{ 
     points = data.GetPoints();
     linestrings = data.GetLineStrings();
     polygons = data.GetPolygons();
@@ -13,6 +14,7 @@ Layer2d::Layer2d(VectorData data)
     boundingBox = calculateBoundingBox();
     attributeHeaders = data.GetAttributName();
     attributes = data.GetAllAttributData();
+    name = data.GetPath();
         
     // Seed the random generator
     std::srand(static_cast<unsigned int>(std::time(nullptr)));

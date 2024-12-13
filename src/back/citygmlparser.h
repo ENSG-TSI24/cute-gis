@@ -8,6 +8,7 @@
 #include <gdal/ogrsf_frmts.h>
 #include <glm/glm.hpp>
 #include "datamanagment.h"
+#define GLM_ENABLE_EXPERIMENTAL
 
 
 #include <nlohmann/json.hpp>  //sudo apt install nlohmann-json3-dev
@@ -68,7 +69,6 @@ public:
 
     //export in obj
     void exportToObj(float s, const std::string& filePath);
-    void exportToMtl(const std::string& filePath) const;
 
     //print the field of one feature
     void printFeature(const Feature& feature) const;

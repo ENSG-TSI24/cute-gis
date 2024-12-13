@@ -4,6 +4,7 @@
 #include "layer2d.h"
 #include "layerraster.h"
 #include "renderer.h"
+#include "../back/session.h"
 
 class Renderer2D {
 public:
@@ -13,8 +14,10 @@ public:
     void reset2D();
     void highlightGeometry(const std::string& layerName, int rowIndex);
     std::vector<std::shared_ptr<LayerBase>> lst_layers2d;
+    Session session;
 
 private:
+
     void renderLayers2d();
 };
 

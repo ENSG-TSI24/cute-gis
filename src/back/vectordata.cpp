@@ -270,7 +270,7 @@ std::vector<std::string> VectorData::GetAttributName() {
     for (int i = 0; i < field_count; ++i) {
         const char *field_name = layer->GetLayerDefn()->GetFieldDefn(i)->GetNameRef();//On récupère le nom de chaque champs et on le passe en char
         //std::cout << field_name << std::endl;
-        header_name.emplace_back(field_name);
+        header_name.emplace_back(std::move(field_name));
     }
     GDALClose(dataset);
     return header_name;

@@ -16,8 +16,7 @@ RasterData::RasterData(const char* path) : filePath(path), width(0), height(0), 
         std::cerr << "Failed to open raster file: " << path << std::endl;
     }
 }
-
-RasterData::~RasterData(){}
+RasterData::~RasterData(){};
 
 int RasterData::GetWidth() const {
     return width;
@@ -151,33 +150,6 @@ QImage RasterData::GetImage() {
     }
 
     const size_t maxLinesToDisplay = 3; // Limite du nombre de lignes à afficher
-
-    //////////COUT TO CHECK THE BUFFER DATA //////////////
-    /*
-    std::cout << "Red Band (limited display):" << std::endl;
-    for (size_t i = 0; i < width * height; ++i) {
-        if (i / width >= maxLinesToDisplay) break; // Arrêter après 'maxLinesToDisplay' lignes
-        if (i > 0 && i % width == 0) std::cout << std::endl; // Saut de ligne après chaque ligne
-        std::cout << static_cast<int>(buffer[i]) << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Green Band (limited display):" << std::endl;
-    for (size_t i = 0; i < width * height; ++i) {
-        if (i / width >= maxLinesToDisplay) break; // Arrêter après 'maxLinesToDisplay' lignes
-        if (i > 0 && i % width == 0) std::cout << std::endl;
-        std::cout << static_cast<int>(buffer[i + width * height]) << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Blue Band (limited display):" << std::endl;
-    for (size_t i = 0; i < width * height; ++i) {
-        if (i / width >= maxLinesToDisplay) break; // Arrêter après 'maxLinesToDisplay' lignes
-        if (i > 0 && i % width == 0) std::cout << std::endl;
-        std::cout << static_cast<int>(buffer[i + 2 * width * height]) << " ";
-    }
-    std::cout << std::endl;
-    */
 
     // QImage Building
     auto qImage = std::make_unique<QImage>(width, height, QImage::Format_RGB888);

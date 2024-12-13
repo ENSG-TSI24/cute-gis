@@ -8,6 +8,9 @@
 #include <cstdlib> // For std::srand and std::rand
 #include <ctime>   // For std::time
 #include "../back/vectordata.h"
+
+#include "controller.h"
+#include "../back/session.h"
 #include "boundingbox.h"
 #include "layerbase.h"
 
@@ -18,6 +21,7 @@ struct Color {
 };
 
 class Layer2d : public LayerBase
+
 {
 public:
     explicit Layer2d(VectorData data);
