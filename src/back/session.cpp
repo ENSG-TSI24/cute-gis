@@ -1,17 +1,21 @@
 #include "session.h"
-#include <fstream>
-#include <vector>
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 
 Session::Session() {
     m_json = std::make_shared<nlohmann::json>();
-    std::ifstream file("../data/session.json");
-    if (file.peek() != std::ifstream::traits_type::eof()) {
-        file >> *m_json;
+    std::ifstream infile("../data/session.json");
+    if (infile.peek() != std::ifstream::traits_type::eof()) {
+        infile >> *m_json;
     }
+    infile.close();
 }
+
 Session::~Session() {
 }
+
+
 
 void Session::updateFile() {
     std::ofstream file("../data/session.json");
