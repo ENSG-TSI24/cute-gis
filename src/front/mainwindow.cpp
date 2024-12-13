@@ -36,8 +36,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
     connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
-//    connect(this, &MainWindow::geometrySelected, renderer->getRenderer2d(), &Renderer2D::highlightGeometry);
-
 }
 
 MainWindow::~MainWindow()
@@ -109,6 +107,7 @@ void MainWindow::onOpenFile()
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->getRenderer3d()->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
+
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
             renderer->reset3D();
             RasterData geo = RasterData(filedata);
@@ -170,7 +169,6 @@ void MainWindow::onOpenFile_stream(const char* chemin)
             //add layer2d
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 
-
             VectorData geo(filedata);
             std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
             renderer->getRenderer2d()->lst_layers2d.push_back(vector);
@@ -192,6 +190,7 @@ void MainWindow::onOpenFile_stream(const char* chemin)
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->getRenderer3d()->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
+
         } else if (stream_path.endsWith(".tif", Qt::CaseInsensitive) || stream_path.endsWith(".tiff", Qt::CaseInsensitive)) {
             renderer->reset3D();
             RasterData geo = RasterData(filedata);
@@ -208,6 +207,7 @@ void MainWindow::onOpenFile_stream(const char* chemin)
 
             renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
+
         } else {
                 throw std::runtime_error("Unsupported file format!");
         }
@@ -292,10 +292,6 @@ void MainWindow::clearLayout(QLayout *layout) {
 
 void MainWindow::onCheckboxToggled(bool checked, std::string name) {
 
-    std::cout<<"-------------- checkbox clicked --------------"<<std::endl;
-    std::cout<<checked<<std::endl;
-    std::cout<<name<<std::endl;
-
     for (auto& layer : renderer->getRenderer2d()->lst_layers2d) {
         if (layer->getName() == name) {
             layer->setIsVisible(checked);
@@ -305,6 +301,7 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
 
 void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QListWidget* listWidget = qobject_cast<QListWidget*>(sender());
+
     if (!listWidget) return;
 
     QListWidgetItem* item = listWidget->itemAt(pos);
@@ -455,13 +452,12 @@ void MainWindow::showAttributeTable(const std::shared_ptr<LayerBase>& layer) {
 void MainWindow::setupCheckboxes() {
 
     // Clear the layout_manager
-    if (ui->layer_manager->layout()) {
-        clearLayout(ui->layer_manager->layout());
-        delete ui->layer_manager->layout();
+    if (ui->listWidget) {
+        ui->listWidget->clear();
     }
 
     // Create list of checkbox
-    QListWidget* listWidget = new QListWidget(ui->layer_manager);
+    QListWidget* listWidget = ui->listWidget;
     listWidget->setDragDropMode(QAbstractItemView::InternalMove);
     listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
@@ -483,7 +479,6 @@ void MainWindow::setupCheckboxes() {
 
     // Set checkbox style
     listWidget->setSpacing(10);
-    listWidget->setMaximumWidth(300);
     listWidget->setStyleSheet("QListWidget::item { padding: 5px; font-family: Sans Serif; font-size: 10pt; }");
 
     // setting police size
@@ -491,13 +486,5 @@ void MainWindow::setupCheckboxes() {
     font.setPointSize(15);
     listWidget->setFont(font);
 
-    // Set layer_manager main layout
-    auto* layout = new QVBoxLayout(ui->layer_manager);
-    layout->setSizeConstraint(QLayout::SetMaximumSize);
-    layout->setContentsMargins(10, 10, 10, 10);
-    layout->addWidget(listWidget);
-    layout->addStretch();
-
-    ui->layer_manager->setLayout(layout);
 
 }
