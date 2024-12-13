@@ -2,23 +2,13 @@
 #include <curl/curl.h>
 #include <iostream>
 #include <sstream>
-
+#include <filesystem>
 /* user will input an XML file that will be captured from file browser element
 that the frontend team will build ** to be added in the constructor */
 API_WMS::API_WMS(const char* link) : url(link)
 {
     GDALAllRegister();
 }
-
-// Crucial to free memory, otherwise bugs
-/*API_WMS::~API_WMS() {
-    // Si le dataset existe, on le ferme
-    if (m_dataset != nullptr) {
-        //m_dataset->FlushCache();  // Facultatif : vide le cache du dataset avant de le fermer
-        GDALClose(m_dataset);     // Libère la mémoire associée au dataset
-        //m_dataset = nullptr;      // Nullifie le pointeur pour éviter les références ultérieures
-    }
-}*/
 
 void API_WMS::loadDataset() {
     // Ouvrir le dataset avec GDAL pour un flux WMS
@@ -29,20 +19,31 @@ void API_WMS::loadDataset() {
         when the front end team finishes ( to reinsert or close window) */
     if (isEmpty()) {
         std::cerr << "Error: Impossible to connect to WMS or unsupported format" << std::endl;
-        throw std::runtime_error("Failed to load dataset"); // Lancer une exception au lieu d'exit
+        exit(1); // ** to be replaced later
     }
 }
 
 
-void API_WMS::downloadTileToGeoTiff(const char* layerName, const char* outputFile, int zoom, int row, int col) {
-    // Construct the URL for the WMS request with the given parameters
-    std::stringstream url;
+void API_WMS::downloadTileToGeoTiff(const std::string& layerName, int zoom, int row, int col) {
+        const char* relativePath = "../cute-gis/data/geotiff/";
+        std::cout << "couche : " << layerName << std::endl;
+       std::string outputFileName = layerName + ".tiff";
+
+       // Correctly concatenate relativePath with outputFileName
+       std::string outputPath = std::string(relativePath) + outputFileName;
+       std::cout << "chemin a charger" << outputPath << std::endl;
+       // If you need a const char* for another API
+       const char* outputPathCStr = outputPath.c_str();
+       static std::string outputPathStatic = outputPathCStr;  // Variable statique pour persister la valeur
+       output_path = outputPathStatic.c_str();
+       std::cout << "chemin a charger réel : " << output_path << std::endl;
+       std::stringstream url;
     url << "https://data.geopf.fr/wms-r?"
         << "LAYERS=" << layerName
         << "&EXCEPTIONS=text/xml&"
         << "FORMAT=image/tiff&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&"
         << "CRS=EPSG:4326&"
-        << "BBOX=45.74845,4.79569,45.79108,4.86564&WIDTH=3000&HEIGHT=3000";
+        << "BBOX=45.74845,4.79569,45.79108,4.86564&WIDTH=1000&HEIGHT=1000";
 
     std::cout << "Request URL: " << url.str() << std::endl;
 
@@ -51,7 +52,7 @@ void API_WMS::downloadTileToGeoTiff(const char* layerName, const char* outputFil
     if (curl) {
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
 
-        FILE* fp = fopen(outputFile, "wb");
+        FILE* fp = fopen(outputPathCStr, "wb");
         if (fp) {
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
             CURLcode res = curl_easy_perform(curl);
@@ -66,10 +67,10 @@ void API_WMS::downloadTileToGeoTiff(const char* layerName, const char* outputFil
     }
 
     // Open the downloaded image with GDAL
-    GDALDataset* downloadedDataset = static_cast<GDALDataset*>(GDALOpen(outputFile, GA_ReadOnly));
+    GDALDataset* downloadedDataset = static_cast<GDALDataset*>(GDALOpen(outputPathCStr, GA_ReadOnly));
     if (downloadedDataset) {
         // Crée un fichier GeoTIFF temporaire
-        std::string tempFile = std::string(outputFile) + ".temp.tif";
+        std::string tempFile = std::string(outputPathCStr) + ".temp.tif";
 
         GDALDriver* tiffDriver = GetGDALDriverManager()->GetDriverByName("GTiff");
         if (tiffDriver) {
@@ -79,7 +80,7 @@ void API_WMS::downloadTileToGeoTiff(const char* layerName, const char* outputFil
                 GDALClose(tiffDataset);
 
                 // Remplace l'ancien fichier
-                std::rename(tempFile.c_str(), outputFile);
+                std::rename(tempFile.c_str(), outputPathCStr);
             } else {
                 std::cerr << "Failed to create GeoTIFF." << std::endl;
             }
@@ -90,25 +91,19 @@ void API_WMS::downloadTileToGeoTiff(const char* layerName, const char* outputFil
     }
 
 }
-
 void API_WMS::loadTileGridToGeoTiff(const char* layerName, int zoom, int centerRow, int centerCol, int gridSize, const char* outputPrefix) {
     for (int row = centerRow - gridSize / 2; row <= centerRow + gridSize / 2; ++row) {
         for (int col = centerCol - gridSize / 2; col <= centerCol + gridSize / 2; ++col) {
             std::stringstream outputFile;
             outputFile << outputPrefix << "_zoom" << zoom << "_row" << row << "_col" << col << ".tiff";
-            downloadTileToGeoTiff(layerName, outputFile.str().c_str(), zoom, row, col);
+            downloadTileToGeoTiff(layerName, zoom, row, col);
         }
     }
 }
 
-/*API_WMS::~API_WMS() {
-    // Si le dataset existe, on le ferme
-    if (m_dataset != nullptr) {
-        //m_dataset->FlushCache();  // Facultatif : vide le cache du dataset avant de le fermer
-        GDALClose(m_dataset);     // Libère la mémoire associée au dataset
-        //m_dataset = nullptr;      // Nullifie le pointeur pour éviter les références ultérieures
-    }
-}*/
+const char* API_WMS:: getOutput(){
+    return output_path;
+}
 
 
 
