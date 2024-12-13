@@ -9,8 +9,9 @@ public:
     Session();
     ~Session();
     void updateFile();
-    void addToJson(const char* path);   
-    std::vector<std::string> getLayers();
+    void addToJson(const char* path, const char* type);  
+    void removeFromJson(const char* path); 
+    std::vector<std::pair<std::string, std::string>>  getLayers();
     std::shared_ptr<nlohmann::json> m_json;
 
 

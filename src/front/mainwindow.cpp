@@ -42,26 +42,24 @@ MainWindow::MainWindow(QWidget *parent)
     for (const auto& layer : renderer->getRenderer2d()->lst_layers2d) {
         QFileInfo fileInfo(QString::fromStdString(layer->getName()));
         std::string name = fileInfo.baseName().toStdString();
-        renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
-
+        layer->setName(name);
 
         name_layers.push_back(name);
-        setupCheckboxes();
         ++nb_layers;
-        renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
-        renderer->setIs3D(false);
-        qDebug() << "Layer name:" << QString::fromStdString(layer->getName());
-        // Perform any additional operations on each layer here
     }
+    setupCheckboxes();
     if (!ui->openGLWidget->layout()) {
         auto* layout = new QVBoxLayout(ui->openGLWidget);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(renderer);
-    } else if (ui->openGLWidget->layout()->indexOf(renderer) == -1) {
+    } else {
+        clearLayout(ui->openGLWidget->layout());
         ui->openGLWidget->layout()->addWidget(renderer);
     }
-
-
+    if (!renderer->getRenderer2d()->lst_layers2d.empty()) {
+        renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
+    }
+    renderer->setIs3D(false);
 }
 
 MainWindow::~MainWindow()
@@ -109,7 +107,7 @@ void MainWindow::onOpenFile()
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive) || filePath.endsWith(".shp", Qt::CaseInsensitive)) {
             renderer->reset3D();
-            renderer->getRenderer2d()->session.addToJson(filedata);
+            renderer->getRenderer2d()->session.addToJson(filedata, "vector");
             //add layer2d
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 
@@ -135,7 +133,10 @@ void MainWindow::onOpenFile()
             renderer->getRenderer3d()->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
+            
             renderer->reset3D();
+
+            renderer->getRenderer2d()->session.addToJson(filedata, "raster");
             RasterData geo = RasterData(filedata);
             std::shared_ptr<LayerRaster> raster = std::make_unique<LayerRaster>(geo);
             renderer->getRenderer2d()->lst_layers2d.push_back(raster);
@@ -360,7 +361,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
 
     int row = listWidget->row(item);
-        if (row < 0 || row >= static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size())) return;
+    if (row < 0 || row >= static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size())) return;
 
     if (selectedAction == renameAction) {
         bool ok;
@@ -372,8 +373,12 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     } else if (selectedAction == deleteAction) {
         int row = listWidget->row(item);
         delete listWidget->takeItem(row);
-        name_layers.erase(name_layers.begin() + row);
-        renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + row);
+        if (row >= 0 && row < static_cast<int>(name_layers.size())) {
+            std::string layerPath = renderer->getRenderer2d()->lst_layers2d[row]->getName();
+            name_layers.erase(name_layers.begin() + row);
+            renderer->getRenderer2d()->session.removeFromJson(layerPath.c_str());
+            renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + row);
+        }
     } else if  (selectedAction == zoomLayer) {
         auto& layer = renderer->getRenderer2d()->lst_layers2d[row];
         renderer->controller->getCamera().centerOnBoundingBox(layer->getBoundingBox());

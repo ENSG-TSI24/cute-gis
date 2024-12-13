@@ -6,7 +6,7 @@
 
 
 Layer2d::Layer2d(VectorData data)
-{ 
+{
     points = data.GetPoints();
     linestrings = data.GetLineStrings();
     polygons = data.GetPolygons();
