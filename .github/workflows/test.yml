@@ -36,12 +36,21 @@ jobs:
 
         sudo apt-get install -y gdal-bin libgdal-dev nlohmann-json3-dev
 
-        # Google Test
+        # Code's Static analysis with cppcheck
+        sudo apt-get install -y cppcheck
+
+        # Code's dynamic analysis
+        sudo apt-get install -y valgrind
+
+        # Unit Testing with Google Test
         sudo apt-get install -y libgtest-dev
         cd /usr/src/gtest
         sudo cmake .
         sudo make
         sudo mv lib/libgtest*.a /usr/lib/
+
+        # generate Automatic Developper Documentation
+        sudo apt-get install -y doxygen
 
     - name: Configure project
       run: |
@@ -51,6 +60,30 @@ jobs:
     - name: Build project
       run: |
         cmake --build build -- -j$(nproc)
+
+    - name: Static analysis with cppcheck
+      run: |
+        cppcheck --enable=all . 2> cppcheck_report.txt
+        echo "Static analysis completed for all files. Report saved to cppcheck_report.txt."
+
+    - name: Dynamic analysis with valgrind
+      run: |
+        cd build
+        valgrind --leak-check=full --show-reachable=yes ./cute-gis
+        echo "Dynamic analysis done."
+
+    - name: Create Doxygen, its configuration and generation
+      run: |
+        doxygen -g Doxyfile  
+        # Update the Doxyfile with the right parameters
+        sed -i 's/^PROJECT_NAME           =.*$/PROJECT_NAME           = "cute-gis"/' Doxyfile
+        sed -i 's/^OUTPUT_DIRECTORY       =.*$/OUTPUT_DIRECTORY       = .\/docs/' Doxyfile
+        sed -i 's/^INPUT                  =.*$/INPUT                  = .\/src/' Doxyfile
+        sed -i 's/^RECURSIVE              = NO/RECURSIVE              = YES/' Doxyfile
+        sed -i 's/^GENERATE_HTML          = NO/GENERATE_HTML          = YES/' Doxyfile
+        sed -i 's/^GENERATE_LATEX         = NO/GENERATE_LATEX         = YES/' Doxyfile
+        # Generate Doxygen Documentation that is found in ./docs/html/index.html
+        doxygen Doxyfile 
 
     - name: Run tests
       run: |

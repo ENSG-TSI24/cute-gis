@@ -173,3 +173,47 @@
          }
      }
  }
+
+
+ void API_WMTS::displayTileInfo() {
+     if (isEmpty()) {
+         std::cerr << "Dataset is not opened." << std::endl;
+         return;
+     }
+
+     char** subdatasets = m_dataset->GetMetadata("SUBDATASETS");
+     if (subdatasets == nullptr) {
+         std::cerr << "No subdatasets found for this WMTS service." << std::endl;
+         return;
+     }
+
+     std::cout << "Available WMTS layers:" << std::endl;
+     for (int i = 0; subdatasets[i] != nullptr; i += 2) {
+         std::cout << "Layer: " << subdatasets[i] << std::endl;
+     }
+ }
+
+ void API_WMTS::renderTile(const std::string& layerName, int zoomLevel, double x, double y) {
+     if (isEmpty()) {
+         std::cerr << "Dataset is not opened." << std::endl;
+         return;
+     }
+
+     int tileRow = static_cast<int>(y);
+     int tileCol = static_cast<int>(x);
+
+     // Utiliser getTileAsImage pour récupérer la tuile
+     QImage tileImage = getTileAsImage(layerName.c_str(), zoomLevel, tileRow, tileCol);
+
+     if (tileImage.isNull()) {
+         std::cerr << "Failed to render tile for layer '" << layerName << "'." << std::endl;
+         return;
+     }
+
+     std::cout << "Rendering tile for layer '" << layerName
+               << "' at zoom " << zoomLevel
+               << " (x: " << x << ", y: " << y << ")" << std::endl;
+
+     // Afficher des informations sur l'image
+     std::cout << "Tile dimensions: " << tileImage.width() << " x " << tileImage.height() << std::endl;
+ }

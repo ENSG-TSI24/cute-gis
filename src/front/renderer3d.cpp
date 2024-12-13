@@ -1,6 +1,6 @@
 #include "renderer3d.h"
 
-Renderer3D::Renderer3D(Renderer& renderer) : parent(renderer), objectLoader(nullptr)
+Renderer3D::Renderer3D() : objectLoader(nullptr)
 {qDebug() << "Renderer3D created: " << this;}
 
 Renderer3D::~Renderer3D() {
@@ -10,41 +10,46 @@ Renderer3D::~Renderer3D() {
 }
 
 ObjectLoader* Renderer3D::getObjectLoader() const {
-     return objectLoader;
- }
+    return objectLoader;
+}
 
-void Renderer3D::paintGl3D(){
+void Renderer3D::paintGl3D(QMatrix4x4 ViewMatrix, float width, float height) {
     if (objectLoader) {
-            parent.controller->set3DMode(true);
 
-            QMatrix4x4 modelMatrix;
-            modelMatrix.translate(0.0f, 0.0f, -3.0f);
-            modelMatrix.rotate(objectLoader->getAngle(), 0.0f, 1.0f, 0.0f);
-            modelMatrix.scale(0.005f);
+        const std::vector<glm::vec3>& vertices = objectLoader->getVertices();
+        // Configurer la matrice de projection
+        QMatrix4x4 projectionMatrix;
+        float aspectRatio = width / height;
+        projectionMatrix.perspective(45.0f, aspectRatio, 0.1f, 1000.0f);
 
-            QMatrix4x4 modelViewMatrix = parent.controller->getCamera().getModelViewMatrix(modelMatrix);
-            glMatrixMode(GL_MODELVIEW);
-            glLoadMatrixf(modelViewMatrix.constData());
+        // Appliquer la matrice de projection
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrixf(projectionMatrix.constData());
 
-            glColor3f(1.0f, 1.0f, 0.0f);
-            glBegin(GL_TRIANGLES);
+        // Appliquer la matrice de vue
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrixf(ViewMatrix.constData());
 
-            const auto& vertices = objectLoader->getVertices();
-            for (const auto& vertex : vertices) {
-                glVertex3f(vertex.x, vertex.y, vertex.z);
-            }
-            glEnd();
-        } else {
-            qWarning() << "No ObjectLoader assigned for 3D rendering.";
+        // Dessiner les objets
+        glColor3f(1.0f, 1.0f, 0.0f);
+        glBegin(GL_TRIANGLES);
+
+        //camera.centerOn3DModel(vertices);
+
+        // Explicitly declare vertices as a constant reference
+        for (const auto& vertex : vertices) {
+            glVertex3f(vertex.x, vertex.z, vertex.y);
         }
+        glEnd();
+    } else {
+        qWarning() << "No ObjectLoader assigned for 3D rendering.";
+    }
 }
 
 void Renderer3D::reset3D(){
     if (objectLoader) {
         delete objectLoader;
         objectLoader = nullptr;
-        parent.controller->getCamera().resetCamera();
-        parent.update();
     }
 }
 

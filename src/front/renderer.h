@@ -21,7 +21,15 @@ public:
     explicit Renderer(QWidget* parent = nullptr);
     virtual ~Renderer();
 
+    void reset();
+    void reset2D();
+    void reset3D();
     void setIs3D(bool enabled);
+    Renderer2D* getRenderer2d();
+    Renderer3D* getRenderer3d();
+
+    Renderer2D* getRenderer2D();
+    Renderer3D* getRenderer3D();
 
 
     //void reset();
@@ -30,8 +38,6 @@ public:
     void calculateBoundingBox();
     BoundingBox boundingBox;
     Controller* controller;
-    Renderer2D* renderer2d;
-    Renderer3D* renderer3d;
 
 protected:
     void initializeGL() override;
@@ -39,10 +45,13 @@ protected:
     void paintGL() override;
 
     void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
 
 private:
     bool is3D;
+    Renderer2D* renderer2d;
+    Renderer3D* renderer3d;
 
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
