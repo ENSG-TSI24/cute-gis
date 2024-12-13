@@ -476,6 +476,7 @@ void MainWindow::setupCheckboxes() {
     QListWidget* listWidget = ui->listWidget;
     listWidget->setDragDropMode(QAbstractItemView::InternalMove);
     listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    disconnect(listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
     connect(listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
     connect(listWidget->model(), &QAbstractItemModel::rowsMoved, this, &MainWindow::onLayersSuperposed);
 
