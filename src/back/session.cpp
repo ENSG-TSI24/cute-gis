@@ -54,10 +54,10 @@ std::vector<std::pair<std::string, std::string>> Session::getLayers() {
 void Session::removeFromJson(const char* path) {
     if (m_json) {
         for (auto it = m_json->begin(); it != m_json->end(); ) {
-            if (it.value().contains("properties") && it.value()["properties"].contains("name") && it.value()["properties"]["name"].get<std::string>() == path) {
-                it = m_json->erase(it);
+            if (it.value().contains("properties") && it.value()["properties"].contains("name") && it.value()["properties"]["name"].get<std::string>().find(path) != std::string::npos) {
+            it = m_json->erase(it);
             } else {
-                ++it;
+            ++it;
             }
         }
         updateFile();
