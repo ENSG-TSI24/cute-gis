@@ -54,7 +54,9 @@ MainWindow::MainWindow(QWidget *parent)
         clearLayout(ui->openGLWidget->layout());
         ui->openGLWidget->layout()->addWidget(renderer);
     }
-    renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
+    if (!renderer->getRenderer2d()->lst_layers2d.empty()) {
+        renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
+    }
     renderer->setIs3D(false);
 }
 
@@ -343,7 +345,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
 
     int row = listWidget->row(item);
-        if (row < 0 || row >= static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size())) return;
+    if (row < 0 || row >= static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size())) return;
 
     if (selectedAction == renameAction) {
         bool ok;
@@ -355,10 +357,12 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     } else if (selectedAction == deleteAction) {
         int row = listWidget->row(item);
         delete listWidget->takeItem(row);
-        name_layers.erase(name_layers.begin() + row);
-        std::string layerPath = renderer->getRenderer2d()->lst_layers2d[row]->getName();
-        renderer->getRenderer2d()->session.removeFromJson(layerPath.c_str());
-        renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + row);
+        if (row >= 0 && row < static_cast<int>(name_layers.size())) {
+            std::string layerPath = renderer->getRenderer2d()->lst_layers2d[row]->getName();
+            name_layers.erase(name_layers.begin() + row);
+            renderer->getRenderer2d()->session.removeFromJson(layerPath.c_str());
+            renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + row);
+        }
     } else if  (selectedAction == zoomLayer) {
         auto& layer = renderer->getRenderer2d()->lst_layers2d[row];
         renderer->controller->getCamera().centerOnBoundingBox(layer->getBoundingBox());
