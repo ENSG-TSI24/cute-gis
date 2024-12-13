@@ -5,17 +5,16 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QDialogButtonBox>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QComboBox>  // Inclure QComboBox
 
 QT_BEGIN_NAMESPACE
 
 class Ui_addFluxData {
 public:
-    QLineEdit *lineEdit_Name;
-    QLineEdit *lineEdit_URL;
+    QComboBox *layer;   // Changer pour QComboBox
+    QComboBox *url;    // Changer pour QComboBox
     QDialogButtonBox *buttonBox;
     QSpacerItem *verticalSpacer;
 
@@ -26,30 +25,26 @@ public:
 
         QVBoxLayout *verticalLayout = new QVBoxLayout(Dialog);
 
-        QLabel *label_Name = new QLabel(Dialog);
-        label_Name->setText("Layer Name:");
-        verticalLayout->addWidget(label_Name);
+        // Création du QComboBox pour 'Layer Name' sans éléments
+        layer = new QComboBox(Dialog);
+        layer->setObjectName(QString::fromUtf8("layer"));
+        verticalLayout->addWidget(layer);
 
-        lineEdit_Name = new QLineEdit(Dialog);
-        lineEdit_Name->setObjectName(QString::fromUtf8("lineEdit_Name"));
-        verticalLayout->addWidget(lineEdit_Name);
+        // Création du QComboBox pour 'URL' sans éléments
+        url = new QComboBox(Dialog);
+        url->setObjectName(QString::fromUtf8("url"));
+        verticalLayout->addWidget(url);
 
-        QLabel *label_URL = new QLabel(Dialog);
-        label_URL->setText("URL:");
-        verticalLayout->addWidget(label_URL);
-
-        lineEdit_URL = new QLineEdit(Dialog);
-        lineEdit_URL->setObjectName(QString::fromUtf8("lineEdit_URL"));
-        verticalLayout->addWidget(lineEdit_URL);
-
-        // Add Spacer
+        // Ajout du spacer pour espacer les éléments
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
         verticalLayout->addItem(verticalSpacer);
 
+        // Configuration des boutons OK et Cancel
         buttonBox = new QDialogButtonBox(Dialog);
         buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
         verticalLayout->addWidget(buttonBox);
 
+        // Connexions des boutons Ok et Cancel
         QObject::connect(buttonBox, &QDialogButtonBox::accepted, Dialog, &QDialog::accept);
         QObject::connect(buttonBox, &QDialogButtonBox::rejected, Dialog, &QDialog::reject);
     }
@@ -62,5 +57,3 @@ namespace Ui {
 QT_END_NAMESPACE
 
 #endif // UI_ADDFLUXDATA_H
-
-

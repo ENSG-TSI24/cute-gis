@@ -25,6 +25,7 @@ void API_WFS::loadDataset() {
         when the front end team finishes ( to reinsert or close window) */
     if (isEmpty()) {
         std::cerr<< "Error: Impossible to connect to WFS or unsupported format" << std::endl;
+        exit(1); // ** to be replaced later
     }
 }
 
@@ -260,5 +261,4 @@ std::vector<std::pair<std::string, std::string>> API_WFS::GetLayerFields(const c
 const char* API_WFS:: getOutput(){
     return output_path;
 }
-
 

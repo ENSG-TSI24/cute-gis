@@ -14,7 +14,7 @@ public:
     void loadDataset();
 
     // Télécharge une tuile spécifique et la convertit en GeoTIFF
-    void downloadTileToGeoTiff(const char* layerName, const char* outputFile, int zoom, int row, int col);
+    void downloadTileToGeoTiff(const std::string& layerName, int zoom, int row, int col);
 
     // Charge une grille de tuiles autour d'une position donnée et les convertit en GeoTIFF
     void loadTileGridToGeoTiff(const char* layerName, int zoom, int centerRow, int centerCol, int gridSize, const char* outputPrefix);
