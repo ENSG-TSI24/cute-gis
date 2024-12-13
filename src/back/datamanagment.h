@@ -8,14 +8,18 @@
 class DataManagment {
 public:
     DataManagment();
+    /**
+    * @brief this class is not to be instancied, this is an abstraction of RasterData and VectorData.
+    * @param const char* Path : path to the file, can be an url also
+    */
     DataManagment(const char* Path);
     ~DataManagment();
-    // TODO LATER DataManagment(std::string Path, std::string CRS);
+    /**
+    * @brief return path of the file associated to the DataManagement class.
+    * @param const char* Path : path to the file, can be an url also
+    */
     const char* GetPath();
-    // GDALDriver* GetDriver();
-    // GDALDataset* GetDATA();
 protected:
-    // GDALDataset* data;
     const char* filePath;
 };
 
