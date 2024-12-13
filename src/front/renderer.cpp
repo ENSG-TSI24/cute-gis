@@ -12,7 +12,6 @@
 Renderer::Renderer(QWidget* parent)
     : QOpenGLWidget(parent) {
     controller = new Controller(this);
-    qDebug() << "Controller created: " << controller;
     renderer2d = new Renderer2D();
     renderer3d = new Renderer3D();
     setFocusPolicy(Qt::StrongFocus);
@@ -28,6 +27,10 @@ Renderer::~Renderer() {
 
 void Renderer::keyPressEvent(QKeyEvent *event){
     this->controller->ControllerkeyPressEvent(event);
+}
+
+void Renderer::keyReleaseEvent(QKeyEvent *event){
+    this->controller->ControllerkeyReleaseEvent(event);
 }
 
 void Renderer::wheelEvent(QWheelEvent* event) {
@@ -62,7 +65,6 @@ void Renderer::resizeGL(int w, int h) {
     glLoadMatrixf(projectionMatrix.constData());
 }
 
-
 void Renderer::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (!is3D) {
@@ -71,10 +73,8 @@ void Renderer::paintGL() {
     } else {
         if (renderer3d->getObjectLoader()) {
             controller->set3DMode(true);
-            QMatrix4x4 modelMatrix = renderer3d->getModelMatrix();
-            QMatrix4x4 modelViewMatrix = controller->getCamera().getModelViewMatrix(modelMatrix);
-
-            renderer3d->paintGl3D(modelViewMatrix);
+            QMatrix4x4 ViewMatrix = controller->getCamera().getViewMatrix();
+            renderer3d->paintGl3D(ViewMatrix,this->width(),this->height());
         }
     };
 }
@@ -113,14 +113,6 @@ void Renderer::setIs3D(bool enabled) {
 
 bool Renderer::getIs3D() {
     return controller->get3DMode();
-}
-
-Renderer2D* Renderer::getRenderer2D() {
-    return renderer2d;
-}
-
-Renderer3D* Renderer::getRenderer3D() {
-    return renderer3d;
 }
 
 void Renderer::mouseReleaseEvent(QMouseEvent* event) {

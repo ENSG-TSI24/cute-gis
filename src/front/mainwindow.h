@@ -12,7 +12,8 @@
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QFileDialog>
-#include "layer2d.h"
+#include "layerbase.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -28,9 +29,8 @@ public:
     void onCheckboxToggled(bool checked, std::string name);
     void onToggle3DMode();
     void onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow);
-    void parseShapefile(const QString& filePath, Layer2d& layer);
-void showAttributeTable(const Layer2d& layer);
-void parseGeoJSON(const QString& filePath, Layer2d& layer);
+    void showAttributeTable(const std::shared_ptr<LayerBase>& layer);
+
 private slots:
     void on_actionFlux_Data_triggered();
 
@@ -45,6 +45,10 @@ private:
     std::vector<std::string> name_layers;
     int nb_layers = 0;
     void onLayerContextMenuRequested(const QPoint& pos);
+
+//signals:
+//    void geometrySelected(const std::string& layerName, int rowIndex);
+
 
 };
 

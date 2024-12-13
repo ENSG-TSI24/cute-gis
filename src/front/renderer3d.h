@@ -8,7 +8,7 @@ class Renderer3D {
 public:
     Renderer3D();
     ~Renderer3D();
-    void paintGl3D(QMatrix4x4 modelViewMatrix);
+    void paintGl3D(QMatrix4x4 modelViewMatrix, float width, float height);
     void reset3D();
     void setObjectLoader(ObjectLoader* loader);
     QMatrix4x4 getModelMatrix();

@@ -15,7 +15,7 @@ protected:
 };
 
 TEST_F(RasterDataTest, Constructor) {
-    //EXPECT_TRUE(raster.GetImage() != nullptr) << "Failed to load image from file.";
+    // EXPECT_TRUE(raster.GetImage() != nullptr) << "Failed to load image from file.";
     EXPECT_EQ(raster.GetWidth(), 6001) << "Width mismatch.";
     EXPECT_EQ(raster.GetHeight(), 5001) << "Height mismatch.";
 }
