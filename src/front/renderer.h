@@ -28,9 +28,6 @@ public:
     Renderer2D* getRenderer2d();
     Renderer3D* getRenderer3d();
 
-    Renderer2D* getRenderer2D();
-    Renderer3D* getRenderer3D();
-
 
     //void reset();
 

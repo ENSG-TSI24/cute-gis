@@ -291,3 +291,19 @@ BoundingBox Layer2d::getBoundingBox() {
     return boundingBox;
 }
 
+float Layer2d::getOpacity() {
+    return opacity;
+}
+
+void Layer2d::setOpacity(float _opacity) {
+    opacity = _opacity;
+}
+
+std::vector<std::vector<std::string>> Layer2d::getAttributes() {
+    return attributes;
+}
+
+std::vector<std::string> Layer2d::getAttributeHeaders() {
+    return attributeHeaders;
+}
+

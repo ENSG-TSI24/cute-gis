@@ -69,6 +69,8 @@ BoundingBox LayerRaster::calculateBoundingBox() {
     return BoundingBox(minX, maxX, minY, maxY);
 }
 
+void LayerRaster::highlightGeometry(int rowIndex) {}
+
 std::string LayerRaster::getName() {
     return name;
 }
@@ -87,4 +89,20 @@ void LayerRaster::setIsVisible(bool _isVisible) {
 
 BoundingBox LayerRaster::getBoundingBox() {
     return boundingBox;
+}
+
+float LayerRaster::getOpacity() {
+    return opacity;
+}
+
+void LayerRaster::setOpacity(float _opacity) {
+    opacity = _opacity;
+}
+
+std::vector<std::vector<std::string>> LayerRaster::getAttributes() {
+    return attributes;
+}
+
+std::vector<std::string> LayerRaster::getAttributeHeaders() {
+    return attributeHeaders;
 }

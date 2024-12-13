@@ -172,37 +172,41 @@ void MainWindow::onOpenFile_stream(const char* chemin)
 
 
             VectorData geo(filedata);
-            renderer->getRenderer2D()->lst_layers2d.push_back(geo);
+            std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
+            renderer->getRenderer2d()->lst_layers2d.push_back(vector);
+
+            // Add name layers
+            QFileInfo fileInfo(stream_path);
+            std::string name = fileInfo.baseName().toStdString();
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
+            name_layers.push_back(name);
+            setupCheckboxes();
+            ++nb_layers;
+
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
+            renderer->setIs3D(false);
+
+        } else if (stream_path.endsWith(".obj", Qt::CaseInsensitive)) {
+            renderer->reset2D();
+            nb_layers=0;
+            ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
+            renderer->getRenderer3d()->setObjectLoader(objectLoader);
+            renderer->setIs3D(true);
+        } else if (stream_path.endsWith(".tif", Qt::CaseInsensitive) || stream_path.endsWith(".tiff", Qt::CaseInsensitive)) {
+            renderer->reset3D();
+            RasterData geo = RasterData(filedata);
+            std::shared_ptr<LayerRaster> raster = std::make_unique<LayerRaster>(geo);
+            renderer->getRenderer2d()->lst_layers2d.push_back(raster);
 
             // add name layers
             QFileInfo fileInfo(stream_path);
             std::string name = fileInfo.baseName().toStdString();
-            renderer->getRenderer2D()->lst_layers2d.back().name = name;
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2D()->lst_layers2d.back().boundingBox);
-            renderer->setIs3D(false);
 
-        } else if (stream_path.endsWith(".obj", Qt::CaseInsensitive)) {
-            renderer->reset();
-            nb_layers=0;
-            ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
-            renderer->getRenderer3D()->setObjectLoader(objectLoader);
-            renderer->setIs3D(true);
-        } else if (stream_path.endsWith(".tif", Qt::CaseInsensitive) || stream_path.endsWith(".tiff", Qt::CaseInsensitive)) {
-            renderer->reset();
-            GeoTiffLoader loader;
-            loader.loadGeoTIFF(stream_path);
-            QImage* image = loader.image;
-
-            renderer->getRenderer2D()->lst_layersraster.push_back(LayerRaster(image));
-
-            // add name layers
-            std::string name = "Couche " + std::to_string(nb_layers);
-            name_layers.push_back(name);
-            setupCheckboxes();
-            ++nb_layers;
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
         } else {
                 throw std::runtime_error("Unsupported file format!");
@@ -338,7 +342,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         // falcultative
         QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer->getName()));
     } else if (selectedAction == metadataAction) {
-        const Layer2d& layer = renderer->getRenderer2d()->lst_layers2d[row];
+        const auto& layer = renderer->getRenderer2d()->lst_layers2d[row];
         showAttributeTable(layer);
     } else if (selectedAction == opacityAction) {
         QDialog* dialog = new QDialog(this);
@@ -349,7 +353,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         layout->addWidget(label);
         QSlider* slider = new QSlider(Qt::Horizontal, dialog);
         slider->setRange(0, 100);
-        double currentOpacity = renderer->getRenderer2d()->lst_layers2d[row].opacity;
+        double currentOpacity = renderer->getRenderer2d()->lst_layers2d[row]->getOpacity();
         slider->setValue(static_cast<int>(currentOpacity * 100));
         layout->addWidget(slider);
 
@@ -358,7 +362,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         connect(slider, &QSlider::valueChanged, [this, row, valueLabel](int value) {
             valueLabel->setText(QString::number(value) + "%");
             if (row >= 0 && row < renderer->getRenderer2d()->lst_layers2d.size()) {
-                renderer->getRenderer2d()->lst_layers2d[row].opacity = value / 100.0;
+                renderer->getRenderer2d()->lst_layers2d[row]->setOpacity(value / 100.0);
                 renderer->update();
             }
         });
@@ -384,29 +388,29 @@ void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, cons
     renderer->update();
 }
 
-void MainWindow::showAttributeTable(const Layer2d& layer) {
+void MainWindow::showAttributeTable(const std::shared_ptr<LayerBase>& layer) {
     // Créer une fenêtre pour afficher la table attributaire
     QDialog* dialog = new QDialog(this);
-    dialog->setWindowTitle(QString::fromStdString("Attributs : " + layer.name));
+    dialog->setWindowTitle(QString::fromStdString("Attributs : " + layer->getName()));
     dialog->resize(600, 400);
 
     QVBoxLayout* layout = new QVBoxLayout(dialog);
 
     // Créer un QTableWidget pour afficher les attributs
     QTableWidget* tableWidget = new QTableWidget(dialog);
-    tableWidget->setColumnCount(layer.attributes.empty() ? 0 : layer.attributes[0].size());
-    tableWidget->setRowCount(layer.attributes.size());
+    tableWidget->setColumnCount(layer->getAttributes().empty() ? 0 : layer->getAttributes()[0].size());
+    tableWidget->setRowCount(layer->getAttributes().size());
 
     // Définir les en-têtes des colonnes
     QStringList headers;
-    for (const auto& header : layer.attributeHeaders) {
+    for (const auto& header : layer->getAttributeHeaders()) {
         headers << QString::fromStdString(header);
     }
     tableWidget->setHorizontalHeaderLabels(headers);
 
     // Remplir les données de la table
-    for (int i = 0; i < layer.attributes.size(); ++i) {
-        const auto& row = layer.attributes[i];
+    for (int i = 0; i < layer->getAttributes().size(); ++i) {
+        const auto& row = layer->getAttributes()[i];
         for (int j = 0; j < row.size(); ++j) {
             tableWidget->setItem(i, j, new QTableWidgetItem(QString::fromStdString(row[j])));
         }
@@ -422,7 +426,7 @@ void MainWindow::showAttributeTable(const Layer2d& layer) {
         QList<QTableWidgetItem*> selectedItems = tableWidget->selectedItems();
         if (!selectedItems.isEmpty()) {
             int row = selectedItems.first()->row();
-            renderer->getRenderer2d()->highlightGeometry(layer.name, row);
+            renderer->getRenderer2d()->highlightGeometry(layer->getName(), row);
 
             // Trigger a refresh of the OpenGL widget
             this->update(); // Or call the appropriate method to refresh the rendering

@@ -17,8 +17,6 @@ public:
 
 private:
     void renderLayers2d();
-    void renderRasters();
-
 };
 
 #endif // RENDERER2D_H

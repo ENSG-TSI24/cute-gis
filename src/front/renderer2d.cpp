@@ -29,9 +29,9 @@ void Renderer2D::reset2D(){
 
 void Renderer2D::highlightGeometry(const std::string& layerName, int rowIndex) {
     for (auto& layer : lst_layers2d) {
-        if (layer.name == layerName) {
+        if (layer->getName() == layerName) {
             // Highlight the geometry in the specified layer
-            layer.highlightGeometry(rowIndex);
+            layer->highlightGeometry(rowIndex);
             return; // Stop once the target layer is found
         }
     }

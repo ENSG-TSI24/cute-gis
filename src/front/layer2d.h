@@ -17,13 +17,17 @@ public:
     void renderPolygons();
     BoundingBox calculateBoundingBox() override;
     void render() override;
+    void highlightGeometry(int rowIndex) override;
 
     std::string getName() override;
     void setName(std::string name) override;
     bool getIsVisible() override;
     void setIsVisible(bool isVisible) override;
     BoundingBox getBoundingBox() override;
-
+    float getOpacity() override;
+    void setOpacity(float opacity) override;
+    std::vector<std::vector<std::string>> getAttributes() override;
+    std::vector<std::string> getAttributeHeaders() override;
 
 private:
     BoundingBox boundingBox;
@@ -34,7 +38,7 @@ private:
     std::vector<std::string> attributeHeaders;
 
 
-        float opacity = 1.0f;
+    float opacity = 1.0f;
 
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;
