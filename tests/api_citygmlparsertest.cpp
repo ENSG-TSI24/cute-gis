@@ -51,7 +51,7 @@ TEST_F(CityGMLParserTest, ParseFeatures) {
    EXPECT_TRUE(data.GetDataset()== nullptr);
    std::vector<Feature> features = data.getFeatures();
    EXPECT_FALSE(data.getFeatures().size() == 0);
-   data.exportToObj(1.0f, "outputdelavie");
+   data.exportToObj(1.0f, "outputdelavie.obj");
 
 
 }

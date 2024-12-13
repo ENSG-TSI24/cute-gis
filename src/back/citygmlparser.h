@@ -69,7 +69,6 @@ public:
 
     //export in obj
     void exportToObj(float s, const std::string& filePath);
-    void exportToMtl(const std::string& filePath) const;
 
     //print the field of one feature
     void printFeature(const Feature& feature) const;

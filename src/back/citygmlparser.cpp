@@ -366,8 +366,11 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
         return;
     }
 
-
     unsigned int vertexOffset = 1;
+    int nbv_printed = 0;
+    int nbvt_printed = 0;
+    int nbvn_printed = 0;
+
     for (const auto& feature : features) {
         if (feature.VerticesGeoreferenced.empty()) {
             std::cerr << "Warning: Feature " << feature.id << " has no geometry and will be skipped." << std::endl;
@@ -375,11 +378,16 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
         }
 
         objFile << "o " << feature.objectName << "\n";
-
-
+        std::string listface;
+        std::string listnormal;
+        std::string listtexture;
         for (int i = 0; i < feature.VerticesGeoreferenced.size(); i++) {
+            std::string face = "f ";
             for (int k =0; k< feature.VerticesGeoreferenced.at(i).size(); k++){
-                int n = 1;
+
+
+
+
                 for (int l =0; l<  feature.VerticesGeoreferenced.at(i).at(k).size(); l++){
 
 
@@ -388,107 +396,40 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
                             << feature.VerticesGeoreferenced.at(i).at(k).at(l).y << " "
                             << feature.VerticesGeoreferenced.at(i).at(k).at(l).z << "\n";
 
-                    objFile << "vt " << feature.VerticesTexture.at(i).at(k).at(l).x << " "
-                            << feature.VerticesTexture.at(i).at(k).at(l).y << " "
-                            << feature.VerticesTexture.at(i).at(k).at(l).z << "\n";
+                    listtexture += "vt " + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).x) + " "
+                                         + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).y) + " "
+                                         + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).z) + "\n";
+
+                    nbv_printed += 1;
+                    nbvt_printed += 1;
+                    face+=  std::to_string(nbv_printed) + "/" + std::to_string(nbvt_printed) + "/" + std::to_string(nbvn_printed+1) + " ";
 
 
                 }
 
 
-                objFile << "vn " << feature.verticeNormal.at(i).at(k).x << " "
-                        << feature.verticeNormal.at(i).at(k).y << " "
-                        << feature.verticeNormal.at(i).at(k).z << "\n";
+                listnormal +=  "vn " + std::to_string(feature.verticeNormal.at(i).at(k).x) + " "
+                                     + std::to_string(feature.verticeNormal.at(i).at(k).y) + " "
+                                     + std::to_string(feature.verticeNormal.at(i).at(k).z) + "\n";
 
-
-
-                std::string face = "f ";
-
-                while (n <= feature.VerticesGeoreferenced.at(i).at(k).size() ){
-                    face+=  std::to_string(-n) + "/" + std::to_string(-n) + "/" + std::to_string(-1) + " ";
-                    n+=1;
-
+                nbvn_printed += 1;
                 }
-                objFile << face << "\n";
-                }
+            listface += face + "\n";
             }
+
+
+        objFile << listnormal;
+        objFile << listtexture;
+        objFile << listface;
+
         vertexOffset += feature.vertices.size() / 3;
-        objFile << "\n";
+
     }
 
     objFile.close();
     std::cout << "Exported features to OBJ file: " << filePath << std::endl;
 }
 
-
-
-void CityGMLParser::exportToMtl(const std::string& filePath) const {
-    std::ofstream mtlFile(filePath);
-    if (!mtlFile.is_open()) {
-        std::cerr << "Error: Could not open file for writing: " << filePath << std::endl;
-        return;
-    }
-
-    for (const auto& feature : features) {
-        std::string materialName = &"Material_" [ feature.id];
-
-        // Default material properties
-        float ambient[3] = {1.0f, 1.0f, 1.0f}; // Default white
-        float diffuse[3] = {0.8f, 0.8f, 0.8f}; // Default light gray
-        float specular[3] = {0.5f, 0.5f, 0.5f}; // Default gray
-        float opacity = 1.0f;                  // Default opaque
-        float shininess = 10.0f;               // Default shininess
-
-        // Check and assign values based on feature attributes
-        if (feature.attributes.count("libofficiel")) {
-            // Generate unique color from 'libofficiel'
-            auto colorHash = [](const std::string& str) -> unsigned int {
-                unsigned int hash = 0;
-                for (char c : str) hash = (hash * 31) + c;
-                return hash;
-            };
-            unsigned int hash = colorHash(feature.attributes.at("libofficiel"));
-            ambient[0] = ((hash & 0xFF0000) >> 16) / 255.0f;
-            ambient[1] = ((hash & 0x00FF00) >> 8) / 255.0f;
-            ambient[2] = (hash & 0x0000FF) / 255.0f;
-            diffuse[0] = ambient[0] * 0.8f;
-            diffuse[1] = ambient[1] * 0.8f;
-            diffuse[2] = ambient[2] * 0.8f;
-        } else {
-            std::cerr << "Warning: 'libofficiel' missing for feature " << feature.id
-                      << ", using default Ka and Kd.\n";
-        }
-
-        if (feature.attributes.count("gid")) {
-            // Customize shininess based on 'gid'
-            shininess = (std::stoi(feature.attributes.at("gid")) % 50) + 10.0f;
-        } else {
-            std::cerr << "Warning: 'gid' missing for feature " << feature.id
-                      << ", using default Ns.\n";
-        }
-
-        if (feature.attributes.count("uid")) {
-            // Customize opacity based on 'uid'
-            opacity = (std::stoi(feature.attributes.at("uid")) % 100) / 100.0f + 0.5f;
-            if (opacity > 1.0f) opacity = 1.0f;
-        } else {
-            std::cerr << "Warning: 'uid' missing for feature " << feature.id
-                      << ", using default opacity.\n";
-        }
-
-        // Write material properties to the MTL file
-        mtlFile << "newmtl " << materialName << "\n";
-        mtlFile << "Ka " << ambient[0] << " " << ambient[1] << " " << ambient[2] << "\n";
-        mtlFile << "Kd " << diffuse[0] << " " << diffuse[1] << " " << diffuse[2] << "\n";
-        mtlFile << "Ks " << specular[0] << " " << specular[1] << " " << specular[2] << "\n";
-        mtlFile << "d " << opacity << "\n";
-        mtlFile << "Ns " << shininess << "\n";
-        mtlFile << "\n";
-    }
-
-    mtlFile.close();
-    std::cout << "Exported materials to MTL file: " << filePath << std::endl;
-}
 
 
 void CityGMLParser::printFeature(const Feature& feature) const {
