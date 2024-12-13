@@ -15,7 +15,7 @@ LayerRaster::LayerRaster(RasterData raster)
 
 LayerRaster::~LayerRaster(){}
 
-void LayerRaster::renderRasters() {
+void LayerRaster::render() {
 
     QImage glImage = image.convertToFormat(QImage::Format_RGBA8888);
     int width = glImage.width();
@@ -67,4 +67,24 @@ BoundingBox LayerRaster::calculateBoundingBox() {
 
     // Assignez les coordonnées à la bounding box
     return BoundingBox(minX, maxX, minY, maxY);
+}
+
+std::string LayerRaster::getName() {
+    return name;
+}
+
+void LayerRaster::setName(std::string _name) {
+    name = _name;
+}
+
+bool LayerRaster::getIsVisible() {
+    return isVisible;
+}
+
+void LayerRaster::setIsVisible(bool _isVisible) {
+    isVisible = _isVisible;
+}
+
+BoundingBox LayerRaster::getBoundingBox() {
+    return boundingBox;
 }

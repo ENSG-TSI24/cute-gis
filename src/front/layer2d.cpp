@@ -13,6 +13,12 @@ Layer2d::Layer2d(VectorData data)
 
 Layer2d::~Layer2d(){}
 
+void Layer2d::render() {
+    renderPolygons();
+    renderLinestrings();
+    renderPoints();
+}
+
 void Layer2d::renderPoints() {
     glColor3f(0.0f, 0.0f, 1.0f); // Couleur bleue
     glPointSize(5.0f);
@@ -154,5 +160,25 @@ BoundingBox Layer2d::calculateBoundingBox() {
     // Stocker la bounding box
     return BoundingBox(minX, maxX, minY, maxY);
     //std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
+}
+
+std::string Layer2d::getName() {
+    return name;
+}
+
+void Layer2d::setName(std::string _name) {
+    name = _name;
+}
+
+bool Layer2d::getIsVisible() {
+    return isVisible;
+}
+
+void Layer2d::setIsVisible(bool _isVisible) {
+    isVisible = _isVisible;
+}
+
+BoundingBox Layer2d::getBoundingBox() {
+    return boundingBox;
 }
 

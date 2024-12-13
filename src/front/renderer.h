@@ -35,8 +35,6 @@ public:
     void calculateBoundingBox();
     Controller* controller;
 
-    std::vector<std::shared_ptr<LayerBase>> lst_layers2d;
-
 protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;

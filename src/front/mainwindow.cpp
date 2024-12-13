@@ -77,18 +77,17 @@ void MainWindow::onOpenFile()
             
             VectorData geo(filedata);
             std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
-            renderer->getRenderer2d()->lst_layersvector.push_back(vector);
-            renderer->lst_layers2d.push_back(vector);
+            renderer->getRenderer2d()->lst_layers2d.push_back(vector);
 
             // add name layers
             QFileInfo fileInfo(filePath);
             std::string name = fileInfo.baseName().toStdString();
-            renderer->getRenderer2d()->lst_layersvector.back()->name = name;
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
 
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layersvector.back()->boundingBox);
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
 
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
@@ -101,18 +100,17 @@ void MainWindow::onOpenFile()
             renderer->reset3D();
             RasterData geo = RasterData(filedata);
             std::shared_ptr<LayerRaster> raster = std::make_unique<LayerRaster>(geo);
-            renderer->getRenderer2d()->lst_layersraster.push_back(raster);
-            renderer->lst_layers2d.push_back(raster);
+            renderer->getRenderer2d()->lst_layers2d.push_back(raster);
 
             // add name layers
             QFileInfo fileInfo(filePath);
             std::string name = fileInfo.baseName().toStdString();
-            renderer->getRenderer2d()->lst_layersraster.back()->name = name;
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
 
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layersraster.back()->boundingBox);
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
         } else {
                 throw std::runtime_error("Unsupported file format!");
@@ -164,9 +162,9 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
     std::cout<<checked<<std::endl;
     std::cout<<name<<std::endl;
 
-    for (auto& layer : renderer->lst_layers2d) {
-        if (layer->name == name) {
-            layer->isVisible = checked;
+    for (auto& layer : renderer->getRenderer2d()->lst_layers2d) {
+        if (layer->getName() == name) {
+            layer->setIsVisible(checked);
         }
     }
 }
@@ -191,7 +189,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QAction* selectedAction = contextMenu.exec(listWidget->mapToGlobal(pos));
 
     int row = listWidget->row(item);
-        if (row < 0 || row >= static_cast<int>(renderer->lst_layers2d.size())) return;
+        if (row < 0 || row >= static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size())) return;
 
     if (selectedAction == renameAction) {
         bool ok;
@@ -204,13 +202,13 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         int row = listWidget->row(item);
         delete listWidget->takeItem(row);
         name_layers.erase(name_layers.begin() + row);
-        renderer->lst_layers2d.erase(renderer->lst_layers2d.begin() + row);
+        renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + row);
     } else if  (selectedAction == zoomLayer) {
-        auto& layer = renderer->lst_layers2d[row];
-        renderer->controller->getCamera().centerOnBoundingBox(layer->boundingBox);
+        auto& layer = renderer->getRenderer2d()->lst_layers2d[row];
+        renderer->controller->getCamera().centerOnBoundingBox(layer->getBoundingBox());
 
         // falcultative
-        QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer->name));
+        QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer->getName()));
     }
 
     // metadata
@@ -218,11 +216,11 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 
 
 void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow) {
-    auto& layer = renderer->lst_layers2d[start];
-    renderer->lst_layers2d.erase(renderer->lst_layers2d.begin() + start);
+    auto& layer = renderer->getRenderer2d()->lst_layers2d[start];
+    renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + start);
 
     int adjustedDestination = (destinationRow > start) ? destinationRow - 1 : destinationRow;
-    renderer->lst_layers2d.insert(renderer->lst_layers2d.begin() + adjustedDestination, layer);
+    renderer->getRenderer2d()->lst_layers2d.insert(renderer->getRenderer2d()->lst_layers2d.begin() + adjustedDestination, layer);
     auto name = name_layers[start];
     name_layers.erase(name_layers.begin() + start);
     name_layers.insert(name_layers.begin() + adjustedDestination, name);

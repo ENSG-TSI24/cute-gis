@@ -11,12 +11,14 @@ class LayerRaster : public LayerBase
 public:
     explicit LayerRaster(RasterData raster);
     ~LayerRaster() override;
-    void renderRasters();
+    void render() override;
     BoundingBox calculateBoundingBox() override;
 
-    std::string getName() override; // Méthode virtuelle pour accéder au nom
-    void setIsVisible(bool isVisible) override; // (Optionnel) Méthode virtuelle pour définir le nom
-    BoundingBox getBoundingBox(BoundingBox boundingBox) override;
+    std::string getName() override;
+    void setName(std::string name) override;
+    bool getIsVisible() override;
+    void setIsVisible(bool isVisible) override;
+    BoundingBox getBoundingBox() override;
 
 private:
     BoundingBox boundingBox;

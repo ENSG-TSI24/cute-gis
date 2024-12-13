@@ -9,11 +9,14 @@ class LayerBase {
 
 public:
     virtual ~LayerBase() = 0;
-    virtual BoundingBox calculateBoundingBox() = 0;;
+    virtual BoundingBox calculateBoundingBox() = 0;
+    virtual void render() = 0;
 
-    virtual std::string getName() = 0; // Méthode virtuelle pour accéder au nom
-    virtual void setIsVisible(bool isVisible) = 0; // (Optionnel) Méthode virtuelle pour définir le nom
-    virtual BoundingBox getBoundingBox(BoundingBox boundingBox) = 0;
+    virtual std::string getName() = 0;
+    virtual void setName(std::string name) = 0;
+    virtual bool getIsVisible() = 0;
+    virtual void setIsVisible(bool isVisible) = 0;
+    virtual BoundingBox getBoundingBox() = 0;
 };
 
 
