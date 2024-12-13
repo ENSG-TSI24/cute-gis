@@ -4,21 +4,28 @@
 #include <vector>
 #include <utility>
 #include "../back/vectordata.h"
-#include "controller.h"
+#include "boundingbox.h"
+#include "layerbase.h"
 
-class Layer2d
+class Layer2d : public LayerBase
 {
 public:
-    Layer2d(VectorData data);
-    ~Layer2d();
+    explicit Layer2d(VectorData data);
+    ~Layer2d() override;
     void renderPoints();
     void renderLinestrings();
     void renderPolygons();
-    void calculateBoundingBox();
-    // Highlight specific geometry
-    void highlightGeometry(int rowIndex);
+    BoundingBox calculateBoundingBox() override;
+    void render() override;
 
-    // Properties
+    std::string getName() override;
+    void setName(std::string name) override;
+    bool getIsVisible() override;
+    void setIsVisible(bool isVisible) override;
+    BoundingBox getBoundingBox() override;
+
+
+private:
     BoundingBox boundingBox;
     int highlightedIndex = -1;
     bool isVisible = true;
@@ -29,7 +36,6 @@ public:
 
         float opacity = 1.0f;
 
-private:
     std::vector<std::pair<float, float>> points;
     std::vector<std::vector<std::pair<float, float>>> linestrings;
     std::vector<std::vector<std::vector<std::tuple<float, float, float>>>> polygons;

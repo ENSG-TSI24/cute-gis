@@ -8,13 +8,17 @@ Layer2d::Layer2d(VectorData data)
     linestrings = data.GetLineStrings();
     polygons = data.GetPolygons();
     polygons2d  = data.Get2DPolygons();
-    calculateBoundingBox();
+    boundingBox = calculateBoundingBox();
     attributeHeaders = data.GetAttributName();
     attributes = data.GetAllAttributData();
 }
 
-Layer2d::~Layer2d(){
+Layer2d::~Layer2d(){}
 
+void Layer2d::render() {
+    renderPolygons();
+    renderLinestrings();
+    renderPoints();
 }
 
 void Layer2d::renderPoints() {
@@ -171,7 +175,7 @@ void Layer2d::renderPolygons() {
 
 
 
-void Layer2d::calculateBoundingBox() {
+BoundingBox Layer2d::calculateBoundingBox() {
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
     float minY = std::numeric_limits<float>::max();
@@ -221,7 +225,7 @@ void Layer2d::calculateBoundingBox() {
     }
 
     // Stocker la bounding box
-    this->boundingBox = {minX, maxX, minY, maxY};
+    return BoundingBox(minX, maxX, minY, maxY);
     //std::cout<<"min:"<<minX<<"; max:"<<maxX<<"\n";
 }
 
@@ -267,3 +271,23 @@ void Layer2d::highlightGeometry(int rowIndex) {
         }
     }
 }
+std::string Layer2d::getName() {
+    return name;
+}
+
+void Layer2d::setName(std::string _name) {
+    name = _name;
+}
+
+bool Layer2d::getIsVisible() {
+    return isVisible;
+}
+
+void Layer2d::setIsVisible(bool _isVisible) {
+    isVisible = _isVisible;
+}
+
+BoundingBox Layer2d::getBoundingBox() {
+    return boundingBox;
+}
+

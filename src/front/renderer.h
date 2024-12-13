@@ -6,11 +6,11 @@
 #include <vector>
 #include <utility>
 #include <QMatrix4x4>
-#include "controller.h"
 #include <QGraphicsSceneMouseEvent>
-
 #include <QMouseEvent>
+#include "controller.h"
 
+class LayerBase;
 class Renderer2D;
 class Renderer3D;
 
@@ -36,7 +36,6 @@ public:
 
     bool getIs3D();
     void calculateBoundingBox();
-    BoundingBox boundingBox;
     Controller* controller;
 
 protected:

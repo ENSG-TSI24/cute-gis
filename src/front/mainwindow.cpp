@@ -8,8 +8,8 @@
 #include <QListWidget>
 #include <QInputDialog>
 #include "../back/vectordata.h"
+#include "../back/rasterdata.h"
 #include "addFluxData.h"
-#include "geotiffloader.h"
 #include "renderer.h"
 #include "renderer2d.h"
 #include "renderer3d.h"
@@ -89,18 +89,18 @@ void MainWindow::onOpenFile()
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 
             VectorData geo(filedata);
-            renderer->getRenderer2d()->lst_layers2d.push_back(geo);
+            std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
+            renderer->getRenderer2d()->lst_layers2d.push_back(vector);
 
             // Add name layers
             QFileInfo fileInfo(filePath);
             std::string name = fileInfo.baseName().toStdString();
-            renderer->getRenderer2d()->lst_layers2d.back().name = name;
-
-
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back().boundingBox);
+
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
 
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
@@ -111,17 +111,19 @@ void MainWindow::onOpenFile()
             renderer->setIs3D(true);
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
             renderer->reset3D();
-            GeoTiffLoader loader;
-            loader.loadGeoTIFF(filePath);
-            QImage* image = loader.image;
-
-            renderer->getRenderer2d()->lst_layersraster.push_back(LayerRaster(image));
+            RasterData geo = RasterData(filedata);
+            std::shared_ptr<LayerRaster> raster = std::make_unique<LayerRaster>(geo);
+            renderer->getRenderer2d()->lst_layers2d.push_back(raster);
 
             // add name layers
-            std::string name = "Couche " + std::to_string(nb_layers);
+            QFileInfo fileInfo(filePath);
+            std::string name = fileInfo.baseName().toStdString();
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
+
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
         } else {
                 throw std::runtime_error("Unsupported file format!");
@@ -291,11 +293,10 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
     std::cout<<name<<std::endl;
 
     for (auto& layer : renderer->getRenderer2d()->lst_layers2d) {
-        if (layer.name == name) {
-            layer.isVisible = checked;
+        if (layer->getName() == name) {
+            layer->setIsVisible(checked);
         }
     }
-
 }
 
 void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
@@ -331,11 +332,11 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         name_layers.erase(name_layers.begin() + row);
         renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + row);
     } else if  (selectedAction == zoomLayer) {
-        const Layer2d& layer = renderer->getRenderer2d()->lst_layers2d[row];
-        renderer->controller->getCamera().centerOnBoundingBox(layer.boundingBox);
+        auto& layer = renderer->getRenderer2d()->lst_layers2d[row];
+        renderer->controller->getCamera().centerOnBoundingBox(layer->getBoundingBox());
 
         // falcultative
-        QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer.name));
+        QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer->getName()));
     } else if (selectedAction == metadataAction) {
         const Layer2d& layer = renderer->getRenderer2d()->lst_layers2d[row];
         showAttributeTable(layer);
@@ -371,7 +372,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 
 
 void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow) {
-    auto layer = renderer->getRenderer2d()->lst_layers2d[start];
+    auto& layer = renderer->getRenderer2d()->lst_layers2d[start];
     renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + start);
 
     int adjustedDestination = (destinationRow > start) ? destinationRow - 1 : destinationRow;
