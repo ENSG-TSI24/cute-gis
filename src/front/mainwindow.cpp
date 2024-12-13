@@ -25,6 +25,8 @@
 #include <ogrsf_frmts.h>
 
 
+#include "../back/API_WMS.h"
+#include "../back/API_WMTS.h"
 #include "../back/API_WFS.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -224,17 +226,6 @@ void MainWindow::onOpenFile_stream(const char* chemin)
     }
 }
 
-QString MainWindow::extractLayerName(const QString &url) {
-    // Chercher la position de "LAYERS=" et "&CRS"
-    int startPos = url.indexOf("LAYERS=") + 7; // 7 est la longueur de "LAYERS="
-    int endPos = url.indexOf("&CRS");
-
-    // Si on trouve les deux parties, extraire la sous-chaîne
-    if (startPos != -1 && endPos != -1) {
-        return url.mid(startPos, endPos - startPos);
-    }
-    return QString(); // Retourne une chaîne vide si l'extraction échoue
-}
 
 
 void MainWindow::on_actionFlux_Data_triggered()
