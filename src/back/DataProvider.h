@@ -1,4 +1,4 @@
-
+#pragma once
 #include <gdal_priv.h>
 #include <ogrsf_frmts.h>
 #include <iostream>
@@ -20,5 +20,6 @@ class DataProvider {
         const char* url;
         GDALDataset* m_dataset;
         char** m_metadata;
+        std::string extractLayerName(const std::string& metadataLine);
 
 };
