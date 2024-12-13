@@ -12,7 +12,6 @@
 Renderer::Renderer(QWidget* parent)
     : QOpenGLWidget(parent) {
     controller = new Controller(this);
-    qDebug() << "Controller created: " << controller;
     renderer2d = new Renderer2D();
     renderer3d = new Renderer3D();
     setFocusPolicy(Qt::StrongFocus);
@@ -113,14 +112,6 @@ void Renderer::setIs3D(bool enabled) {
 
 bool Renderer::getIs3D() {
     return controller->get3DMode();
-}
-
-Renderer2D* Renderer::getRenderer2D() {
-    return renderer2d;
-}
-
-Renderer3D* Renderer::getRenderer3D() {
-    return renderer3d;
 }
 
 void Renderer::mouseReleaseEvent(QMouseEvent* event) {

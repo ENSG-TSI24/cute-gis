@@ -12,7 +12,7 @@
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QFileDialog>
-#include "layer2d.h"
+#include "layerbase.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,7 +29,7 @@ public:
     void onCheckboxToggled(bool checked, std::string name);
     void onToggle3DMode();
     void onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow);
-    void showAttributeTable(const Layer2d& layer);
+    void showAttributeTable(const std::shared_ptr<LayerBase>& layer);
 
 private slots:
     void on_actionFlux_Data_triggered();

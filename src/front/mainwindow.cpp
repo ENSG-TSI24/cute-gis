@@ -8,8 +8,8 @@
 #include <QListWidget>
 #include <QInputDialog>
 #include "../back/vectordata.h"
+#include "../back/rasterdata.h"
 #include "addFluxData.h"
-#include "geotiffloader.h"
 #include "renderer.h"
 #include "renderer2d.h"
 #include "renderer3d.h"
@@ -89,18 +89,18 @@ void MainWindow::onOpenFile()
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 
             VectorData geo(filedata);
-            renderer->getRenderer2d()->lst_layers2d.push_back(geo);
+            std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
+            renderer->getRenderer2d()->lst_layers2d.push_back(vector);
 
             // Add name layers
             QFileInfo fileInfo(filePath);
             std::string name = fileInfo.baseName().toStdString();
-            renderer->getRenderer2d()->lst_layers2d.back().name = name;
-
-
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back().boundingBox);
+
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
 
         } else if (filePath.endsWith(".obj", Qt::CaseInsensitive)) {
@@ -111,17 +111,19 @@ void MainWindow::onOpenFile()
             renderer->setIs3D(true);
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
             renderer->reset3D();
-            GeoTiffLoader loader;
-            loader.loadGeoTIFF(filePath);
-            QImage* image = loader.image;
-
-            renderer->getRenderer2d()->lst_layersraster.push_back(LayerRaster(image));
+            RasterData geo = RasterData(filedata);
+            std::shared_ptr<LayerRaster> raster = std::make_unique<LayerRaster>(geo);
+            renderer->getRenderer2d()->lst_layers2d.push_back(raster);
 
             // add name layers
-            std::string name = "Couche " + std::to_string(nb_layers);
+            QFileInfo fileInfo(filePath);
+            std::string name = fileInfo.baseName().toStdString();
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
+
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
         } else {
                 throw std::runtime_error("Unsupported file format!");
@@ -170,37 +172,41 @@ void MainWindow::onOpenFile_stream(const char* chemin)
 
 
             VectorData geo(filedata);
-            renderer->getRenderer2D()->lst_layers2d.push_back(geo);
+            std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
+            renderer->getRenderer2d()->lst_layers2d.push_back(vector);
+
+            // Add name layers
+            QFileInfo fileInfo(stream_path);
+            std::string name = fileInfo.baseName().toStdString();
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
+            name_layers.push_back(name);
+            setupCheckboxes();
+            ++nb_layers;
+
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
+            renderer->setIs3D(false);
+
+        } else if (stream_path.endsWith(".obj", Qt::CaseInsensitive)) {
+            renderer->reset2D();
+            nb_layers=0;
+            ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
+            renderer->getRenderer3d()->setObjectLoader(objectLoader);
+            renderer->setIs3D(true);
+        } else if (stream_path.endsWith(".tif", Qt::CaseInsensitive) || stream_path.endsWith(".tiff", Qt::CaseInsensitive)) {
+            renderer->reset3D();
+            RasterData geo = RasterData(filedata);
+            std::shared_ptr<LayerRaster> raster = std::make_unique<LayerRaster>(geo);
+            renderer->getRenderer2d()->lst_layers2d.push_back(raster);
 
             // add name layers
             QFileInfo fileInfo(stream_path);
             std::string name = fileInfo.baseName().toStdString();
-            renderer->getRenderer2D()->lst_layers2d.back().name = name;
+            renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
             name_layers.push_back(name);
             setupCheckboxes();
             ++nb_layers;
-            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2D()->lst_layers2d.back().boundingBox);
-            renderer->setIs3D(false);
 
-        } else if (stream_path.endsWith(".obj", Qt::CaseInsensitive)) {
-            renderer->reset();
-            nb_layers=0;
-            ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
-            renderer->getRenderer3D()->setObjectLoader(objectLoader);
-            renderer->setIs3D(true);
-        } else if (stream_path.endsWith(".tif", Qt::CaseInsensitive) || stream_path.endsWith(".tiff", Qt::CaseInsensitive)) {
-            renderer->reset();
-            GeoTiffLoader loader;
-            loader.loadGeoTIFF(stream_path);
-            QImage* image = loader.image;
-
-            renderer->getRenderer2D()->lst_layersraster.push_back(LayerRaster(image));
-
-            // add name layers
-            std::string name = "Couche " + std::to_string(nb_layers);
-            name_layers.push_back(name);
-            setupCheckboxes();
-            ++nb_layers;
+            renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
         } else {
                 throw std::runtime_error("Unsupported file format!");
@@ -291,11 +297,10 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
     std::cout<<name<<std::endl;
 
     for (auto& layer : renderer->getRenderer2d()->lst_layers2d) {
-        if (layer.name == name) {
-            layer.isVisible = checked;
+        if (layer->getName() == name) {
+            layer->setIsVisible(checked);
         }
     }
-
 }
 
 void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
@@ -331,13 +336,13 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         name_layers.erase(name_layers.begin() + row);
         renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + row);
     } else if  (selectedAction == zoomLayer) {
-        const Layer2d& layer = renderer->getRenderer2d()->lst_layers2d[row];
-        renderer->controller->getCamera().centerOnBoundingBox(layer.boundingBox);
+        auto& layer = renderer->getRenderer2d()->lst_layers2d[row];
+        renderer->controller->getCamera().centerOnBoundingBox(layer->getBoundingBox());
 
         // falcultative
-        QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer.name));
+        QMessageBox::information(this, "Zoom", "Zoomed to layer: " + QString::fromStdString(layer->getName()));
     } else if (selectedAction == metadataAction) {
-        const Layer2d& layer = renderer->getRenderer2d()->lst_layers2d[row];
+        const auto& layer = renderer->getRenderer2d()->lst_layers2d[row];
         showAttributeTable(layer);
     } else if (selectedAction == opacityAction) {
         QDialog* dialog = new QDialog(this);
@@ -348,7 +353,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         layout->addWidget(label);
         QSlider* slider = new QSlider(Qt::Horizontal, dialog);
         slider->setRange(0, 100);
-        double currentOpacity = renderer->getRenderer2d()->lst_layers2d[row].opacity;
+        double currentOpacity = renderer->getRenderer2d()->lst_layers2d[row]->getOpacity();
         slider->setValue(static_cast<int>(currentOpacity * 100));
         layout->addWidget(slider);
 
@@ -357,7 +362,7 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         connect(slider, &QSlider::valueChanged, [this, row, valueLabel](int value) {
             valueLabel->setText(QString::number(value) + "%");
             if (row >= 0 && row < renderer->getRenderer2d()->lst_layers2d.size()) {
-                renderer->getRenderer2d()->lst_layers2d[row].opacity = value / 100.0;
+                renderer->getRenderer2d()->lst_layers2d[row]->setOpacity(value / 100.0);
                 renderer->update();
             }
         });
@@ -367,10 +372,13 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 
 }
 
-
-
-
 void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow) {
+    if (start < 0 || start >= static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size()) ||
+        destinationRow < 0 || destinationRow > static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size())) {
+        qWarning() << "invalid indices for layer reordering.";
+        return;
+    }
+
     auto layer = renderer->getRenderer2d()->lst_layers2d[start];
     renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + start);
 
@@ -383,29 +391,43 @@ void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, cons
     renderer->update();
 }
 
-void MainWindow::showAttributeTable(const Layer2d& layer) {
-    // Créer une fenêtre pour afficher la table attributaire
+void MainWindow::showAttributeTable(const std::shared_ptr<LayerBase>& layer) {
+    if (!layer->hasAttributes()) {
+        QMessageBox::information(this, "No Attributes", "This layer does not support attribute tables.");
+        return;
+    }
+
+    const auto& attributes = layer->getAttributes();
+    const auto& headers = layer->getAttributeHeaders();
+
+    if (attributes.empty() || headers.empty()) {
+        QMessageBox::warning(this, "Empty Attributes", "This layer does not contain any attribute data.");
+        return;
+    }
+
     QDialog* dialog = new QDialog(this);
-    dialog->setWindowTitle(QString::fromStdString("Attributs : " + layer.name));
+    dialog->setWindowTitle(QString::fromStdString("Attributs : " + layer->getName()));
     dialog->resize(600, 400);
 
     QVBoxLayout* layout = new QVBoxLayout(dialog);
 
-    // Créer un QTableWidget pour afficher les attributs
     QTableWidget* tableWidget = new QTableWidget(dialog);
-    tableWidget->setColumnCount(layer.attributes.empty() ? 0 : layer.attributes[0].size());
-    tableWidget->setRowCount(layer.attributes.size());
 
-    // Définir les en-têtes des colonnes
-    QStringList headers;
-    for (const auto& header : layer.attributeHeaders) {
-        headers << QString::fromStdString(header);
+    tableWidget->setColumnCount(headers.size());
+    tableWidget->setRowCount(attributes.size());
+
+    QStringList headerLabels;
+    for (const auto& header : headers) {
+        headerLabels << QString::fromStdString(header);
     }
-    tableWidget->setHorizontalHeaderLabels(headers);
+    tableWidget->setHorizontalHeaderLabels(headerLabels);
 
-    // Remplir les données de la table
-    for (int i = 0; i < layer.attributes.size(); ++i) {
-        const auto& row = layer.attributes[i];
+    for (int i = 0; i < attributes.size(); ++i) {
+        const auto& row = attributes[i];
+        if (row.size() != headers.size()) {
+            QMessageBox::critical(this, "Data Error", "Row size does not match header size. Data may be corrupted.");
+            return;
+        }
         for (int j = 0; j < row.size(); ++j) {
             tableWidget->setItem(i, j, new QTableWidgetItem(QString::fromStdString(row[j])));
         }
@@ -416,18 +438,15 @@ void MainWindow::showAttributeTable(const Layer2d& layer) {
 
     dialog->setLayout(layout);
 
-    // Connect the table's selection signal to directly call the highlightGeometry method
     connect(tableWidget, &QTableWidget::itemSelectionChanged, this, [this, &layer, tableWidget]() {
         QList<QTableWidgetItem*> selectedItems = tableWidget->selectedItems();
         if (!selectedItems.isEmpty()) {
             int row = selectedItems.first()->row();
-            renderer->getRenderer2d()->highlightGeometry(layer.name, row);
+            renderer->getRenderer2d()->highlightGeometry(layer->getName(), row);
 
-            // Trigger a refresh of the OpenGL widget
-            this->update(); // Or call the appropriate method to refresh the rendering
+            this->update();
         }
     });
-
 
     dialog->exec(); // Afficher la boîte de dialogue
 }

@@ -6,11 +6,11 @@
 #include <vector>
 #include <utility>
 #include <QMatrix4x4>
-#include "controller.h"
 #include <QGraphicsSceneMouseEvent>
-
 #include <QMouseEvent>
+#include "controller.h"
 
+class LayerBase;
 class Renderer2D;
 class Renderer3D;
 
@@ -28,15 +28,11 @@ public:
     Renderer2D* getRenderer2d();
     Renderer3D* getRenderer3d();
 
-    Renderer2D* getRenderer2D();
-    Renderer3D* getRenderer3D();
-
 
     //void reset();
 
     bool getIs3D();
     void calculateBoundingBox();
-    BoundingBox boundingBox;
     Controller* controller;
 
 protected:
