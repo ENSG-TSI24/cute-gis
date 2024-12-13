@@ -17,6 +17,7 @@ public:
     void set3DMode(bool is3D);
     void ControllerwheelEvent(QWheelEvent* event) ; // Gère les événements molette
     void ControllerkeyPressEvent(QKeyEvent* event) ; // Gère les événements clavier
+    void ControllerkeyReleaseEvent(QKeyEvent* event);
     void ControllerQMouseEvent(QMouseEvent *event);
 
     void ControllerMousePressEvent(QMouseEvent* event); // Début du drag
@@ -30,6 +31,7 @@ private:
     bool isDragging;
     QPoint lastMousePosition;
     bool is3DMode;
+    bool isCtrlPressed=false;
 
 };
 

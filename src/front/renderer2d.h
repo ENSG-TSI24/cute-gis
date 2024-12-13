@@ -10,17 +10,12 @@ public:
     Renderer2D();
     ~Renderer2D();
     void paintGl2D();
-    void calculateBoundingBox();
     void reset2D();
-
-    std::vector<LayerRaster> lst_layersraster;
-    std::vector<Layer2d> lst_layers2d;
-    BoundingBox boundingBox;
+    void highlightGeometry(const std::string& layerName, int rowIndex);
+    std::vector<std::shared_ptr<LayerBase>> lst_layers2d;
 
 private:
     void renderLayers2d();
-    void renderRasters();
-
 };
 
 #endif // RENDERER2D_H
