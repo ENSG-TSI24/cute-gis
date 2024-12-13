@@ -4,6 +4,7 @@
 #include "layer2d.h"
 #include "layerraster.h"
 #include "renderer.h"
+#include "../back/session.h"
 
 class Renderer2D {
 public:
@@ -18,6 +19,7 @@ public:
     BoundingBox boundingBox;
 
 private:
+    Session session;
     void renderLayers2d();
     void renderRasters();
 

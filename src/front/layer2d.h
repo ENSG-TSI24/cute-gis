@@ -5,8 +5,7 @@
 #include <utility>
 #include "../back/vectordata.h"
 #include "controller.h"
-
-
+#include "../back/session.h"
 
 class Layer2d
 {

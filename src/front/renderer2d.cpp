@@ -1,6 +1,18 @@
 #include "renderer2d.h"
+#include "src/back/vectordata.h"
+#include <iostream>
 
-Renderer2D::Renderer2D(){}
+Renderer2D::Renderer2D(){
+    lst_layers2d = std::vector<Layer2d>();
+    session = Session();
+
+    auto layers2d_json = session.getLayers();
+    for (auto& layer_path : layers2d_json) {
+        const char* layer_path_cstr = layer_path.c_str();
+        lst_layers2d.push_back(Layer2d(VectorData(layer_path_cstr)));
+    }
+    
+}
 
 Renderer2D::~Renderer2D() {}
 

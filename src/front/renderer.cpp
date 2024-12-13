@@ -17,6 +17,7 @@ Renderer::Renderer(QWidget* parent)
     renderer3d = new Renderer3D();
     setFocusPolicy(Qt::StrongFocus);
     is3D = false;
+    this->getRenderer2d()->lst_layers2d;
 }
 
 Renderer::~Renderer() {
