@@ -17,8 +17,7 @@ class CityGMLParserTest : public :: testing::Test {
     protected:
         CityGMLParser data;
         std::vector<Feature> features;
-        const char* inputFile =  ".."
-                                 "/data/gml/SAINT_DIDIER_AU_MONT_D_OR_PYLONE_2015.gml";
+        const char* inputFile =  "/home/formation/Documents/ProjetTSI/SAINT_DIDIER_AU_MONT_D_OR_BATI_2015_repaired.gml";
 };
 
 /*
@@ -44,7 +43,7 @@ TEST_F(CityGMLParserTest, ConstructorVectorDataNull){
 
 
 }
-
+*/
 TEST_F(CityGMLParserTest, ParseFeatures) {
    data = CityGMLParser(inputFile);
 
@@ -52,11 +51,12 @@ TEST_F(CityGMLParserTest, ParseFeatures) {
    EXPECT_TRUE(data.GetDataset()== nullptr);
    std::vector<Feature> features = data.getFeatures();
    EXPECT_FALSE(data.getFeatures().size() == 0);
+   data.exportToObj(1.0f, "outputdelavie");
 
 
 }
 
-*/
+
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

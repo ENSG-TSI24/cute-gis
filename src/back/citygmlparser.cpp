@@ -152,11 +152,12 @@ void CityGMLParser::parseFeatures() {
         feature.vertices = data.at(0);
         feature.VerticesGeoreferenced = data.at(0);
         feature.verticeNormal = data.at(1).at(0);
+
         feature.VerticesTexture = data.at(2);
 
 
         // Passage des vertices à la feature
-        std::cout<< "feature" <<to_string(feature.vertices.at(0).at(0).at(0)) << std::endl;
+
 
         //Passage de l'enveloppe à la feature
         feature.lowerCorner = std::make_tuple(xMin,yMin,zMin);
@@ -224,12 +225,14 @@ std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> CityGMLParser::pro
                     glm::vec3 u = v2 - v1;
                     glm::vec3 v = v3 - v1;
 
-                    if (u!= glm::vec3(0,0,0) && v!= glm::vec3(0,0,0) && u!=v){
-                    glm::vec3 normal = glm::normalize(glm::cross(u, v));
 
+                    glm::vec3 normal = glm::normalize(glm::cross(u, v));
+                    if (std::isnan(normal.x)) normal.x = 0.0f;
+                    if (std::isnan(normal.y)) normal.y = 0.0f;
+                    if (std::isnan(normal.z)) normal.z = 0.0f;
                     normals3D.push_back(normal); // Accumuler les normales
 
-                    }
+
                 }
             }
 
@@ -284,8 +287,11 @@ std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> CityGMLParser::pro
 
         returnTuple.push_back(multipolygonList);
 
+
         normalsListUniform.push_back(normalsList);
+
         returnTuple.push_back(normalsListUniform);
+
 
         returnTuple.push_back(multipolygontexture);
 
@@ -321,7 +327,7 @@ void CityGMLParser::setInScale(float s) {
               << xMax << ", " << yMax << ", " << zMax << ")" << std::endl;
 
     for (Feature& feature : features) {
-        for (int i = 0; i < feature.vertices.size(); i += 3) {
+        for (int i = 0; i < feature.vertices.size(); i++) {
             for (int k =0; k< feature.vertices.at(i).size(); k++){
                 for (int l =0; l<  feature.vertices.at(i).at(k).size(); l++){
 
@@ -360,57 +366,52 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
         return;
     }
 
-    std::string mtlFileName = filePath.substr(0, filePath.find_last_of('.')) + ".mtl";
-    objFile << "mtllib " << mtlFileName << "\n"; // Reference the .mtl file
 
     unsigned int vertexOffset = 1;
     for (const auto& feature : features) {
-        if (feature.vertices.empty()) {
+        if (feature.VerticesGeoreferenced.empty()) {
             std::cerr << "Warning: Feature " << feature.id << " has no geometry and will be skipped." << std::endl;
             continue;
         }
-        std::cout<< "je fais un objet" << std::endl;
+
         objFile << "o " << feature.objectName << "\n";
-        objFile << "usemtl Material_" << feature.id << "\n"; // Assign material
 
-        for (int i = 0; i < feature.vertices.size(); i += 3) {
-            for (int k =0; k< feature.vertices.at(i).size(); k++){
+
+        for (int i = 0; i < feature.VerticesGeoreferenced.size(); i++) {
+            for (int k =0; k< feature.VerticesGeoreferenced.at(i).size(); k++){
                 int n = 1;
-                for (int l =0; l<  feature.vertices.at(i).at(k).size(); l++){
+                for (int l =0; l<  feature.VerticesGeoreferenced.at(i).at(k).size(); l++){
 
-                    std::cout<<"v :" <<to_string(feature.vertices.at(i).at(k).at(l))<<std::endl;
-                    objFile << "v " << feature.vertices.at(i).at(k).at(l).x << " "
-                            << feature.vertices.at(i).at(k).at(l).y << " "
-                            << feature.vertices.at(i).at(k).at(l).z << "\n";
-                    std::cout<<"vt : "<<to_string(feature.VerticesTexture.at(i).at(k).at(l))<<std::endl;
+
+                    objFile << std::fixed << std::setprecision(1) <<
+                               "v " << feature.VerticesGeoreferenced.at(i).at(k).at(l).x << " "
+                            << feature.VerticesGeoreferenced.at(i).at(k).at(l).y << " "
+                            << feature.VerticesGeoreferenced.at(i).at(k).at(l).z << "\n";
+
                     objFile << "vt " << feature.VerticesTexture.at(i).at(k).at(l).x << " "
                             << feature.VerticesTexture.at(i).at(k).at(l).y << " "
                             << feature.VerticesTexture.at(i).at(k).at(l).z << "\n";
 
 
                 }
-                if (feature.verticeNormal.at(i).size() >= k-1){
-                std::cout<< "vn :" <<to_string(feature.verticeNormal.at(i).at(k)) << std::endl;
+
+
                 objFile << "vn " << feature.verticeNormal.at(i).at(k).x << " "
                         << feature.verticeNormal.at(i).at(k).y << " "
                         << feature.verticeNormal.at(i).at(k).z << "\n";
-                }
-                objFile << "f ";
 
 
-                while (n < feature.vertices.at(i).size() ){
-                    objFile << -n << "/" << -n << "/" << -1 << " ";
+
+                std::string face = "f ";
+
+                while (n <= feature.VerticesGeoreferenced.at(i).at(k).size() ){
+                    face+=  std::to_string(-n) + "/" + std::to_string(-n) + "/" + std::to_string(-1) + " ";
                     n+=1;
-                }
-                objFile << "\n";
-                }
 
-
+                }
+                objFile << face << "\n";
+                }
             }
-
-
-
-
         vertexOffset += feature.vertices.size() / 3;
         objFile << "\n";
     }
@@ -418,6 +419,7 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
     objFile.close();
     std::cout << "Exported features to OBJ file: " << filePath << std::endl;
 }
+
 
 
 void CityGMLParser::exportToMtl(const std::string& filePath) const {
