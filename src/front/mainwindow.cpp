@@ -36,7 +36,29 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
     connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
-//    connect(this, &MainWindow::geometrySelected, renderer->getRenderer2d(), &Renderer2D::highlightGeometry);
+
+    for (const auto& layer : renderer->getRenderer2d()->lst_layers2d) {
+        QFileInfo fileInfo(QString::fromStdString(layer->getName()));
+        std::string name = fileInfo.baseName().toStdString();
+        renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
+
+
+        name_layers.push_back(name);
+        setupCheckboxes();
+        ++nb_layers;
+        renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
+        renderer->setIs3D(false);
+        qDebug() << "Layer name:" << QString::fromStdString(layer->getName());
+        // Perform any additional operations on each layer here
+    }
+    if (!ui->openGLWidget->layout()) {
+        auto* layout = new QVBoxLayout(ui->openGLWidget);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->addWidget(renderer);
+    } else if (ui->openGLWidget->layout()->indexOf(renderer) == -1) {
+        ui->openGLWidget->layout()->addWidget(renderer);
+    }
+
 
 }
 
@@ -85,6 +107,7 @@ void MainWindow::onOpenFile()
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive) || filePath.endsWith(".shp", Qt::CaseInsensitive)) {
             renderer->reset3D();
+            renderer->getRenderer2d()->session.addToJson(filedata);
             //add layer2d
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 

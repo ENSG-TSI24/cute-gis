@@ -4,10 +4,14 @@
 #include <vector>
 #include <utility>
 #include "../back/vectordata.h"
+
+#include "controller.h"
+#include "../back/session.h"
 #include "boundingbox.h"
 #include "layerbase.h"
 
 class Layer2d : public LayerBase
+
 {
 public:
     explicit Layer2d(VectorData data);
