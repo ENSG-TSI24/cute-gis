@@ -242,7 +242,7 @@ void MainWindow::on_actionFlux_Data_triggered()
 
     if (dialog.exec() == QDialog::Accepted) {
         QString layerName_temp = dialog.getLayerName();
-        QString layerName = extractLayerName(layerName_temp);
+        //QString layerName = extractLayerName(layerName_temp);
         QString layerURL = dialog.getLayerURL();
 
         std::string intername2 = layerName_temp.toStdString();
