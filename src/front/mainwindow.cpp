@@ -54,7 +54,8 @@ MainWindow::MainWindow(QWidget *parent)
         clearLayout(ui->openGLWidget->layout());
         ui->openGLWidget->layout()->addWidget(renderer);
     }
-    renderer->update();
+    renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
+    renderer->setIs3D(false);
 }
 
 MainWindow::~MainWindow()

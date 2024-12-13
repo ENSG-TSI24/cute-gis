@@ -1,16 +1,23 @@
 {
-    "/home/ibhou/Documents/cute-gis/data/test_data/departements.geojson": {
+    "/home/ibhou/Documents/cute-gis/data/geojson/multipoint__lyonPartDieu__barrier.geojson": {
         "properties": {
-            "name": "/home/ibhou/Documents/cute-gis/data/test_data/departements.geojson",
+            "name": "/home/ibhou/Documents/cute-gis/data/geojson/multipoint__lyonPartDieu__barrier.geojson",
             "visible": true
         },
         "type": "vector"
     },
-    "/home/ibhou/Documents/cute-gis/data/test_data/multipolygon.geojson": {
+    "/home/ibhou/Documents/cute-gis/data/geojson/multipoint__lyonPartDieu__trafficSignal.geojson": {
         "properties": {
-            "name": "/home/ibhou/Documents/cute-gis/data/test_data/multipolygon.geojson",
+            "name": "/home/ibhou/Documents/cute-gis/data/geojson/multipoint__lyonPartDieu__trafficSignal.geojson",
             "visible": true
         },
         "type": "vector"
+    },
+    "/home/ibhou/Downloads/PlanetObserver_PlanetSAT_10m_UK_London_UTM30/PlanetObserver_PlanetSAT_10m_UK_London_UTM30.tif": {
+        "properties": {
+            "name": "/home/ibhou/Downloads/PlanetObserver_PlanetSAT_10m_UK_London_UTM30/PlanetObserver_PlanetSAT_10m_UK_London_UTM30.tif",
+            "visible": true
+        },
+        "type": "raster"
     }
 }
