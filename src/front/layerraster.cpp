@@ -39,7 +39,7 @@ void LayerRaster::render() {
     // Activer les textures
     glEnable(GL_TEXTURE_2D);
 
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor4f(1.0f, 1.0f, 1.0f, opacity);
     // Dessiner le quadrilatère texturé
     glBegin(GL_QUADS);
         glTexCoord3f(0.0f, 0.0f, 0.0f); glVertex3f(xMin, yMin, 0.0); // Bas gauche

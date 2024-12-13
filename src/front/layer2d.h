@@ -29,6 +29,11 @@ public:
     std::vector<std::vector<std::string>> getAttributes() override;
     std::vector<std::string> getAttributeHeaders() override;
 
+    bool hasAttributes() const override {
+        return true;
+    }
+
+
 private:
     BoundingBox boundingBox;
     int highlightedIndex = -1;

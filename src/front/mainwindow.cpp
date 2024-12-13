@@ -69,7 +69,7 @@ void MainWindow::onOpenFile()
 {
     bool is3DMode = renderer->getIs3D();
 
-    QString filter = is3DMode ? "3D Files (*.obj);;All Files (*.*)" : "2D Files (*.geojson *.shp);;All Files (*.*)";
+    QString filter = is3DMode ? "3D Files (*.obj);;All Files (*.*)" : "2D Files (*.geojson *.shp *.tif *.tiff);;All Files (*.*)";
     QString filePath = QFileDialog::getOpenFileName(this, "Open File ...", "../cute-gis/data", filter);
 
     if (filePath.isEmpty()) {
@@ -372,11 +372,14 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
 
 }
 
-
-
-
 void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow) {
-    auto& layer = renderer->getRenderer2d()->lst_layers2d[start];
+    if (start < 0 || start >= static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size()) ||
+        destinationRow < 0 || destinationRow > static_cast<int>(renderer->getRenderer2d()->lst_layers2d.size())) {
+        qWarning() << "invalid indices for layer reordering.";
+        return;
+    }
+
+    auto layer = renderer->getRenderer2d()->lst_layers2d[start];
     renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + start);
 
     int adjustedDestination = (destinationRow > start) ? destinationRow - 1 : destinationRow;
@@ -389,28 +392,42 @@ void MainWindow::onLayersSuperposed(const QModelIndex&, int start, int end, cons
 }
 
 void MainWindow::showAttributeTable(const std::shared_ptr<LayerBase>& layer) {
-    // Créer une fenêtre pour afficher la table attributaire
+    if (!layer->hasAttributes()) {
+        QMessageBox::information(this, "No Attributes", "This layer does not support attribute tables.");
+        return;
+    }
+
+    const auto& attributes = layer->getAttributes();
+    const auto& headers = layer->getAttributeHeaders();
+
+    if (attributes.empty() || headers.empty()) {
+        QMessageBox::warning(this, "Empty Attributes", "This layer does not contain any attribute data.");
+        return;
+    }
+
     QDialog* dialog = new QDialog(this);
     dialog->setWindowTitle(QString::fromStdString("Attributs : " + layer->getName()));
     dialog->resize(600, 400);
 
     QVBoxLayout* layout = new QVBoxLayout(dialog);
 
-    // Créer un QTableWidget pour afficher les attributs
     QTableWidget* tableWidget = new QTableWidget(dialog);
-    tableWidget->setColumnCount(layer->getAttributes().empty() ? 0 : layer->getAttributes()[0].size());
-    tableWidget->setRowCount(layer->getAttributes().size());
 
-    // Définir les en-têtes des colonnes
-    QStringList headers;
-    for (const auto& header : layer->getAttributeHeaders()) {
-        headers << QString::fromStdString(header);
+    tableWidget->setColumnCount(headers.size());
+    tableWidget->setRowCount(attributes.size());
+
+    QStringList headerLabels;
+    for (const auto& header : headers) {
+        headerLabels << QString::fromStdString(header);
     }
-    tableWidget->setHorizontalHeaderLabels(headers);
+    tableWidget->setHorizontalHeaderLabels(headerLabels);
 
-    // Remplir les données de la table
-    for (int i = 0; i < layer->getAttributes().size(); ++i) {
-        const auto& row = layer->getAttributes()[i];
+    for (int i = 0; i < attributes.size(); ++i) {
+        const auto& row = attributes[i];
+        if (row.size() != headers.size()) {
+            QMessageBox::critical(this, "Data Error", "Row size does not match header size. Data may be corrupted.");
+            return;
+        }
         for (int j = 0; j < row.size(); ++j) {
             tableWidget->setItem(i, j, new QTableWidgetItem(QString::fromStdString(row[j])));
         }
@@ -421,18 +438,15 @@ void MainWindow::showAttributeTable(const std::shared_ptr<LayerBase>& layer) {
 
     dialog->setLayout(layout);
 
-    // Connect the table's selection signal to directly call the highlightGeometry method
     connect(tableWidget, &QTableWidget::itemSelectionChanged, this, [this, &layer, tableWidget]() {
         QList<QTableWidgetItem*> selectedItems = tableWidget->selectedItems();
         if (!selectedItems.isEmpty()) {
             int row = selectedItems.first()->row();
             renderer->getRenderer2d()->highlightGeometry(layer->getName(), row);
 
-            // Trigger a refresh of the OpenGL widget
-            this->update(); // Or call the appropriate method to refresh the rendering
+            this->update();
         }
     });
-
 
     dialog->exec(); // Afficher la boîte de dialogue
 }

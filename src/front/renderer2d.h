@@ -12,7 +12,6 @@ public:
     void paintGl2D();
     void reset2D();
     void highlightGeometry(const std::string& layerName, int rowIndex);
-
     std::vector<std::shared_ptr<LayerBase>> lst_layers2d;
 
 private:

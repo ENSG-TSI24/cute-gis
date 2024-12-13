@@ -23,6 +23,7 @@ public:
     virtual std::vector<std::vector<std::string>> getAttributes() = 0;
     virtual std::vector<std::string> getAttributeHeaders() = 0;
     virtual void highlightGeometry(int rowIndex) = 0;
+    virtual bool hasAttributes() const = 0;
 };
 
 

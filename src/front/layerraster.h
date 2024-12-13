@@ -25,6 +25,11 @@ public:
     std::vector<std::vector<std::string>> getAttributes() override;
     std::vector<std::string> getAttributeHeaders() override;
 
+    bool hasAttributes() const override{
+        return false;
+    }
+
+
 private:
     BoundingBox boundingBox;
     bool isVisible = true;
