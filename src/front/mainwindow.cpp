@@ -25,8 +25,6 @@
 #include <ogrsf_frmts.h>
 
 
-#include "../back/API_WMS.h"
-#include "../back/API_WMTS.h"
 #include "../back/API_WFS.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -38,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->actionfiles, &QAction::triggered, this, &MainWindow::onOpenFile);
     connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
+//    connect(this, &MainWindow::geometrySelected, renderer->getRenderer2d(), &Renderer2D::highlightGeometry);
+
 }
 
 MainWindow::~MainWindow()
@@ -109,7 +109,6 @@ void MainWindow::onOpenFile()
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->getRenderer3d()->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
-
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
             renderer->reset3D();
             RasterData geo = RasterData(filedata);
@@ -171,6 +170,7 @@ void MainWindow::onOpenFile_stream(const char* chemin)
             //add layer2d
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 
+
             VectorData geo(filedata);
             std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
             renderer->getRenderer2d()->lst_layers2d.push_back(vector);
@@ -192,7 +192,6 @@ void MainWindow::onOpenFile_stream(const char* chemin)
             ObjectLoader* objectLoader = new ObjectLoader(filedata, this);
             renderer->getRenderer3d()->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
-
         } else if (stream_path.endsWith(".tif", Qt::CaseInsensitive) || stream_path.endsWith(".tiff", Qt::CaseInsensitive)) {
             renderer->reset3D();
             RasterData geo = RasterData(filedata);
@@ -209,7 +208,6 @@ void MainWindow::onOpenFile_stream(const char* chemin)
 
             renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
             renderer->setIs3D(false);
-
         } else {
                 throw std::runtime_error("Unsupported file format!");
         }
@@ -234,66 +232,52 @@ void MainWindow::onOpenFile_stream(const char* chemin)
 
 
 
-void MainWindow::on_actionFlux_Data_triggered()
-{
-    addFluxData dialog(this);
+void MainWindow::on_actionFlux_Data_triggered() {
+    addFluxData dialog(this);  // Create the dialog instance
+    if (dialog.exec() == QDialog::Accepted) {  // Wait for user interaction
+        QString layerName = dialog.getLayerName();  // Get the layer name
+        QString layerURL = dialog.getLayerURL();    // Get the layer URL
 
-    // Ajouter des URL à la combo box
-    dialog.addItemToComboBox_url("WFS:https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities");
-    //dialog.addItemToComboBox_url("WMTS:https://data.geopf.fr/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetCapabilities");
-    dialog.addItemToComboBox_url("WMS:https://data.geopf.fr/wms-r?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities");
-    dialog.addItemToComboBox_url("WFS:https://data.grandlyon.com/geoserver/wfs?SERVICE=WFS&REQUEST=GetCapabilities&VERSION=1.1.0");
-    dialog.addItemToComboBox_url("WMS:https://data.grandlyon.com/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0");
-   // dialog.addItemToComboBox_url("WMTS:https://imagerie.data.grandlyon.com/all/wmts?service=WMTS&request=getcapabilities");
+        qDebug() << "Layer Name:" << layerName;
+        qDebug() << "URL:" << layerURL;
+     std::string  intername =layerName.toStdString();
+        const char* cclayerName = intername.c_str();
 
-    if (dialog.exec() == QDialog::Accepted) {
-        QString layerName_temp = dialog.getLayerName();
-        //QString layerName = extractLayerName(layerName_temp);
-        QString layerURL = dialog.getLayerURL();
+        // intername.c_str();
+        std::string  intername2 =layerURL.toStdString();
+        const char* wfsUrl = intername2.c_str();
+        std::cout << wfsUrl << std::endl;
 
-        std::string intername2 = layerName_temp.toStdString();
-        std::string  intername1 = layerURL.toStdString();
-        const char* layname = intername2.c_str();
-        const char* Url = intername1.c_str();
-
-        DataProvider d;
-        std::string typef = d.GetTypeStream(Url);
-
-
-        if (typef == "WFS"){
-            API_WFS wfs(Url);
+        std::cout <<"oui 1" <<std::endl;
+        API_WFS wfs(wfsUrl);
+        try {
             wfs.loadDataset();
-            wfs.ExportToGeoJSON(intername2);
-            std::cout << "url" << Url << std::endl;
-            std::cout << "layer" << intername2 << std::endl;
-            std::cout << wfs.displayMetadata() << std::endl;
+            if (!wfs.isEmpty()) {
+            char** layers = wfs.displayMetadata(); // Get the list of layers
+
+                    for (int i = 0; layers[i] != nullptr; ++i) { // Iterate until null terminator
+                        std::cout << "Layer " << i + 1 << ": " << layers[i] << std::endl;
+                    }
+            std::cout <<"I'm here"<<std::endl ;
+            wfs.ExportToGeoJSON(intername);
+            std::vector<std::pair<std::string, std::string>> FieldsLayers = wfs.GetLayerFields(cclayerName);
+            for (const auto& field : FieldsLayers) {
+                   std::cout << "Field: " << field.first << ", Type: " << field.second << std::endl;
+               }
             const char* chemin = wfs.getOutput();
             onOpenFile_stream(chemin);
-        }
 
-        else if (typef == "WMS"){
-            API_WMS wms(Url);
-            wms.loadDataset();
 
-            std::cout << "couche intername : " << intername2 << std::endl;
-            const char* op = "../cute-gis/data/geotiff/";
-            wms.loadTileGridToGeoTiff(layname,1,1,1,1,op);
-            const char* chemin2 = wms.getOutput();
-            onOpenFile_stream(chemin2);
-        } else {
-            API_WMTS wmts(Url);
-            wmts.loadDataset();
-
-            std::cout << "url" << Url << std::endl;
-            std::cout << "layer" << intername2 << std::endl;
-            std::cout << wmts.displayMetadata() << std::endl;
-        }
+    }
+        }  catch (const std::exception& e) {
+            std::cout << "An error occurred: " << e.what() << std::endl; // **frontend team ( error log )
+            on_actionFlux_Data_triggered();
         }
 
 
 
-
-       }
+    }
+}
 
 
 
@@ -308,6 +292,10 @@ void MainWindow::clearLayout(QLayout *layout) {
 
 void MainWindow::onCheckboxToggled(bool checked, std::string name) {
 
+    std::cout<<"-------------- checkbox clicked --------------"<<std::endl;
+    std::cout<<checked<<std::endl;
+    std::cout<<name<<std::endl;
+
     for (auto& layer : renderer->getRenderer2d()->lst_layers2d) {
         if (layer->getName() == name) {
             layer->setIsVisible(checked);
@@ -317,7 +305,6 @@ void MainWindow::onCheckboxToggled(bool checked, std::string name) {
 
 void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
     QListWidget* listWidget = qobject_cast<QListWidget*>(sender());
-
     if (!listWidget) return;
 
     QListWidgetItem* item = listWidget->itemAt(pos);
@@ -466,42 +453,34 @@ void MainWindow::showAttributeTable(const std::shared_ptr<LayerBase>& layer) {
 
 
 void MainWindow::setupCheckboxes() {
+    ui->listWidget->clear();
 
-    // Clear the layout_manager
-    if (ui->listWidget) {
-        ui->listWidget->clear();
-    }
+    disconnect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
+    disconnect(ui->listWidget->model(), &QAbstractItemModel::rowsMoved, this, &MainWindow::onLayersSuperposed);
+    disconnect(ui->listWidget, &QListWidget::itemChanged, nullptr, nullptr);
 
-    // Create list of checkbox
-    QListWidget* listWidget = ui->listWidget;
-    listWidget->setDragDropMode(QAbstractItemView::InternalMove);
-    listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    disconnect(listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
-    connect(listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
-    connect(listWidget->model(), &QAbstractItemModel::rowsMoved, this, &MainWindow::onLayersSuperposed);
+    ui->listWidget->setDragDropMode(QAbstractItemView::InternalMove);
+    ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
+
+    connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &MainWindow::onLayerContextMenuRequested);
+    connect(ui->listWidget->model(), &QAbstractItemModel::rowsMoved, this, &MainWindow::onLayersSuperposed);
 
     for (const auto& name : name_layers) {
-        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(name), listWidget);
+        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(name), ui->listWidget);
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         item->setCheckState(Qt::Checked);
     }
 
-    // Link event to checkbox
-    connect(listWidget, &QListWidget::itemChanged, [this](QListWidgetItem *item) {
+    connect(ui->listWidget, &QListWidget::itemChanged, [this](QListWidgetItem *item) {
         bool checked = item->checkState() == Qt::Checked;
         QString name = item->text();
         onCheckboxToggled(checked, name.toStdString());
     });
 
-    // Set checkbox style
-    listWidget->setSpacing(10);
-    listWidget->setStyleSheet("QListWidget::item { padding: 5px; font-family: Sans Serif; font-size: 10pt; }");
-
-    // setting police size
-    QFont font = listWidget->font();
+    ui->listWidget->setSpacing(10);
+    QFont font = ui->listWidget->font();
     font.setPointSize(15);
-    listWidget->setFont(font);
-
-
+    ui->listWidget->setFont(font);
+    ui->listWidget->setStyleSheet("QListWidget::item { padding: 5px; font-family: Sans Serif; font-size: 10pt; }");
 }
