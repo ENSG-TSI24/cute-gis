@@ -3,15 +3,16 @@
 #include <iostream>
 
 Renderer2D::Renderer2D(){
-    lst_layers2d = std::vector<Layer2d>();
     session = Session();
 
     auto layers2d_json = session.getLayers();
     for (auto& layer_path : layers2d_json) {
         const char* layer_path_cstr = layer_path.c_str();
-        lst_layers2d.push_back(Layer2d(VectorData(layer_path_cstr)));
+        VectorData geo(layer_path_cstr);
+        std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
+        lst_layers2d.push_back(vector);
     }
-    
+
 }
 
 Renderer2D::~Renderer2D() {}

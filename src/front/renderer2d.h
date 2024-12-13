@@ -14,9 +14,10 @@ public:
     void reset2D();
     void highlightGeometry(const std::string& layerName, int rowIndex);
     std::vector<std::shared_ptr<LayerBase>> lst_layers2d;
+    Session session;
 
 private:
-    Session session;
+
     void renderLayers2d();
 };
 

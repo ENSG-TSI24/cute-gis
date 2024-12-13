@@ -38,17 +38,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->button_3d, &QPushButton::clicked, this, &MainWindow::onToggle3DMode);
 
     for (const auto& layer : renderer->getRenderer2d()->lst_layers2d) {
-        QFileInfo fileInfo(QString::fromStdString(layer.name));
+        QFileInfo fileInfo(QString::fromStdString(layer->getName()));
         std::string name = fileInfo.baseName().toStdString();
-        renderer->getRenderer2d()->lst_layers2d.back().name = name;
+        renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
 
 
         name_layers.push_back(name);
         setupCheckboxes();
         ++nb_layers;
-        renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back().boundingBox);
+        renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
         renderer->setIs3D(false);
-        qDebug() << "Layer name:" << QString::fromStdString(layer.name);
+        qDebug() << "Layer name:" << QString::fromStdString(layer->getName());
         // Perform any additional operations on each layer here
     }
     if (!ui->openGLWidget->layout()) {
@@ -107,6 +107,7 @@ void MainWindow::onOpenFile()
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive) || filePath.endsWith(".shp", Qt::CaseInsensitive)) {
             renderer->reset3D();
+            renderer->getRenderer2d()->session.addToJson(filedata);
             //add layer2d
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 

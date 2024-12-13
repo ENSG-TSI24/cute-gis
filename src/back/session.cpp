@@ -10,7 +10,6 @@ Session::Session() {
         file >> *m_json;
     }
 }
-
 Session::~Session() {
 }
 

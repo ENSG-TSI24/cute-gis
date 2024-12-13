@@ -397,9 +397,7 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
                             << feature.VerticesGeoreferenced.at(i).at(k).at(l).z << "\n";
 
                     listtexture += "vt " + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).x) + " "
-                                         + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).y) + " "
-                                         + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).z) + "\n";
-
+                                         + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).y) + "\n";
                     nbv_printed += 1;
                     nbvt_printed += 1;
                     face+=  std::to_string(nbv_printed) + "/" + std::to_string(nbvt_printed) + "/" + std::to_string(nbvn_printed+1) + " ";
