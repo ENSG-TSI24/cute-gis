@@ -152,11 +152,12 @@ void CityGMLParser::parseFeatures() {
         feature.vertices = data.at(0);
         feature.VerticesGeoreferenced = data.at(0);
         feature.verticeNormal = data.at(1).at(0);
+
         feature.VerticesTexture = data.at(2);
 
 
         // Passage des vertices à la feature
-        std::cout<< "feature" <<to_string(feature.vertices.at(0).at(0).at(0)) << std::endl;
+
 
         //Passage de l'enveloppe à la feature
         feature.lowerCorner = std::make_tuple(xMin,yMin,zMin);
@@ -224,12 +225,14 @@ std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> CityGMLParser::pro
                     glm::vec3 u = v2 - v1;
                     glm::vec3 v = v3 - v1;
 
-                    if (u!= glm::vec3(0,0,0) && v!= glm::vec3(0,0,0) && u!=v){
-                    glm::vec3 normal = glm::normalize(glm::cross(u, v));
 
+                    glm::vec3 normal = glm::normalize(glm::cross(u, v));
+                    if (std::isnan(normal.x)) normal.x = 0.0f;
+                    if (std::isnan(normal.y)) normal.y = 0.0f;
+                    if (std::isnan(normal.z)) normal.z = 0.0f;
                     normals3D.push_back(normal); // Accumuler les normales
 
-                    }
+
                 }
             }
 
@@ -284,8 +287,11 @@ std::vector<std::vector<std::vector<std::vector<glm::vec3>>>> CityGMLParser::pro
 
         returnTuple.push_back(multipolygonList);
 
+
         normalsListUniform.push_back(normalsList);
+
         returnTuple.push_back(normalsListUniform);
+
 
         returnTuple.push_back(multipolygontexture);
 
@@ -321,7 +327,7 @@ void CityGMLParser::setInScale(float s) {
               << xMax << ", " << yMax << ", " << zMax << ")" << std::endl;
 
     for (Feature& feature : features) {
-        for (int i = 0; i < feature.vertices.size(); i += 3) {
+        for (int i = 0; i < feature.vertices.size(); i++) {
             for (int k =0; k< feature.vertices.at(i).size(); k++){
                 for (int l =0; l<  feature.vertices.at(i).at(k).size(); l++){
 
@@ -360,133 +366,70 @@ void CityGMLParser::exportToObj(float s, const std::string& filePath){
         return;
     }
 
-    std::string mtlFileName = filePath.substr(0, filePath.find_last_of('.')) + ".mtl";
-    objFile << "mtllib " << mtlFileName << "\n"; // Reference the .mtl file
-
     unsigned int vertexOffset = 1;
+    int nbv_printed = 0;
+    int nbvt_printed = 0;
+    int nbvn_printed = 0;
+
     for (const auto& feature : features) {
-        if (feature.vertices.empty()) {
+        if (feature.VerticesGeoreferenced.empty()) {
             std::cerr << "Warning: Feature " << feature.id << " has no geometry and will be skipped." << std::endl;
             continue;
         }
-        std::cout<< "je fais un objet" << std::endl;
+
         objFile << "o " << feature.objectName << "\n";
-        objFile << "usemtl Material_" << feature.id << "\n"; // Assign material
+        std::string listface;
+        std::string listnormal;
+        std::string listtexture;
+        for (int i = 0; i < feature.VerticesGeoreferenced.size(); i++) {
+            std::string face = "f ";
+            for (int k =0; k< feature.VerticesGeoreferenced.at(i).size(); k++){
 
-        for (int i = 0; i < feature.vertices.size(); i += 3) {
-            for (int k =0; k< feature.vertices.at(i).size(); k++){
-                int n = 1;
-                for (int l =0; l<  feature.vertices.at(i).at(k).size(); l++){
 
-                    std::cout<<"v :" <<to_string(feature.vertices.at(i).at(k).at(l))<<std::endl;
-                    objFile << "v " << feature.vertices.at(i).at(k).at(l).x << " "
-                            << feature.vertices.at(i).at(k).at(l).y << " "
-                            << feature.vertices.at(i).at(k).at(l).z << "\n";
-                    std::cout<<"vt : "<<to_string(feature.VerticesTexture.at(i).at(k).at(l))<<std::endl;
-                    objFile << "vt " << feature.VerticesTexture.at(i).at(k).at(l).x << " "
-                            << feature.VerticesTexture.at(i).at(k).at(l).y << " "
-                            << feature.VerticesTexture.at(i).at(k).at(l).z << "\n";
+
+
+                for (int l =0; l<  feature.VerticesGeoreferenced.at(i).at(k).size(); l++){
+
+
+                    objFile << std::fixed << std::setprecision(1) <<
+                               "v " << feature.VerticesGeoreferenced.at(i).at(k).at(l).x << " "
+                            << feature.VerticesGeoreferenced.at(i).at(k).at(l).y << " "
+                            << feature.VerticesGeoreferenced.at(i).at(k).at(l).z << "\n";
+
+                    listtexture += "vt " + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).x) + " "
+                                         + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).y) + " "
+                                         + std::to_string(feature.VerticesTexture.at(i).at(k).at(l).z) + "\n";
+
+                    nbv_printed += 1;
+                    nbvt_printed += 1;
+                    face+=  std::to_string(nbv_printed) + "/" + std::to_string(nbvt_printed) + "/" + std::to_string(nbvn_printed+1) + " ";
 
 
                 }
-                if (feature.verticeNormal.at(i).size() >= k-1){
-                std::cout<< "vn :" <<to_string(feature.verticeNormal.at(i).at(k)) << std::endl;
-                objFile << "vn " << feature.verticeNormal.at(i).at(k).x << " "
-                        << feature.verticeNormal.at(i).at(k).y << " "
-                        << feature.verticeNormal.at(i).at(k).z << "\n";
+
+
+                listnormal +=  "vn " + std::to_string(feature.verticeNormal.at(i).at(k).x) + " "
+                                     + std::to_string(feature.verticeNormal.at(i).at(k).y) + " "
+                                     + std::to_string(feature.verticeNormal.at(i).at(k).z) + "\n";
+
+                nbvn_printed += 1;
                 }
-                objFile << "f ";
-
-
-                while (n < feature.vertices.at(i).size() ){
-                    objFile << -n << "/" << -n << "/" << -1 << " ";
-                    n+=1;
-                }
-                objFile << "\n";
-                }
-
-
+            listface += face + "\n";
             }
 
 
-
+        objFile << listnormal;
+        objFile << listtexture;
+        objFile << listface;
 
         vertexOffset += feature.vertices.size() / 3;
-        objFile << "\n";
+
     }
 
     objFile.close();
     std::cout << "Exported features to OBJ file: " << filePath << std::endl;
 }
 
-
-void CityGMLParser::exportToMtl(const std::string& filePath) const {
-    std::ofstream mtlFile(filePath);
-    if (!mtlFile.is_open()) {
-        std::cerr << "Error: Could not open file for writing: " << filePath << std::endl;
-        return;
-    }
-
-    for (const auto& feature : features) {
-        std::string materialName = &"Material_" [ feature.id];
-
-        // Default material properties
-        float ambient[3] = {1.0f, 1.0f, 1.0f}; // Default white
-        float diffuse[3] = {0.8f, 0.8f, 0.8f}; // Default light gray
-        float specular[3] = {0.5f, 0.5f, 0.5f}; // Default gray
-        float opacity = 1.0f;                  // Default opaque
-        float shininess = 10.0f;               // Default shininess
-
-        // Check and assign values based on feature attributes
-        if (feature.attributes.count("libofficiel")) {
-            // Generate unique color from 'libofficiel'
-            auto colorHash = [](const std::string& str) -> unsigned int {
-                unsigned int hash = 0;
-                for (char c : str) hash = (hash * 31) + c;
-                return hash;
-            };
-            unsigned int hash = colorHash(feature.attributes.at("libofficiel"));
-            ambient[0] = ((hash & 0xFF0000) >> 16) / 255.0f;
-            ambient[1] = ((hash & 0x00FF00) >> 8) / 255.0f;
-            ambient[2] = (hash & 0x0000FF) / 255.0f;
-            diffuse[0] = ambient[0] * 0.8f;
-            diffuse[1] = ambient[1] * 0.8f;
-            diffuse[2] = ambient[2] * 0.8f;
-        } else {
-            std::cerr << "Warning: 'libofficiel' missing for feature " << feature.id
-                      << ", using default Ka and Kd.\n";
-        }
-
-        if (feature.attributes.count("gid")) {
-            // Customize shininess based on 'gid'
-            shininess = (std::stoi(feature.attributes.at("gid")) % 50) + 10.0f;
-        } else {
-            std::cerr << "Warning: 'gid' missing for feature " << feature.id
-                      << ", using default Ns.\n";
-        }
-
-        if (feature.attributes.count("uid")) {
-            // Customize opacity based on 'uid'
-            opacity = (std::stoi(feature.attributes.at("uid")) % 100) / 100.0f + 0.5f;
-            if (opacity > 1.0f) opacity = 1.0f;
-        } else {
-            std::cerr << "Warning: 'uid' missing for feature " << feature.id
-                      << ", using default opacity.\n";
-        }
-
-        // Write material properties to the MTL file
-        mtlFile << "newmtl " << materialName << "\n";
-        mtlFile << "Ka " << ambient[0] << " " << ambient[1] << " " << ambient[2] << "\n";
-        mtlFile << "Kd " << diffuse[0] << " " << diffuse[1] << " " << diffuse[2] << "\n";
-        mtlFile << "Ks " << specular[0] << " " << specular[1] << " " << specular[2] << "\n";
-        mtlFile << "d " << opacity << "\n";
-        mtlFile << "Ns " << shininess << "\n";
-        mtlFile << "\n";
-    }
-
-    mtlFile.close();
-    std::cout << "Exported materials to MTL file: " << filePath << std::endl;
-}
 
 
 void CityGMLParser::printFeature(const Feature& feature) const {
