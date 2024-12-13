@@ -1,0 +1,16 @@
+{
+    "/home/ibhou/Documents/cute-gis/data/test_data/departements.geojson": {
+        "properties": {
+            "name": "/home/ibhou/Documents/cute-gis/data/test_data/departements.geojson",
+            "visible": true
+        },
+        "type": "vector"
+    },
+    "/home/ibhou/Documents/cute-gis/data/test_data/multipolygon.geojson": {
+        "properties": {
+            "name": "/home/ibhou/Documents/cute-gis/data/test_data/multipolygon.geojson",
+            "visible": true
+        },
+        "type": "vector"
+    }
+}

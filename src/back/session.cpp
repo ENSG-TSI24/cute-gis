@@ -23,9 +23,9 @@ void Session::updateFile() {
     file.close();
 }
 
-void Session::addToJson(const char* path) {
+void Session::addToJson(const char* path, const char* type) {
     (*m_json)[path] = {
-        {"type", "layer"},
+        {"type", type},
         {"properties", {
             {"name", path},
             {"visible", true}
@@ -34,12 +34,17 @@ void Session::addToJson(const char* path) {
     updateFile();
 }
 
-std::vector<std::string> Session::getLayers() {
-    std::vector<std::string> layers;
+std::vector<std::pair<std::string, std::string>> Session::getLayers() {
+    std::vector<std::pair<std::string, std::string>> layers;
     for (auto& [key, layer] : m_json->items()) {
-        if (layer.contains("properties") && layer["properties"].contains("name")) {
-            layers.push_back(layer["properties"]["name"]);
+        if (layer.contains("properties") && layer["properties"].contains("name") && layer.contains("type")) {
+            layers.emplace_back(layer["properties"]["name"], layer["type"]);
         }
     }
     return layers;
+}
+
+void Session::removeFromJson(const char* path) {
+    m_json->erase(path);
+    updateFile();
 }

@@ -1,16 +1,28 @@
 #include "renderer2d.h"
 #include "src/back/vectordata.h"
+#include "src/back/rasterdata.h"
 #include <iostream>
 
 Renderer2D::Renderer2D(){
     session = Session();
-
     auto layers2d_json = session.getLayers();
-    for (auto& layer_path : layers2d_json) {
+    for (auto& layer_info : layers2d_json) {
+        const std::string& layer_type = layer_info.second;
+        const std::string& layer_path = layer_info.first;
         const char* layer_path_cstr = layer_path.c_str();
-        VectorData geo(layer_path_cstr);
-        std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
-        lst_layers2d.push_back(vector);
+        if (layer_type == "vector") {
+            VectorData geo(layer_path_cstr);
+            std::shared_ptr<Layer2d> vector = std::make_unique<Layer2d>(geo);
+            vector->calculateBoundingBox();
+            vector->setName(layer_path);
+            lst_layers2d.push_back(vector);
+        } else if (layer_type == "raster") {
+            RasterData geo(layer_path_cstr);
+            std::shared_ptr<LayerRaster> raster = std::make_unique<LayerRaster>(geo);
+            raster->calculateBoundingBox();
+            raster->setName(layer_path);
+            lst_layers2d.push_back(raster);
+        } 
     }
 
 }

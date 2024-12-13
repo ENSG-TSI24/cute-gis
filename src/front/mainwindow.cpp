@@ -40,26 +40,21 @@ MainWindow::MainWindow(QWidget *parent)
     for (const auto& layer : renderer->getRenderer2d()->lst_layers2d) {
         QFileInfo fileInfo(QString::fromStdString(layer->getName()));
         std::string name = fileInfo.baseName().toStdString();
-        renderer->getRenderer2d()->lst_layers2d.back()->setName(name);
-
+        layer->setName(name);
 
         name_layers.push_back(name);
-        setupCheckboxes();
         ++nb_layers;
-        renderer->controller->getCamera().centerOnBoundingBox(renderer->getRenderer2d()->lst_layers2d.back()->getBoundingBox());
-        renderer->setIs3D(false);
-        qDebug() << "Layer name:" << QString::fromStdString(layer->getName());
-        // Perform any additional operations on each layer here
     }
+    setupCheckboxes();
     if (!ui->openGLWidget->layout()) {
         auto* layout = new QVBoxLayout(ui->openGLWidget);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(renderer);
-    } else if (ui->openGLWidget->layout()->indexOf(renderer) == -1) {
+    } else {
+        clearLayout(ui->openGLWidget->layout());
         ui->openGLWidget->layout()->addWidget(renderer);
     }
-
-
+    renderer->update();
 }
 
 MainWindow::~MainWindow()
@@ -107,7 +102,7 @@ void MainWindow::onOpenFile()
     try {
         if (filePath.endsWith(".geojson", Qt::CaseInsensitive) || filePath.endsWith(".shp", Qt::CaseInsensitive)) {
             renderer->reset3D();
-            renderer->getRenderer2d()->session.addToJson(filedata);
+            renderer->getRenderer2d()->session.addToJson(filedata, "vector");
             //add layer2d
             std::cout<<"############### ADD LAYER ################"<<std::endl;
 
@@ -133,7 +128,10 @@ void MainWindow::onOpenFile()
             renderer->getRenderer3d()->setObjectLoader(objectLoader);
             renderer->setIs3D(true);
         } else if (filePath.endsWith(".tif", Qt::CaseInsensitive) || filePath.endsWith(".tiff", Qt::CaseInsensitive)) {
+            
             renderer->reset3D();
+
+            renderer->getRenderer2d()->session.addToJson(filedata, "raster");
             RasterData geo = RasterData(filedata);
             std::shared_ptr<LayerRaster> raster = std::make_unique<LayerRaster>(geo);
             renderer->getRenderer2d()->lst_layers2d.push_back(raster);
@@ -357,6 +355,8 @@ void MainWindow::onLayerContextMenuRequested(const QPoint& pos) {
         int row = listWidget->row(item);
         delete listWidget->takeItem(row);
         name_layers.erase(name_layers.begin() + row);
+        std::string layerPath = renderer->getRenderer2d()->lst_layers2d[row]->getName();
+        renderer->getRenderer2d()->session.removeFromJson(layerPath.c_str());
         renderer->getRenderer2d()->lst_layers2d.erase(renderer->getRenderer2d()->lst_layers2d.begin() + row);
     } else if  (selectedAction == zoomLayer) {
         auto& layer = renderer->getRenderer2d()->lst_layers2d[row];
