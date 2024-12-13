@@ -12,12 +12,11 @@
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QFileDialog>
+#include "layerbase.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
-
-class GeoJsonViewer;
 
 class MainWindow : public QMainWindow
 {
@@ -30,6 +29,7 @@ public:
     void onCheckboxToggled(bool checked, std::string name);
     void onToggle3DMode();
     void onLayersSuperposed(const QModelIndex&, int start, int end, const QModelIndex&, int destinationRow);
+    void showAttributeTable(const std::shared_ptr<LayerBase>& layer);
 
 private slots:
     void on_actionFlux_Data_triggered();
@@ -40,10 +40,15 @@ private:
     Renderer* renderer;
     QTimer* refreshTimer;
     void onOpenFile();
+    void onOpenFile_stream(const char* chemin);
     ObjectLoader *objectLoader = nullptr;
     std::vector<std::string> name_layers;
     int nb_layers = 0;
     void onLayerContextMenuRequested(const QPoint& pos);
+
+//signals:
+//    void geometrySelected(const std::string& layerName, int rowIndex);
+
 
 };
 

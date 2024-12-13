@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  cute-gis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cute-gis
+    environment:
+      - DISPLAY=${DISPLAY} # needed for displaying the qt window on the host
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix # mandatory for the QT window to show up 
+

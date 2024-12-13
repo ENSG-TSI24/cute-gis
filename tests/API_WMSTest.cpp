@@ -38,14 +38,16 @@ TEST(API_WMSTest, DownloadTileToGeoTiff_FileGenerated) {
     const char* url1 = "WMS:https://data.geopf.fr/wms-r?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
     API_WMS flux_valide = API_WMS(url1);
 
-    const char* layerName = "OI.OrthoimageCoverage";
-    const char* outputFile = "../data/test_data/tile_orthoimage.tiff";
+    const std::string layerName = "OI.OrthoimageCoverage";
+
+    const char* outputFile = "../data/geojson/tile_orthoimage.tiff"; // ** changer le lien
+
     int zoom = 1;
     int row = 1;
     int col = 0;
 
     // Act
-    flux_valide.downloadTileToGeoTiff(layerName, outputFile, zoom, row, col);
+    flux_valide.downloadTileToGeoTiff(layerName, zoom, row, col);
 
     // Assert
     std::ifstream file(outputFile);

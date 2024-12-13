@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include "src/back/API_WFS.h"
 
 using json = nlohmann::json;
 

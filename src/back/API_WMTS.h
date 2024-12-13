@@ -1,4 +1,3 @@
-
 #ifndef WMTSDATA_H
 #define WMTSDATA_H
 
@@ -20,6 +19,9 @@ public:
     QImage getTileAsImage(const char* layerName, int zoom, int row, int col);
     void displayTiles(const char* layerName, int zoom, int centerRow, int centerCol, int gridSize, QGraphicsScene* scene);
 
+    // autre prototype peut-etre
+    void displayTileInfo();
+    void renderTile(const std::string& layerName, int zoomLevel, double x, double y);
 protected:
     const char* url;
 };
