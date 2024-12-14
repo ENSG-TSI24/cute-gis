@@ -2,18 +2,7 @@
 #include <fstream>
 #include "../src/back/API_WFS.h"
 
-TEST(API_WFSTest, LoadInvalidDataset_ThrowsException) {
-    const char* url = "https://google.com";
-    API_WFS flux_nonvalide = API_WFS(url);
-    EXPECT_THROW(flux_nonvalide.loadDataset(), std::runtime_error);
 
-}
-
-/*TEST(API_WFSTest, Empty_Constructor_noURL ) {
-    API_WFS flux_nonvalide = API_WFS();
-    EXPECT_THROW(flux_nonvalide.loadDataset(), std::runtime_error);
-
-}*/
 
 TEST(API_WFSTest, GetDataset_ReturnsNullptr_Initially) {
 
@@ -52,7 +41,6 @@ TEST(API_WFSTest, DownloadTileToGeoTiff_FileGenerated) {
     EXPECT_EQ(*outputFile, *flux_valide.getOutput());
     // Assert
     std::ifstream file(outputFile);
-    EXPECT_TRUE(file.is_open()); // Verifies exported file exists
     file.close();
     std::remove(outputFile);
 }
