@@ -1,0 +1,31 @@
+\doxysection{Data\+Provider.\+h}
+\hypertarget{DataProvider_8h_source}{}\label{DataProvider_8h_source}\index{src/back/DataProvider.h@{src/back/DataProvider.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ <gdal\_priv.h>}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <ogrsf\_frmts.h>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classDataProvider}{DataProvider}}\ \{}
+\DoxyCodeLine{00007\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00008\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classDataProvider}{DataProvider}}()\ ;}
+\DoxyCodeLine{00009\ \ \ \ \ \ \ \ \ GDALDataset*\ getDataset()\ ;}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ Metadata}}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}**\ displayMetadata();}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isEmpty()\ ;}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ std::string\ GetTypeStream(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ url);}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Crucial\ to\ free\ memory,\ otherwise\ bugs}}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classDataProvider}{\string~DataProvider}}()\ ;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ url;}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ GDALDataset*\ m\_dataset;}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}**\ m\_metadata;}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ std::string\ extractLayerName(\textcolor{keyword}{const}\ std::string\&\ metadataLine);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \};}
+
+\end{DoxyCode}

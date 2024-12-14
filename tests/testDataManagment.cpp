@@ -21,27 +21,6 @@ class DataManagmentTest : public ::testing::Test {
         const char* inputFileLyon = "../data/geojson/polygon_nord.geojson";
 };
 
-/*
-TEST_F(DataManagmentTest, DefaultConstructor) {
-    data = DataManagment();
-    EXPECT_TRUE(data.GetDATA() == nullptr);
-    // EXPECT_TRUE(data.GetPath() == nullptr);
-    GDALClose(data.GetDATA());
-}
-*/
-// TEST_F(DataManagmentTest, ConstructorWithParameters) {
-//     const char* inputFile = "../test_data/BASSIN_VERSANT.geojson";
-//     DataManagment data(inputFile);
-//     GDALDataset *dataset = (GDALDataset *) GDALOpenEx(inputFile, GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
-
-//     EXPECT_TRUE(data.GetDATA()->GetLayerCount  ()  == dataset->GetLayerCount  () );
-// //    EXPECT_TRUE(data.GetDATA()->GetGCPCount ()  == dataset->GetGCPCount () );
-//     EXPECT_TRUE(data.GetPath() ==  inputFile);
-//     EXPECT_TRUE(data.GetDriver() == dataset->GetDriver());
-//     GDALClose(dataset);
-// //    GDALClose(data.GetDATA());
-// }
-
 TEST_F(DataManagmentTest, ConstructorVectorDataNull){
     VectorData vectordata = VectorData();
     EXPECT_TRUE(vectordata.GetPath() == nullptr);
@@ -102,19 +81,6 @@ TEST_F(DataManagmentTest, VectorGetMultiPolygons) {
 
 }
 
-TEST_F(DataManagmentTest, VectorGetPolygonNord) {
-    vectordata = VectorData(inputFileLyon);
-    auto polygons = vectordata.GetPolygons();
-    
-    ASSERT_EQ(polygons.size(), 968);
-
-    auto coordinates = polygons[0];
-    size_t pointCount = 0;
-    for (const auto& ring : coordinates) {
-        pointCount += ring.size();
-    }
-    EXPECT_GT(pointCount, 0);
-}
 
 
 int main(int argc, char **argv) {

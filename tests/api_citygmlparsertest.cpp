@@ -17,14 +17,10 @@ class CityGMLParserTest : public :: testing::Test {
     protected:
         CityGMLParser data;
         std::vector<Feature> features;
-        const char* inputFile =  "/home/formation/Documents/ProjetTSI/SAINT_DIDIER_AU_MONT_D_OR_BATI_2015_repaired.gml";
+        const char* inputFile =  "../data/gml/SAINT_DIDIER_AU_MONT_D_OR_PYLONE_2015.gml";
 };
 
-/*
-TEST(CityGMLParserTest, ConstructorVectorDataNull){
-    CityGMLParser parser = CityGMLParser();
-    EXPECT_FALSE(parser.open(""));
-}*/
+
 
 TEST_F(CityGMLParserTest, ConstructorVectorDataNull){
     data = CityGMLParser();
@@ -33,17 +29,7 @@ TEST_F(CityGMLParserTest, ConstructorVectorDataNull){
     EXPECT_TRUE(data.GetPath() == nullptr);
 }
 
-/*TEST_F(CityGMLParserTest, ConstructorVectorData){
-    data = CityGMLParser(inputFile);
 
-    EXPECT_TRUE(data.GetDataset()== nullptr);
-    std::cout<<"cc:"<<data.GetDataset()<<"\n"<<std::endl;
-    EXPECT_TRUE(data.GetPath() == inputFile);
-    EXPECT_TRUE(data.getFeatures().size() == 0);
-
-
-}
-*/
 TEST_F(CityGMLParserTest, ParseFeatures) {
    data = CityGMLParser(inputFile);
 

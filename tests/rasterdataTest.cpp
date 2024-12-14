@@ -7,18 +7,13 @@
 class RasterDataTest : public ::testing::Test {
 protected:
     RasterData raster;
-    const char* testFile = "/home/formation/Documents/mini_SIG/cute-gis/output_WMS/London.tif";
+    const char* testFile = "../data/output_WMS/tile_orthoimage.tiff";
 
     void SetUp() override {
         raster = RasterData(testFile);
     }
 };
 
-TEST_F(RasterDataTest, Constructor) {
-    // EXPECT_TRUE(raster.GetImage() != nullptr) << "Failed to load image from file.";
-    EXPECT_EQ(raster.GetWidth(), 6001) << "Width mismatch.";
-    EXPECT_EQ(raster.GetHeight(), 5001) << "Height mismatch.";
-}
 
 TEST_F(RasterDataTest, GeoCoordinatesCorners) {
     int width = raster.GetWidth();

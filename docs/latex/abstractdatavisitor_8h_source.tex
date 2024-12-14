@@ -1,0 +1,22 @@
+\doxysection{abstractdatavisitor.\+h}
+\hypertarget{abstractdatavisitor_8h_source}{}\label{abstractdatavisitor_8h_source}\index{src/back/dataextract/abstractdatavisitor.h@{src/back/dataextract/abstractdatavisitor.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ABSTRACTDATAVISITOR\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ABSTRACTDATAVISITOR\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <gdal/gdal.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <ogrsf\_frmts.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classAbstractDataVisitor}{AbstractDataVisitor}}\ \{}
+\DoxyCodeLine{00008\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classAbstractDataVisitor}{\string~AbstractDataVisitor}}()\{\};}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{comment}{//virtual\ void\ visitGeojson(GDALDataset*\ geoJsonDataset);}}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{comment}{//virtual\ GDALDataset*\ visitSHP(GDALDataset*\ shpDataset);}}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{comment}{//virtual\ GDALDataset*\ visitSHP(GDALDataset*\ shpDataset,\ GDALDataset*\ shp\_intersectedDataset);}}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{comment}{//virtual\ GDALDataset*\ visitGeojson(GDALDataset*\ geoJsonDataset,\ GDALDataset*\ geoJson\_intersectedDataset)\ =\ 0;}}
+\DoxyCodeLine{00014\ \};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

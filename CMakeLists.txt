@@ -50,7 +50,6 @@ set(PROJECT_SOURCES
     src/front/addFluxData.h
     src/front/addFluxData.ui
     src/front/layerraster.h src/front/layerraster.cpp
-    src/front/geotiffloader.h src/front/geotiffloader.cpp
     src/front/renderer2d.h src/front/renderer2d.cpp
     src/front/renderer3d.h src/front/renderer3d.cpp
     src/front/boundingbox.h src/front/boundingbox.cpp

@@ -1,0 +1,30 @@
+\doxysection{renderer2d.\+h}
+\hypertarget{renderer2d_8h_source}{}\label{renderer2d_8h_source}\index{src/front/renderer2d.h@{src/front/renderer2d.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ RENDERER2D\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ RENDERER2D\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}layer2d.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}layerraster.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}renderer.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}../back/session.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRenderer2D}{Renderer2D}}\ \{}
+\DoxyCodeLine{00010\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00011\ \ \ \ \ \mbox{\hyperlink{classRenderer2D}{Renderer2D}}();}
+\DoxyCodeLine{00012\ \ \ \ \ \mbox{\hyperlink{classRenderer2D}{\string~Renderer2D}}();}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{void}\ paintGl2D();}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{void}\ reset2D();}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{void}\ highlightGeometry(\textcolor{keyword}{const}\ std::string\&\ layerName,\ \textcolor{keywordtype}{int}\ rowIndex);}
+\DoxyCodeLine{00016\ \ \ \ \ std::vector<std::shared\_ptr<LayerBase>>\ lst\_layers2d;}
+\DoxyCodeLine{00017\ \ \ \ \ \mbox{\hyperlink{classSession}{Session}}\ session;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{void}\ renderLayers2d();}
+\DoxyCodeLine{00022\ \};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ RENDERER2D\_H}}
+
+\end{DoxyCode}

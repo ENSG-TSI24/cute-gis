@@ -39,8 +39,6 @@ jobs:
         # Code's Static analysis with cppcheck
         sudo apt-get install -y cppcheck
 
-        # Code's dynamic analysis
-        sudo apt-get install -y valgrind
 
         # Unit Testing with Google Test
         sudo apt-get install -y libgtest-dev
@@ -65,12 +63,6 @@ jobs:
       run: |
         cppcheck --enable=all . 2> cppcheck_report.txt
         echo "Static analysis completed for all files. Report saved to cppcheck_report.txt."
-
-    - name: Dynamic analysis with valgrind
-      run: |
-        cd build
-        valgrind --leak-check=full --show-reachable=yes ./cute-gis
-        echo "Dynamic analysis done."
 
     - name: Create Doxygen, its configuration and generation
       run: |

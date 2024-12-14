@@ -1,5 +1,4 @@
 #include "layerraster.h"
-#include "geotiffloader.h"
 
 #include <QOpenGLFunctions>
 #include <iostream>

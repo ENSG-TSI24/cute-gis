@@ -1,0 +1,69 @@
+\doxysection{API\+\_\+\+WMTS Class Reference}
+\hypertarget{classAPI__WMTS}{}\label{classAPI__WMTS}\index{API\_WMTS@{API\_WMTS}}
+
+
+Inheritance diagram for API\+\_\+\+WMTS\+:
+% FIG 0
+
+
+Collaboration diagram for API\+\_\+\+WMTS\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classAPI__WMTS_afdbe4e4986651fb0fc075f7750c0fa2b}\label{classAPI__WMTS_afdbe4e4986651fb0fc075f7750c0fa2b} 
+{\bfseries API\+\_\+\+WMTS} (const char \texorpdfstring{$\ast$}{*}link)
+\item 
+\Hypertarget{classAPI__WMTS_a2cf1584df6b5d6f51ff8c2cab4ece7e5}\label{classAPI__WMTS_a2cf1584df6b5d6f51ff8c2cab4ece7e5} 
+void {\bfseries load\+Dataset} ()
+\item 
+\Hypertarget{classAPI__WMTS_ab309234deb9ec8e8324cfcd548032b0c}\label{classAPI__WMTS_ab309234deb9ec8e8324cfcd548032b0c} 
+QImage {\bfseries get\+Tile\+As\+Image} (const char \texorpdfstring{$\ast$}{*}layer\+Name, int zoom, int row, int col)
+\item 
+\Hypertarget{classAPI__WMTS_addd87265f5f0480d6bb42292fcdf675c}\label{classAPI__WMTS_addd87265f5f0480d6bb42292fcdf675c} 
+void {\bfseries display\+Tiles} (const char \texorpdfstring{$\ast$}{*}layer\+Name, int zoom, int center\+Row, int center\+Col, int grid\+Size, QGraphics\+Scene \texorpdfstring{$\ast$}{*}scene)
+\item 
+\Hypertarget{classAPI__WMTS_a9322a21e8eb1898b8d5f6dea0df339a9}\label{classAPI__WMTS_a9322a21e8eb1898b8d5f6dea0df339a9} 
+void {\bfseries display\+Tile\+Info} ()
+\item 
+\Hypertarget{classAPI__WMTS_a169d26ccbc5fd82cc55efabe6bc12523}\label{classAPI__WMTS_a169d26ccbc5fd82cc55efabe6bc12523} 
+void {\bfseries render\+Tile} (const std\+::string \&layer\+Name, int zoom\+Level, double x, double y)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classDataProvider}{Data\+Provider}}}
+\begin{DoxyCompactItemize}
+\item 
+GDALDataset \texorpdfstring{$\ast$}{*} {\bfseries get\+Dataset} ()
+\item 
+char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} {\bfseries display\+Metadata} ()
+\item 
+bool {\bfseries is\+Empty} ()
+\item 
+std\+::string {\bfseries Get\+Type\+Stream} (const char \texorpdfstring{$\ast$}{*}url)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classAPI__WMTS_aee39c829af67566bdf48f91941479985}\label{classAPI__WMTS_aee39c829af67566bdf48f91941479985} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries url}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{classDataProvider}{Data\+Provider}}}
+\begin{DoxyCompactItemize}
+\item 
+const char \texorpdfstring{$\ast$}{*} {\bfseries url}
+\item 
+GDALDataset \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+dataset}
+\item 
+char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+metadata}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{classDataProvider}{Data\+Provider}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string {\bfseries extract\+Layer\+Name} (const std\+::string \&metadata\+Line)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/back/API\+\_\+\+WMTS.\+h\item 
+src/back/API\+\_\+\+WMTS.\+cpp\end{DoxyCompactItemize}
