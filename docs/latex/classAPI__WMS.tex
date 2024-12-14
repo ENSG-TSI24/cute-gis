@@ -1,0 +1,69 @@
+\doxysection{API\+\_\+\+WMS Class Reference}
+\hypertarget{classAPI__WMS}{}\label{classAPI__WMS}\index{API\_WMS@{API\_WMS}}
+
+
+Inheritance diagram for API\+\_\+\+WMS\+:
+% FIG 0
+
+
+Collaboration diagram for API\+\_\+\+WMS\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classAPI__WMS_a812f3790c5048a76ce902142e9bd1d02}\label{classAPI__WMS_a812f3790c5048a76ce902142e9bd1d02} 
+{\bfseries API\+\_\+\+WMS} (const char \texorpdfstring{$\ast$}{*}link)
+\item 
+\Hypertarget{classAPI__WMS_a5c898fc7f43f432d354ddc711251400a}\label{classAPI__WMS_a5c898fc7f43f432d354ddc711251400a} 
+void {\bfseries load\+Dataset} ()
+\item 
+\Hypertarget{classAPI__WMS_a620325499a41c180330d645386ce0a4f}\label{classAPI__WMS_a620325499a41c180330d645386ce0a4f} 
+void {\bfseries download\+Tile\+To\+Geo\+Tiff} (const std\+::string \&layer\+Name, int zoom, int row, int col)
+\item 
+\Hypertarget{classAPI__WMS_a41a27e7e73abcff710c7f83482c0e96e}\label{classAPI__WMS_a41a27e7e73abcff710c7f83482c0e96e} 
+void {\bfseries load\+Tile\+Grid\+To\+Geo\+Tiff} (const char \texorpdfstring{$\ast$}{*}layer\+Name, int zoom, int center\+Row, int center\+Col, int grid\+Size, const char \texorpdfstring{$\ast$}{*}output\+Prefix)
+\item 
+\Hypertarget{classAPI__WMS_a55d61e91193c46e0cb5c98fc33399c43}\label{classAPI__WMS_a55d61e91193c46e0cb5c98fc33399c43} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries get\+Output} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classDataProvider}{Data\+Provider}}}
+\begin{DoxyCompactItemize}
+\item 
+GDALDataset \texorpdfstring{$\ast$}{*} {\bfseries get\+Dataset} ()
+\item 
+char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} {\bfseries display\+Metadata} ()
+\item 
+bool {\bfseries is\+Empty} ()
+\item 
+std\+::string {\bfseries Get\+Type\+Stream} (const char \texorpdfstring{$\ast$}{*}url)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classAPI__WMS_add5e8f5c8f906a1b071afb809a60b2d3}\label{classAPI__WMS_add5e8f5c8f906a1b071afb809a60b2d3} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries url}
+\item 
+\Hypertarget{classAPI__WMS_a5db863dbb9b64f48ea173d095692f19c}\label{classAPI__WMS_a5db863dbb9b64f48ea173d095692f19c} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries output\+\_\+path}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{classDataProvider}{Data\+Provider}}}
+\begin{DoxyCompactItemize}
+\item 
+const char \texorpdfstring{$\ast$}{*} {\bfseries url}
+\item 
+GDALDataset \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+dataset}
+\item 
+char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+metadata}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{classDataProvider}{Data\+Provider}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string {\bfseries extract\+Layer\+Name} (const std\+::string \&metadata\+Line)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/back/API\+\_\+\+WMS.\+h\item 
+src/back/API\+\_\+\+WMS.\+cpp\end{DoxyCompactItemize}

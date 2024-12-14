@@ -1,0 +1,61 @@
+\doxysection{mainwindow.\+h}
+\hypertarget{mainwindow_8h_source}{}\label{mainwindow_8h_source}\index{src/front/mainwindow.h@{src/front/mainwindow.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ MAINWINDOW\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ MAINWINDOW\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <QMainWindow>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QTimer>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}./ui\_mainwindow.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}renderer.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}objectloader.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <QVBoxLayout>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <QCheckBox>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <QMessageBox>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <QFileDialog>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}layerbase.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ QT\_BEGIN\_NAMESPACE}
+\DoxyCodeLine{00018\ \textcolor{keyword}{namespace\ }Ui\ \{\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classMainWindow}{MainWindow}};\ \}}
+\DoxyCodeLine{00019\ QT\_END\_NAMESPACE}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classMainWindow}{MainWindow}}\ :\ \textcolor{keyword}{public}\ QMainWindow}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00026\ \ \ \ \ \mbox{\hyperlink{classMainWindow}{MainWindow}}(QWidget\ *parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{classMainWindow}{\string~MainWindow}}();}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{void}\ clearLayout(QLayout\ *layout);}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{void}\ onCheckboxToggled(\textcolor{keywordtype}{bool}\ checked,\ std::string\ name);}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{void}\ onToggle3DMode();}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{void}\ onLayersSuperposed(\textcolor{keyword}{const}\ QModelIndex\&,\ \textcolor{keywordtype}{int}\ start,\ \textcolor{keywordtype}{int}\ end,\ \textcolor{keyword}{const}\ QModelIndex\&,\ \textcolor{keywordtype}{int}\ destinationRow);}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{void}\ showAttributeTable(\textcolor{keyword}{const}\ std::shared\_ptr<LayerBase>\&\ layer);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{private}\ slots:}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{void}\ on\_actionFlux\_Data\_triggered();}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00038\ \ \ \ \ Ui::MainWindow\ *ui;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ setupCheckboxes();}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{classRenderer}{Renderer}}*\ renderer;}
+\DoxyCodeLine{00041\ \ \ \ \ QTimer*\ refreshTimer;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ onOpenFile();}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ onOpenFile\_stream(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ chemin);}
+\DoxyCodeLine{00044\ \ \ \ \ \mbox{\hyperlink{classObjectLoader}{ObjectLoader}}\ *objectLoader\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00045\ \ \ \ \ std::vector<std::string>\ name\_layers;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{int}\ nb\_layers\ =\ 0;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ onLayerContextMenuRequested(\textcolor{keyword}{const}\ QPoint\&\ pos);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{//signals:}}
+\DoxyCodeLine{00050\ \textcolor{comment}{//\ \ \ \ void\ geometrySelected(const\ std::string\&\ layerName,\ int\ rowIndex);}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ MAINWINDOW\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,181 @@
+\doxysection{Layer\+Raster Class Reference}
+\hypertarget{classLayerRaster}{}\label{classLayerRaster}\index{LayerRaster@{LayerRaster}}
+
+
+Inheritance diagram for Layer\+Raster\+:
+% FIG 0
+
+
+Collaboration diagram for Layer\+Raster\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classLayerRaster_a6315e0fb7b70ce61b569f32293a50db7}\label{classLayerRaster_a6315e0fb7b70ce61b569f32293a50db7} 
+{\bfseries Layer\+Raster} (\mbox{\hyperlink{classRasterData}{Raster\+Data}} raster)
+\item 
+void \mbox{\hyperlink{classLayerRaster_acb59bc40bf3f9c71fb18c1c07e4ef98e}{render}} () override
+\item 
+\mbox{\hyperlink{classBoundingBox}{Bounding\+Box}} \mbox{\hyperlink{classLayerRaster_a09b26c1c6b96275a94643f80f9828d8b}{calculate\+Bounding\+Box}} () override
+\item 
+void \mbox{\hyperlink{classLayerRaster_ade7b6b75da9fdcebe73eae4cfadd9277}{highlight\+Geometry}} (int row\+Index) override
+\item 
+std\+::string \mbox{\hyperlink{classLayerRaster_a1705f44fa1e3b09f38b7897f6178e8c2}{get\+Name}} () override
+\item 
+void \mbox{\hyperlink{classLayerRaster_a664faca661cd4c54a61bf05e813f68f0}{set\+Name}} (std\+::string name) override
+\item 
+bool \mbox{\hyperlink{classLayerRaster_a3b114b6380c681a56f48e2dcc69282f6}{get\+Is\+Visible}} () override
+\item 
+void \mbox{\hyperlink{classLayerRaster_ad9a660c8545e9faeeabf2681b23069e4}{set\+Is\+Visible}} (bool is\+Visible) override
+\item 
+\mbox{\hyperlink{classBoundingBox}{Bounding\+Box}} \mbox{\hyperlink{classLayerRaster_a4cf6a13f16dd38ab3fd2cfad22b8060c}{get\+Bounding\+Box}} () override
+\item 
+float \mbox{\hyperlink{classLayerRaster_a20d65545cfbacb0d7bca6c4ba6d31a43}{get\+Opacity}} () override
+\item 
+void \mbox{\hyperlink{classLayerRaster_a765ca633ca27a94ebc1fa696f0460ff9}{set\+Opacity}} (float opacity) override
+\item 
+std\+::vector$<$ std\+::vector$<$ std\+::string $>$ $>$ \mbox{\hyperlink{classLayerRaster_a4c1a0bd8fd5b68902e5451d712476c68}{get\+Attributes}} () override
+\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classLayerRaster_a740462662b9629e71eb8569a87a28a1d}{get\+Attribute\+Headers}} () override
+\item 
+bool \mbox{\hyperlink{classLayerRaster_a650f85e3782ce17853c326351e6b70fe}{has\+Attributes}} () const override
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classLayerRaster_a09b26c1c6b96275a94643f80f9828d8b}\label{classLayerRaster_a09b26c1c6b96275a94643f80f9828d8b} 
+\index{LayerRaster@{LayerRaster}!calculateBoundingBox@{calculateBoundingBox}}
+\index{calculateBoundingBox@{calculateBoundingBox}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{calculateBoundingBox()}{calculateBoundingBox()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classBoundingBox}{Bounding\+Box}} Layer\+Raster\+::calculate\+Bounding\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_a740462662b9629e71eb8569a87a28a1d}\label{classLayerRaster_a740462662b9629e71eb8569a87a28a1d} 
+\index{LayerRaster@{LayerRaster}!getAttributeHeaders@{getAttributeHeaders}}
+\index{getAttributeHeaders@{getAttributeHeaders}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{getAttributeHeaders()}{getAttributeHeaders()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::string $>$ Layer\+Raster\+::get\+Attribute\+Headers (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_a4c1a0bd8fd5b68902e5451d712476c68}\label{classLayerRaster_a4c1a0bd8fd5b68902e5451d712476c68} 
+\index{LayerRaster@{LayerRaster}!getAttributes@{getAttributes}}
+\index{getAttributes@{getAttributes}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{getAttributes()}{getAttributes()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ std\+::string $>$ $>$ Layer\+Raster\+::get\+Attributes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_a4cf6a13f16dd38ab3fd2cfad22b8060c}\label{classLayerRaster_a4cf6a13f16dd38ab3fd2cfad22b8060c} 
+\index{LayerRaster@{LayerRaster}!getBoundingBox@{getBoundingBox}}
+\index{getBoundingBox@{getBoundingBox}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{getBoundingBox()}{getBoundingBox()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classBoundingBox}{Bounding\+Box}} Layer\+Raster\+::get\+Bounding\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_a3b114b6380c681a56f48e2dcc69282f6}\label{classLayerRaster_a3b114b6380c681a56f48e2dcc69282f6} 
+\index{LayerRaster@{LayerRaster}!getIsVisible@{getIsVisible}}
+\index{getIsVisible@{getIsVisible}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{getIsVisible()}{getIsVisible()}}
+{\footnotesize\ttfamily bool Layer\+Raster\+::get\+Is\+Visible (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_a1705f44fa1e3b09f38b7897f6178e8c2}\label{classLayerRaster_a1705f44fa1e3b09f38b7897f6178e8c2} 
+\index{LayerRaster@{LayerRaster}!getName@{getName}}
+\index{getName@{getName}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{getName()}{getName()}}
+{\footnotesize\ttfamily std\+::string Layer\+Raster\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_a20d65545cfbacb0d7bca6c4ba6d31a43}\label{classLayerRaster_a20d65545cfbacb0d7bca6c4ba6d31a43} 
+\index{LayerRaster@{LayerRaster}!getOpacity@{getOpacity}}
+\index{getOpacity@{getOpacity}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{getOpacity()}{getOpacity()}}
+{\footnotesize\ttfamily float Layer\+Raster\+::get\+Opacity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_a650f85e3782ce17853c326351e6b70fe}\label{classLayerRaster_a650f85e3782ce17853c326351e6b70fe} 
+\index{LayerRaster@{LayerRaster}!hasAttributes@{hasAttributes}}
+\index{hasAttributes@{hasAttributes}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{hasAttributes()}{hasAttributes()}}
+{\footnotesize\ttfamily bool Layer\+Raster\+::has\+Attributes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_ade7b6b75da9fdcebe73eae4cfadd9277}\label{classLayerRaster_ade7b6b75da9fdcebe73eae4cfadd9277} 
+\index{LayerRaster@{LayerRaster}!highlightGeometry@{highlightGeometry}}
+\index{highlightGeometry@{highlightGeometry}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{highlightGeometry()}{highlightGeometry()}}
+{\footnotesize\ttfamily void Layer\+Raster\+::highlight\+Geometry (\begin{DoxyParamCaption}\item[{int}]{row\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_acb59bc40bf3f9c71fb18c1c07e4ef98e}\label{classLayerRaster_acb59bc40bf3f9c71fb18c1c07e4ef98e} 
+\index{LayerRaster@{LayerRaster}!render@{render}}
+\index{render@{render}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{render()}{render()}}
+{\footnotesize\ttfamily void Layer\+Raster\+::render (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_ad9a660c8545e9faeeabf2681b23069e4}\label{classLayerRaster_ad9a660c8545e9faeeabf2681b23069e4} 
+\index{LayerRaster@{LayerRaster}!setIsVisible@{setIsVisible}}
+\index{setIsVisible@{setIsVisible}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{setIsVisible()}{setIsVisible()}}
+{\footnotesize\ttfamily void Layer\+Raster\+::set\+Is\+Visible (\begin{DoxyParamCaption}\item[{bool}]{is\+Visible }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_a664faca661cd4c54a61bf05e813f68f0}\label{classLayerRaster_a664faca661cd4c54a61bf05e813f68f0} 
+\index{LayerRaster@{LayerRaster}!setName@{setName}}
+\index{setName@{setName}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{setName()}{setName()}}
+{\footnotesize\ttfamily void Layer\+Raster\+::set\+Name (\begin{DoxyParamCaption}\item[{std\+::string}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+\Hypertarget{classLayerRaster_a765ca633ca27a94ebc1fa696f0460ff9}\label{classLayerRaster_a765ca633ca27a94ebc1fa696f0460ff9} 
+\index{LayerRaster@{LayerRaster}!setOpacity@{setOpacity}}
+\index{setOpacity@{setOpacity}!LayerRaster@{LayerRaster}}
+\doxysubsubsection{\texorpdfstring{setOpacity()}{setOpacity()}}
+{\footnotesize\ttfamily void Layer\+Raster\+::set\+Opacity (\begin{DoxyParamCaption}\item[{float}]{opacity }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classLayerBase}{Layer\+Base}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/front/layerraster.\+h\item 
+src/front/layerraster.\+cpp\end{DoxyCompactItemize}

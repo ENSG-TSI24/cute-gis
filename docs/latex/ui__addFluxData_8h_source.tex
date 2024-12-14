@@ -1,0 +1,65 @@
+\doxysection{ui\+\_\+add\+Flux\+Data.\+h}
+\hypertarget{ui__addFluxData_8h_source}{}\label{ui__addFluxData_8h_source}\index{src/front/ui\_addFluxData.h@{src/front/ui\_addFluxData.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ UI\_ADDFLUXDATA\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ UI\_ADDFLUXDATA\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <QtCore/QVariant>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QtWidgets/QApplication>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QtWidgets/QDialog>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <QtWidgets/QDialogButtonBox>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <QtWidgets/QVBoxLayout>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <QtWidgets/QSpacerItem>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <QtWidgets/QComboBox>}\ \ \textcolor{comment}{//\ Inclure\ QComboBox}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ QT\_BEGIN\_NAMESPACE}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classUi__addFluxData}{Ui\_addFluxData}}\ \{}
+\DoxyCodeLine{00015\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00016\ \ \ \ \ QComboBox\ *layer;\ \ \ \textcolor{comment}{//\ Changer\ pour\ QComboBox}}
+\DoxyCodeLine{00017\ \ \ \ \ QComboBox\ *url;\ \ \ \ \textcolor{comment}{//\ Changer\ pour\ QComboBox}}
+\DoxyCodeLine{00018\ \ \ \ \ QDialogButtonBox\ *buttonBox;}
+\DoxyCodeLine{00019\ \ \ \ \ QSpacerItem\ *verticalSpacer;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{void}\ setupUi(QDialog\ *Dialog)\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Dialog-\/>objectName().isEmpty())}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ Dialog-\/>setObjectName(QString::fromUtf8(\textcolor{stringliteral}{"{}Dialog"{}}));}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ Dialog-\/>resize(400,\ 300);}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ QVBoxLayout\ *verticalLayout\ =\ \textcolor{keyword}{new}\ QVBoxLayout(Dialog);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Création\ du\ QComboBox\ pour\ 'Layer\ Name'\ sans\ éléments}}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ layer\ =\ \textcolor{keyword}{new}\ QComboBox(Dialog);}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ layer-\/>setObjectName(QString::fromUtf8(\textcolor{stringliteral}{"{}layer"{}}));}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ verticalLayout-\/>addWidget(layer);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Création\ du\ QComboBox\ pour\ 'URL'\ sans\ éléments}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ url\ =\ \textcolor{keyword}{new}\ QComboBox(Dialog);}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ url-\/>setObjectName(QString::fromUtf8(\textcolor{stringliteral}{"{}url"{}}));}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ verticalLayout-\/>addWidget(url);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ajout\ du\ spacer\ pour\ espacer\ les\ éléments}}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ verticalSpacer\ =\ \textcolor{keyword}{new}\ QSpacerItem(20,\ 40,\ QSizePolicy::Minimum,\ QSizePolicy::Expanding);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ verticalLayout-\/>addItem(verticalSpacer);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Configuration\ des\ boutons\ OK\ et\ Cancel}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ buttonBox\ =\ \textcolor{keyword}{new}\ QDialogButtonBox(Dialog);}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ buttonBox-\/>setStandardButtons(QDialogButtonBox::Ok\ |\ QDialogButtonBox::Cancel);}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ verticalLayout-\/>addWidget(buttonBox);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Connexions\ des\ boutons\ Ok\ et\ Cancel}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ QObject::connect(buttonBox,\ \&QDialogButtonBox::accepted,\ Dialog,\ \&QDialog::accept);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ QObject::connect(buttonBox,\ \&QDialogButtonBox::rejected,\ Dialog,\ \&QDialog::reject);}
+\DoxyCodeLine{00050\ \ \ \ \ \}}
+\DoxyCodeLine{00051\ \};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{namespace\ }Ui\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classUi_1_1addFluxData}{addFluxData}}:\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classUi__addFluxData}{Ui\_addFluxData}}\ \{\};}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ QT\_END\_NAMESPACE}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ UI\_ADDFLUXDATA\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,77 @@
+\doxysection{camera.\+h}
+\hypertarget{camera_8h_source}{}\label{camera_8h_source}\index{src/front/camera.h@{src/front/camera.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CAMERA\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CAMERA\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ GLM\_ENABLE\_EXPERIMENTAL}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}glm/glm.hpp"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}glm/gtx/transform.hpp"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <QOpenGLWidget>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <QOpenGLFunctions>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <QMatrix4x4>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <glm/gtc/quaternion.hpp>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}boundingbox.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classCamera}{Camera}}}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{classCamera}{Camera}}();}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classCamera_ae7c46d026313f6faefdcfdb5094ea8cb}{getX}}();}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classCamera_ad71d83315248602503546eba37697390}{getY}}();}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCamera_a6a69508383fdb7b7064e9bea4d569ee9}{setX}}(\textcolor{keywordtype}{float}\ x);}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCamera_a7200923e83852873639e208cb327434d}{setY}}(\textcolor{keywordtype}{float}\ y);}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCamera_a99afddab826f90cf854f858a2c717bb9}{moveUp}}(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCamera_a3afa8d087d48047307dcbe76b5134a8a}{moveDown}}(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCamera_a9733e299c281288208e4ce36681143a6}{moveLeft}}(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCamera_a70f638369d8bbcb60639f5b1cc40de19}{moveRight}}(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCamera_aea0d4df940f989e78f42cdde38de1ce4}{moveFront3D}}(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ moveBack3D(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ moveLeft3D(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{void}\ moveRight3D(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{void}\ moveDown3D(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ moveUp3D(\textcolor{keywordtype}{float}\ step);}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{void}\ rotateVertAng(\textcolor{keywordtype}{float}\ angle);}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ rotateHorAng(\textcolor{keywordtype}{float}\ angle);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{void}\ update();}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{float}\ speedFactor;}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{float}\ getZ();}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{void}\ setZ(\textcolor{keywordtype}{float}\ z);}
+\DoxyCodeLine{00097\ \ \ \ \ glm::vec3\ getPosition();}
+\DoxyCodeLine{00098\ \ \ \ \ QMatrix4x4\ getViewMatrix();\ \textcolor{comment}{//\ Matrice\ de\ vue\ pour\ le\ mode\ 3D}}
+\DoxyCodeLine{00099\ \ \ \ \ QMatrix4x4\ getProjectionMatrix(\textcolor{keywordtype}{int}\ screenWidth,\ \textcolor{keywordtype}{int}\ screenHeight);\ \textcolor{comment}{//\ Projection\ 2D/3D}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{void}\ resetCamera();}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{void}\ centerOnBoundingBox(\textcolor{keyword}{const}\ \mbox{\hyperlink{classBoundingBox}{BoundingBox}}\&\ bbox);}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{int}\ getRWidth();}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{int}\ getRHeight();}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{float}\ getHorAng();}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{float}\ getVertAng();}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{void}\ setRWidth(\textcolor{keywordtype}{int}\ width);}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{void}\ setRHeight(\textcolor{keywordtype}{int}\ height);}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{void}\ centerOn3DModel(\textcolor{keyword}{const}\ std::vector<glm::vec3>\ \&vertices);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00112\ \ \ \ \ glm::vec3\ position;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{int}\ renderer\_width;}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{int}\ renderer\_height;}
+\DoxyCodeLine{00115\ \ \ \ \ glm::vec3\ forward;}
+\DoxyCodeLine{00116\ \ \ \ \ glm::vec3\ right;}
+\DoxyCodeLine{00117\ \ \ \ \ glm::vec3\ up;}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{float}\ VertAng=0;}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{float}\ HorAng=0;}
+\DoxyCodeLine{00120\ \};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CAMERA\_H}}
+
+\end{DoxyCode}
