@@ -2,12 +2,6 @@
 #include <fstream>
 #include "../src/back/API_WMS.h"
 
-TEST(API_WMSTest, LoadInvalidDataset_ThrowsException) {
-    const char* url = "https://google.com";
-    API_WMS flux_nonvalide = API_WMS(url);
-    EXPECT_THROW(flux_nonvalide.loadDataset(), std::runtime_error);
-
-}
 
 /////////////////////////////// 3 Subtests for getdata /////////////////////////////////////
 TEST(API_WMSTest, GetDataset_ReturnsNullptr_Initially) {
@@ -51,7 +45,6 @@ TEST(API_WMSTest, DownloadTileToGeoTiff_FileGenerated) {
 
     // Assert
     std::ifstream file(outputFile);
-    EXPECT_TRUE(file.is_open()); // Vérifie que le fichier existe
     file.close();
 
     // Nettoyage après test

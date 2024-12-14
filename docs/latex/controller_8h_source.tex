@@ -1,0 +1,44 @@
+\doxysection{controller.\+h}
+\hypertarget{controller_8h_source}{}\label{controller_8h_source}\index{src/front/controller.h@{src/front/controller.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CONTROLLER\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CONTROLLER\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <QWidget>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QKeyEvent>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QWheelEvent>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}camera.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classController}{Controller}}\ :\ \textcolor{keyword}{public}\ QWidget\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classController}{Controller}}(QWidget*\ parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00014\ \ \ \ \ \mbox{\hyperlink{classController}{\string~Controller}}();}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \mbox{\hyperlink{classCamera}{Camera}}\&\ getCamera();\ \textcolor{comment}{//\ Fournit\ un\ accès\ à\ la\ caméra}}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{void}\ set3DMode(\textcolor{keywordtype}{bool}\ is3D);}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{void}\ ControllerwheelEvent(QWheelEvent*\ event)\ ;\ \textcolor{comment}{//\ Gère\ les\ événements\ molette}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{void}\ ControllerkeyPressEvent(QKeyEvent*\ event)\ ;\ \textcolor{comment}{//\ Gère\ les\ événements\ clavier}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{void}\ ControllerkeyReleaseEvent(QKeyEvent*\ event);}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{void}\ ControllerQMouseEvent(QMouseEvent\ *event);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{void}\ ControllerMousePressEvent(QMouseEvent*\ event);\ \textcolor{comment}{//\ Début\ du\ drag}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{void}\ ControllerMouseReleaseEvent(QMouseEvent*\ event);\ \textcolor{comment}{//\ Fin\ du\ drag}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{void}\ ControllerMouseMoveEvent(QMouseEvent*\ event);\ \textcolor{comment}{//\ Déplacement\ pendant\ le\ drag}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{bool}\ get3DMode();}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{classCamera}{Camera}}\ camera;\ \textcolor{comment}{//\ Caméra\ contrôlée\ par\ Controller}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{bool}\ isDragging;}
+\DoxyCodeLine{00032\ \ \ \ \ QPoint\ lastMousePosition;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{bool}\ is3DMode;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{bool}\ isCtrlPressed=\textcolor{keyword}{false};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CONTROLLER\_H}}
+
+\end{DoxyCode}

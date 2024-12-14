@@ -1,0 +1,76 @@
+\doxysection{layer2d.\+h}
+\hypertarget{layer2d_8h_source}{}\label{layer2d_8h_source}\index{src/front/layer2d.h@{src/front/layer2d.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ LAYER2D\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ LAYER2D\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <tuple>}\ \textcolor{comment}{//\ For\ std::tuple}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <cstdlib>}\ \textcolor{comment}{//\ For\ std::srand\ and\ std::rand}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <ctime>}\ \ \ \textcolor{comment}{//\ For\ std::time}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}../back/vectordata.h"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}controller.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}../back/session.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}boundingbox.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}layerbase.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ Struct\ to\ represent\ a\ color}}
+\DoxyCodeLine{00019\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structColor}{Color}}\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{float}\ r,\ g,\ b;}
+\DoxyCodeLine{00021\ \};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classLayer2d}{Layer2d}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classLayerBase}{LayerBase}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classLayer2d}{Layer2d}}(\mbox{\hyperlink{classVectorData}{VectorData}}\ data);}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{classLayer2d}{\string~Layer2d}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{void}\ renderPoints();}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{void}\ renderLinestrings();}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{void}\ renderPolygons();}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{classBoundingBox}{BoundingBox}}\ calculateBoundingBox()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{void}\ render()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{void}\ highlightGeometry(\textcolor{keywordtype}{int}\ rowIndex)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ std::string\ getName()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{void}\ setName(std::string\ name)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{bool}\ getIsVisible()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ setIsVisible(\textcolor{keywordtype}{bool}\ isVisible)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{classBoundingBox}{BoundingBox}}\ getBoundingBox()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{float}\ getOpacity()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ setOpacity(\textcolor{keywordtype}{float}\ opacity)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00043\ \ \ \ \ std::vector<std::vector<std::string>>\ getAttributes()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00044\ \ \ \ \ std::vector<std::string>\ getAttributeHeaders()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{bool}\ hasAttributes()\textcolor{keyword}{\ const\ override\ }\{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{classBoundingBox}{BoundingBox}}\ boundingBox;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{int}\ highlightedIndex\ =\ -\/1;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{bool}\ isVisible\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00055\ \ \ \ \ std::string\ name\ =\ \textcolor{stringliteral}{"{}no\ name"{}};}
+\DoxyCodeLine{00056\ \ \ \ \ std::vector<std::vector<std::string>>\ attributes;}
+\DoxyCodeLine{00057\ \ \ \ \ std::vector<std::string>\ attributeHeaders;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{float}\ opacity\ =\ 1.0f;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ std::vector<std::pair<float,\ float>>\ points;}
+\DoxyCodeLine{00063\ \ \ \ \ std::vector<std::vector<std::pair<float,\ float>>>\ linestrings;}
+\DoxyCodeLine{00064\ \ \ \ \ std::vector<std::vector<std::vector<std::tuple<float,\ float,\ float>>>>\ polygons;}
+\DoxyCodeLine{00065\ \ \ \ \ std::vector<std::vector<std::vector<std::pair<float,\ float>>>\ >\ polygons2d;}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{structColor}{Color}}\ color;}
+\DoxyCodeLine{00068\ \};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ LAYER2D\_H}}
+
+\end{DoxyCode}
