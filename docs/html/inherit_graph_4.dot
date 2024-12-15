@@ -14,6 +14,4 @@ digraph "Graphical Class Hierarchy"
   Node3 [id="Node000003",label="VectorData",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classVectorData.html",tooltip=" "];
   Node3 -> Node4 [id="edge5_Node000003_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node4 [id="Node000004",label="CityGMLFIle",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classCityGMLFIle.html",tooltip=" "];
-  Node3 -> Node5 [id="edge6_Node000003_Node000005",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node5 [id="Node000005",label="SHPFile",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classSHPFile.html",tooltip=" "];
 }

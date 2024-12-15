@@ -6,10 +6,10 @@ digraph "Graphical Class Hierarchy"
   node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
   rankdir="LR";
   Node0 [id="Node000000",label="DataProvider",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classDataProvider.html",tooltip=" "];
-  Node0 -> Node1 [id="edge7_Node000000_Node000001",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node0 -> Node1 [id="edge6_Node000000_Node000001",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node1 [id="Node000001",label="API_WFS",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classAPI__WFS.html",tooltip=" "];
-  Node0 -> Node2 [id="edge8_Node000000_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node0 -> Node2 [id="edge7_Node000000_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 [id="Node000002",label="API_WMS",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classAPI__WMS.html",tooltip=" "];
-  Node0 -> Node3 [id="edge9_Node000000_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node0 -> Node3 [id="edge8_Node000000_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node3 [id="Node000003",label="API_WMTS",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classAPI__WMTS.html",tooltip=" "];
 }
