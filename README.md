@@ -70,8 +70,7 @@ You can load data files into the application. Here are some examples:
 
 - **Interact with the Map:**
     - Use the mouse or touchpad to:
-        - **Zoom (only 2D):** Scroll the mouse wheel or use the zoom buttons.
-        - **Rotate:** Press `Shift + left click` to rotate the 3D view.
+        - **Zoom :** Scroll the mouse wheel(2D) or use the Z and S keys(3D).
         - **Pan:** Click and drag to move the map.
     - You can also use the arrow keys or `ZQSD` to navigate.
 
