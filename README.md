@@ -32,14 +32,14 @@ Cute-gis is a full-featured, user-friendly, free-and-open-source (FOSS) geograph
 ```bash
     cd path/to/cute-gis
 ```
-- Instantiate a docker container by running this line:
+- Enable Display Access: To render the main window of the application from the docker container, run the following command:
 
 ```bash
-    docker build -t cute-gis .
+    xhost +
 ```
-- Finally you can now, run the container:
+- Finally you can now, build and run the container:
 ```bash
-    docker build --detach cute-gis
+    docker-compose up
 ```
 
 ## Utilisation
