@@ -2,27 +2,25 @@
     <img src="images/logoCute.png" alt="Cute-gis Logo" width="150"/>
 </p>
 
-# GIS application project
+# Mini-Gis project
 ![Build Status](https://github.com/ENSG-TSI24/cute-gis/actions/workflows/test.yml/badge.svg?branch=devback_visiteur)
 ![Commit Status](https://img.shields.io/github/commit-activity/t/ENSG-TSI24/cute-gis?)
-![Docker Status](https://img.shields.io/docker/automated/ENSG-TSI24/cute-gis)
 
 
 Cute-gis is a full-featured, user-friendly, free-and-open-source (FOSS) geographical information system (GIS) that runs on Unix platforms.
 
 ## Table of contents
 * [Features](#features)
-* [Installing](#installing-cute-gis)
-* [Utilisation](#utilisation)
+* [Installing](#installing-cutegis)
+* [Utilisation](#how-to-use-cutegis)
 * [Dependencies](#dependencies)
 
 ## Features
 
 - This mini-GIS can load and display 2D and 3D data from a variety of files including .shp, .geojson and more.
 - You will be able to move around a map and explore data from the GrandLyon.
-- It is also possible to perform some spatial analysis such as intersections or buffers.
 
-## Installing Cute-gis
+## Installing CuteGis
 
 - Clone or download source-code from this repository
 ```bash
@@ -42,7 +40,7 @@ Cute-gis is a full-featured, user-friendly, free-and-open-source (FOSS) geograph
     docker-compose up
 ```
 
-## Utilisation
+## How to use CuteGis
 
 ### Load Data Files
 
@@ -78,6 +76,7 @@ You can load data files into the application. Here are some examples:
 - **Explore the Data:**
     - Right-click on layers in the **Layer manager** to display their options.
 
+***For further details, please refer to the user guide available in the docs directory!***
 
 ## Dependencies
 
