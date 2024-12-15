@@ -13,6 +13,4 @@ digraph "DataManagment"
   Node4 [id="Node000004",label="VectorData",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",URL="$classVectorData.html",tooltip=" "];
   Node4 -> Node5 [id="edge4_Node000004_Node000005",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node5 [id="Node000005",label="CityGMLFIle",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",URL="$classCityGMLFIle.html",tooltip=" "];
-  Node4 -> Node6 [id="edge5_Node000004_Node000006",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node6 [id="Node000006",label="SHPFile",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",URL="$classSHPFile.html",tooltip=" "];
 }

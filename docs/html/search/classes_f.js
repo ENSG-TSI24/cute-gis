@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ui_5faddfluxdata_0',['Ui_addFluxData',['../classUi__addFluxData.html',1,'']]]
+  ['vectordata_0',['VectorData',['../classVectorData.html',1,'']]]
 ];
