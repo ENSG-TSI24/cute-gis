@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="images/logo_v15.png" alt="Cute-gis Logo" width="150"/>
+    <img src="images/logoCute.png" alt="Cute-gis Logo" width="150"/>
 </p>
 
 # GIS application project
