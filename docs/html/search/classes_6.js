@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['index_5ft_0',['index_t',['../structtinyobj_1_1index__t.html',1,'tinyobj']]],
-  ['intersectvisitor_1',['IntersectVisitor',['../classIntersectVisitor.html',1,'']]]
+  ['joint_5fand_5fweight_5ft_0',['joint_and_weight_t',['../structtinyobj_1_1joint__and__weight__t.html',1,'tinyobj']]]
 ];

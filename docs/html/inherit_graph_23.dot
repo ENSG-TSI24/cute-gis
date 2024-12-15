@@ -5,9 +5,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
   node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
   rankdir="LR";
-  Node0 [id="Node000000",label="tinyobj::MaterialReader",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classtinyobj_1_1MaterialReader.html",tooltip=" "];
-  Node0 -> Node1 [id="edge18_Node000000_Node000001",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node1 [id="Node000001",label="tinyobj::MaterialFileReader",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classtinyobj_1_1MaterialFileReader.html",tooltip=" "];
-  Node0 -> Node2 [id="edge19_Node000000_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node2 [id="Node000002",label="tinyobj::MaterialStreamReader",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classtinyobj_1_1MaterialStreamReader.html",tooltip=" "];
+  Node0 [id="Node000000",label="tinyobj::mesh_t",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$structtinyobj_1_1mesh__t.html",tooltip=" "];
 }
